@@ -43,6 +43,10 @@ async def reboot()
 ```
 Have a look at the [example.py](https://github.com/stilllman/freepybox/blob/aiofreepybox/example.py) for a more complete overview.
 
+Notes on HTTPS
+--------------
+When you access a Freebox with its default-assigned domain (ending in `fbxos.fr`), the library verifies its certificate by automatically trusting the Freebox certificate authority. If you want to avoid this, you can [setup a custom domain name](https://www.freenews.fr/freenews-edition-nationale-299/freebox-9/lacces-distant-a-freebox-os-sameliore-https) which will be associated with a Let's Encrypt certificate.
+
 Resources
 ---------
 Freebox OS API documentation : http://dev.freebox.fr/sdk/os/

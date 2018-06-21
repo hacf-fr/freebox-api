@@ -54,12 +54,9 @@ class Freepybox:
         if not self._is_app_desc_valid(self.app_desc):
             raise InvalidTokenError('invalid application descriptor')
 
-        if host.endswith('.freeboxos.fr'):
-            # freeboxos.fr certificates are provided by Let's Encrypt, no need to provide custom certificate
-            ssl_ctx = ssl.create_default_context()
-        else:
-            cert_path = os.path.join(os.path.dirname(__file__), 'freebox_root_ca.pem')
-            ssl_ctx = ssl.create_default_context(cafile=cert_path)
+        cert_path = os.path.join(os.path.dirname(__file__), 'freebox_certificates.pem')
+        ssl_ctx = ssl.create_default_context()
+        ssl_ctx.load_verify_locations(cafile=cert_path)
 
         conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
         self.session = aiohttp.ClientSession(connector=conn)
