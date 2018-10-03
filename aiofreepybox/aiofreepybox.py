@@ -21,6 +21,7 @@ from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.wifi import Wifi
 from aiofreepybox.api.fs import Fs
 from aiofreepybox.api.call import Call
+from aiofreepybox.api.connection import Connection
 
 
 # Token file default location
