@@ -72,7 +72,7 @@ class Freepybox:
         self.wifi = Wifi(self._access)
         self.fs = Fs(self._access)
         self.call = Call(self._access)
-        self.connection = Call(self._access)
+        self.connection = Connection(self._access)
 
     async def close(self):
         '''
