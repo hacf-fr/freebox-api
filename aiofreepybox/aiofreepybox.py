@@ -1,5 +1,4 @@
 import asyncio
-import hmac
 import ipaddress
 import os
 import json
@@ -127,17 +126,10 @@ class Freepybox:
 
             # Store application token in file
             self._writefile_app_token(app_token, track_id, app_desc, token_file)
-            logger.info('Application token file was generated : {0}'.format(token_file))
-
-
-        # Get token for the current session
-        session_token, session_permissions = await self._get_session_token(base_url, app_token, app_desc['app_id'], timeout)
-
-        logger.info('Session opened')
-        logger.info('Permissions: ' + str(session_permissions))
+            logger.info('Application token file was generated: {0}'.format(token_file))
 
         # Create freebox http access module
-        fbx_access = Access(self.session, base_url, session_token, timeout)
+        fbx_access = Access(self.session, base_url, app_token, app_desc['app_id'], timeout)
 
         return fbx_access
 
@@ -201,48 +193,6 @@ class Freepybox:
 
         except FileNotFoundError:
             return (None, None, None)
-
-    async def _get_session_token(self, base_url, app_token, app_id, timeout=10):
-        """
-        Get session token from freebox.
-        Returns (session_token, session_permissions)
-        """
-        # Get challenge from API
-        challenge = await self._get_challenge(base_url, timeout)
-
-        # Hash app_token with chalenge key to get the password
-        h = hmac.new(app_token.encode(), challenge.encode(), 'sha1')
-        password = h.hexdigest()
-
-        url = urljoin(base_url, 'login/session/')
-        data = json.dumps({'app_id': app_id, 'password': password})
-        r = await self.session.post(url, data=data, timeout=timeout)
-        resp = await r.json()
-
-        # raise exception if resp.success != True
-        if not resp.get('success'):
-            raise AuthorizationError('Starting session failed (APIResponse: {0})'
-                                     .format(json.dumps(resp)))
-
-        session_token = resp.get('result').get('session_token')
-        session_permissions = resp.get('result').get('permissions')
-
-        return(session_token, session_permissions)
-
-    async def _get_challenge(self, base_url, timeout=10):
-        '''
-        Return challenge from freebox API
-        '''
-        url = urljoin(base_url, 'login')
-        r = await self.session.get(url, timeout=timeout)
-        resp = await r.json()
-
-        # raise exception if resp.success != True
-        if not resp.get('success'):
-            raise AuthorizationError('Getting challenge failed (APIResponse: {0})'
-                                     .format(json.dumps(resp)))
-
-        return resp['result']['challenge']
 
     def _get_base_url(self, host, port, freebox_api_version):
         '''
