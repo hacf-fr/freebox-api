@@ -122,6 +122,10 @@ class Freepybox:
                 # timeout = authorization failed
                 elif status == 'timeout':
                     raise AuthorizationError('Authorization timed out')
+                    
+                # new_apps_denied : user must tick the box to authorize new tokens to be generated
+                elif status == 'new_apps_denied':
+                    raise AuthorizationError('New apps are denied')
 
             logger.info('Application authorization granted')
 
