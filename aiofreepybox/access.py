@@ -69,65 +69,52 @@ class Access:
         logger.info('Permissions: ' + str(session_permissions))
         self.session_token = session_token
 
-    async def get(self, end_url):
+    def _get_headers(self):
+        return {'X-Fbx-App-Auth': self.session_token}
+
+    async def _perform_request(self, verb, end_url, **kwargs):
         '''
-        Send get request and return results
+        Perform the given request, refreshing the session token if needed
         '''
         if not self.session_token:
             await self._refresh_session_token()
         url = urljoin(self.base_url, end_url)
-        r = await self.session.get(url, headers={'X-Fbx-App-Auth': self.session_token}, timeout=self.timeout)
+        request_params = {
+            **kwargs,
+            "headers": self._get_headers(),
+            "timeout": self.timeout
+        }
+        r = await verb(url, **request_params)
         resp = await r.json()
 
         if resp.get('error_code') == 'auth_required':
             await self._refresh_session_token()
-            r = await self.session.get(url, headers={'X-Fbx-App-Auth': self.session_token}, timeout=self.timeout)
+            request_params["headers"] = self._get_headers()
+            r = await verb(url, **request_params)
             resp = await r.json()
 
         if not resp['success']:
-            raise HttpRequestError('GET request failed (APIResponse: {0})'
+            raise HttpRequestError('Request failed (APIResponse: {0})'
                                    .format(json.dumps(resp)))
 
         return resp['result'] if 'result' in resp else None
+
+    async def get(self, end_url):
+        '''
+        Send get request and return results
+        '''
+        return await self._perform_request(self.session.get, end_url)
 
     async def post(self, end_url, payload=None):
         '''
         Send post request and return results
         '''
-        if not self.session_token:
-            await self._refresh_session_token()
-        url = urljoin(self.base_url, end_url)
         data = json.dumps(payload) if payload is not None else None
-        r = await self.session.post(url, headers={'X-Fbx-App-Auth': self.session_token}, data=data, timeout=self.timeout)
-        resp = await r.json()
-
-        if resp.get('error_code') == 'auth_required':
-            await self._refresh_session_token()
-            r = await self.session.post(url, headers={'X-Fbx-App-Auth': self.session_token}, data=data, timeout=self.timeout)
-            resp = await r.json()
-        if not resp['success']:
-            raise HttpRequestError('POST request failed (APIResponse: {0})'
-                                   .format(json.dumps(resp)))
-
-        return resp['result'] if 'result' in resp else None
+        return await self._perform_request(self.session.post, end_url, data=data)
 
     async def put(self, end_url, payload=None):
         '''
         Send post request and return results
         '''
-        if not self.session_token:
-            await self._refresh_session_token()
-        url = urljoin(self.base_url, end_url)
         data = json.dumps(payload) if payload is not None else None
-        r = await self.session.put(url, headers=self.header, data=data, timeout=self.timeout)
-        resp = await r.json()
-
-        if resp.get('error_code') == 'auth_required':
-            await self._refresh_session_token()
-            r = await self.session.put(url, headers={'X-Fbx-App-Auth': self.session_token}, data=data, timeout=self.timeout)
-            resp = await r.json()
-        if not resp['success']:
-            raise HttpRequestError('PUT request failed (APIResponse: {0})'
-                                   .format(json.dumps(resp)))
-
-        return resp['result'] if 'result' in resp else None
+        return await self._perform_request(self.session.put, end_url, data=data)

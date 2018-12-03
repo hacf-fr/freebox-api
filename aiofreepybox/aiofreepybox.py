@@ -59,7 +59,7 @@ class Freepybox:
         ssl_ctx.load_verify_locations(cafile=cert_path)
 
         conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
-        self.session = aiohttp.ClientSession(connector=conn, raise_for_status=True)
+        self.session = aiohttp.ClientSession(connector=conn)
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
