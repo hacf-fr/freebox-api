@@ -93,10 +93,12 @@ class Access:
             request_params["headers"] = self._get_headers()
             r = await verb(url, **request_params)
             resp = await r.json()
+            if not resp['success']:
+                raise HttpRequestError('Request failed (APIResponse: {0})'
+                                       .format(json.dumps(resp)))
 
-        if not resp['success']:
-            raise HttpRequestError('Request failed (APIResponse: {0})'
-                                   .format(json.dumps(resp)))
+        elif resp.get('error_code') == 'insufficient_rights':
+            logger.error("The application has no access to the requested API")
 
         return resp['result'] if 'result' in resp else None
 
