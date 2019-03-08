@@ -37,7 +37,7 @@ class Nat:
         '''
         Set incoming port configuration
         '''
-        return await self._access.put('fw/redir/{}'.format(inc), conf)
+        return await self._access.put('fw/incoming/{}'.format(inc), conf)
 
     async def get_dmz(self):
         '''
