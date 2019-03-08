@@ -29,13 +29,13 @@ class Nat:
 
     async def get_inc(self, inc):
         '''
-        Get incoming configuration
+        Get incoming port configuration
         '''
         return await self._access.get('fw/incoming/{}'.format(inc))
 
     async def set_inc(self, inc, conf):
         '''
-        Set redirection configuration
+        Set incoming port configuration
         '''
         return await self._access.put('fw/redir/{}'.format(inc), conf)
 
