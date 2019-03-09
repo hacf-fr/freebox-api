@@ -44,7 +44,7 @@ class Nat:
         Get DMZ configuration
         '''
         return await self._access.get('fw/dmz/')
-    
+
     async def set_dmz(self, conf):
         '''
         Set DMZ configuration
