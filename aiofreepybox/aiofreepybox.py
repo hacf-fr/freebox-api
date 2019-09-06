@@ -22,7 +22,7 @@ from aiofreepybox.api.fs import Fs
 from aiofreepybox.api.call import Call
 from aiofreepybox.api.connection import Connection
 from aiofreepybox.api.nat import Nat
-
+from aiofreepybox.api.home import Home
 
 # Token file default location
 token_filename = 'app_auth'
@@ -75,6 +75,7 @@ class Freepybox:
         self.call = Call(self._access)
         self.connection = Connection(self._access)
         self.nat = Nat(self._access)
+        self.home = Home(self._access)
 
     async def close(self):
         '''
