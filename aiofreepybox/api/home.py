@@ -1,5 +1,4 @@
 # Home structure : adapter > node > endpoint
-
 class Home:
 
     def __init__(self, access):
@@ -47,11 +46,8 @@ class Home:
         '''
         return await self._access.get('home/tileset/', tileid)
 
-
     async def get_tilesets(self):
         '''
         Get the list of Tileset
         '''
         return await self._access.get('home/tileset/all')
-
-
