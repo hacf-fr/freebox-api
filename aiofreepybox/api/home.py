@@ -6,7 +6,7 @@ class Home:
 
     async def get_adapter(self, adapterid):
         '''
-        Retrieve the list of registered HomeAdapters
+        Retrieve the list of registered HomeAdapter
         '''
         return await self._access.get('home/adapters/', adapterid)
 
@@ -39,6 +39,12 @@ class Home:
         Get nodes
         '''
         return await self._access.get('home/nodes/')
+
+    async def get_pairingstep(self, adapterid):
+        '''
+        Get the current pairing step
+        '''
+        return await self._access.get('home/pairing/', adapterid)
 
     async def get_tile(self, tileid):
         '''
