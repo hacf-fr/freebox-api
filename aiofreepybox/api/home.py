@@ -4,17 +4,17 @@ class Home:
     def __init__(self, access):
         self._access = access
 
-    async def get_adapters(self):
-        '''
-        Retrieve the list of registered HomeAdapters
-        '''
-        return await self._access.get('home/adapters/')
-
     async def get_adapter(self, adapterid):
         '''
         Retrieve the list of registered HomeAdapters
         '''
         return await self._access.get('home/adapters/', adapterid)
+
+    async def get_adapters(self):
+        '''
+        Retrieve the list of registered HomeAdapters
+        '''
+        return await self._access.get('home/adapters/')
 
     async def get_endpointvalue(self, nodeid, endpointid):
         '''
