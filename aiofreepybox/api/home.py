@@ -10,6 +10,12 @@ class Home:
         '''
         return await self._access.get('home/adapters/')
 
+    async def get_adapter(self, adapterid):
+        '''
+        Retrieve the list of registered HomeAdapters
+        '''
+        return await self._access.get('home/adapters/', adapterid)
+
     async def get_endpointvalue(self, nodeid, endpointid):
         '''
         Get endpoint value
