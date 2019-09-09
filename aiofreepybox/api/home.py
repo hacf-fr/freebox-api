@@ -22,12 +22,6 @@ class Home:
         '''
         self._access.put('home/endpoints/{0}/'.format(nodeid), endpointid, value)
 
-    async def get_endpointvalues(self):
-        '''
-        Get endpoint values
-        '''
-        return await self._access.get('home/endpointvalues/')
-
     async def get_node(self, nodeid):
         '''
         Get node id
