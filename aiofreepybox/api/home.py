@@ -6,7 +6,7 @@ class Home:
 
     async def get_adapter(self, adapterid):
         '''
-        Retrieve the list of registered HomeAdapter
+        Retrieve a registered HomeAdapter
         '''
         return await self._access.get('home/adapters/', adapterid)
 
@@ -15,6 +15,12 @@ class Home:
         Retrieve the list of registered HomeAdapters
         '''
         return await self._access.get('home/adapters/')
+
+    async def get_camera(self):
+        '''
+        Get camera info
+        '''
+        return await self._access.get('camera/')
 
     async def get_endpointvalue(self, nodeid, endpointid):
         '''
