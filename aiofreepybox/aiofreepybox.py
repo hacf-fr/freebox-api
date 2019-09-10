@@ -13,6 +13,7 @@ import aiohttp
 import aiofreepybox
 from aiofreepybox.exceptions import *
 from aiofreepybox.access import Access
+from aiofreepybox.api.tv import Tv
 from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
 from aiofreepybox.api.switch import Switch
