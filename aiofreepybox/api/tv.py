@@ -3,98 +3,98 @@ class Tv:
     def __init__(self, access):
         self._access = access
 
-    async def get_FinishedTvRecords(self):
+    async def get_finished_tv_records(self):
         '''
-        Get Finished Tv Records
+        Get finished tv records
         '''
         return await self._access.get('pvr/finished/')
 
-    async def get_TvBouquetChannels(self, bouquetId):
+    async def get_tv_bouquet_channels(self, bouquetid):
         '''
-        Get Tv Bouquet Channels
+        Get tv bouquet channels
         '''
-        return await self._access.get('tv/bouquets/{0}/channels/'.format(bouquetId))
+        return await self._access.get('tv/bouquets/{0}/channels/'.format(bouquetid))
 
-    async def get_TvBouquet(self):
+    async def get_tv_bouquet(self):
         '''
-        Get Tv Bouquet 
+        Get tv bouquet 
         '''
         return await self._access.get('tv/bouquets/')
 
-    async def get_TvChannels(self):
+    async def get_tv_channels(self):
         '''
-        Get Tv Channels
+        Get tv channels
         '''
         return await self._access.get('tv/channels/')
 
-    async def get_TvDefaultBouquetChannels(self):
+    async def get_tv_default_bouquet_channels(self):
         '''
-        Get Tv Default Bouquet Channels
+        Get tv default bouquet channels
         '''
         return await self._access.get('tv/bouquets/freeboxtv/channels/')
 
-    async def get_TvProgram(self, programId):
+    async def get_tv_program(self, programid):
         '''
-        Get Tv Program
+        Get tv program
         '''
-        return await self._access.get('tv/epg/programs/', programId)
+        return await self._access.get('tv/epg/programs/', programid)
 
-    async def get_TvProgramHighlights(self, channelId, date):
+    async def get_tv_program_highlights(self, channelid, date):
         '''
-        Get Tv Program Highlights
+        Get tv program highlights
         '''
-        return await self._access.get('tv/epg/highlights/{0}/'.format(channelId), date)
+        return await self._access.get('tv/epg/highlights/{0}/'.format(channelid), date)
 
-    async def get_TvProgramsByChannel(self, channelId, date):
+    async def get_tv_programs_by_channel(self, channelid, date):
         '''
-        Get Tv Programs By Channel
+        Get tv programs by channel
         '''
-        return await self._access.get('tv/epg/by_channel/{0}/'.format(channelId), date)
+        return await self._access.get('tv/epg/by_channel/{0}/'.format(channelid), date)
 
-    async def get_TvProgramsByDate(self, date):
+    async def get_tv_programs_by_date(self, date):
         '''
-        Get Tv Programs By Date
+        Get tv programs by date
         '''
         return await self._access.get('tv/epg/by_time/', date)
 
-    async def create_TvRecord(self, tVRecord):
+    async def create_tv_record(self, tvrecord):
         '''
-        Create Tv Record
+        Create tv record
         '''
-        return await self._access.post('pvr/', 'programmed/', tVRecord)
+        return await self._access.post('pvr/', 'programmed/', tvrecord)
 
-    async def create_TvRecordGenerator(self, tVRecordGenerator):
+    async def create_tv_record_generator(self, tvrecordgenerator):
         '''
-        Create Tv Record Generator
+        Create tv record generator
         '''
-        return await self._access.post('pvr/', 'generator/', tVRecordGenerator)
+        return await self._access.post('pvr/', 'generator/', tvrecordgenerator)
 
-    async def edit_TvRecordGenerator(self, generatorId, tVRecordGenerator):
+    async def edit_tv_record_generator(self, generatorid, tvrecordgenerator):
         '''
-        Edit Tv Record Generator
+        Edit tv record generator
         '''
-        return await self._access.put('pvr/generator/', generatorId, tVRecordGenerator)
+        return await self._access.put('pvr/generator/', generatorid, tvrecordgenerator)
 
-    async def get_TvRecordGenerator(self, generatorId):
+    async def get_tv_record_generator(self, generatorid):
         '''
-        Get Tv Record Generator
+        Get tv record generator
         '''
-        return await self._access.get('pvr/generator/', generatorId)
+        return await self._access.get('pvr/generator/', generatorid)
 
-    async def get_TvRecordsConfiguration(self):
+    async def get_tv_records_configuration(self):
         '''
-        Get Tv Records Configuration
+        Get tv records configuration
         '''
         return await self._access.get('pvr/config/')
 
-    async def get_TvRecordsMediaList(self):
+    async def get_tvrecords_media_list(self):
         '''
-        Get Tv Records Media List
+        Get tv records media list
         '''
         return await self._access.get('pvr/media/')
 
-    async def get_TvStatus(self):
+    async def get_tv_status(self):
         '''
-        Get Tv Status
+        Get tv status
         '''
         return await self._access.get('tv/status/')
