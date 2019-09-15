@@ -22,13 +22,13 @@ class Home:
         '''
         return await self._access.get('camera/')
 
-    async def get_endpointvalue(self, nodeid, endpointid):
+    async def get_endpoint_value(self, nodeid, endpointid):
         '''
         Get endpoint value
         '''
         return await self._access.get('home/endpoints/{0}/'.format(nodeid), endpointid)
 
-    async def set_endpointvalue(self, nodeid, endpointid, value):
+    async def set_endpoint_value(self, nodeid, endpointid, value):
         '''
         Set endpoint value
         '''
@@ -76,7 +76,7 @@ class Home:
         '''
         return await self._access.get('home/nodes/')
 
-    async def get_pairingstate(self, adapterid):
+    async def get_pairing_state(self, adapterid):
         '''
         Get the current pairing state
         '''
@@ -88,13 +88,13 @@ class Home:
         '''
         return await self._access.post('home/rules/', templatename, createpayload)
 
-    async def get_ruleconfig(self, nodeid, templatename, roleid):
+    async def get_rule_config(self, nodeid, templatename, roleid):
         '''
         Get node rule configuration data
         '''
         return await self._access.get('home/nodes/{0}/rules/template/{1}'.format(nodeid, templatename), roleid)
 
-    async def set_ruleconfig(self, rulenodeid, noderuledata):
+    async def set_rule_config(self, rulenodeid, noderuledata):
         '''
         Set node rule configuration data
         '''
@@ -112,7 +112,7 @@ class Home:
         '''
         return await self._access.get('home/secmod/')
 
-    async def get_smsnumbers(self):
+    async def get_sms_numbers(self):
         '''
         Get sms numbers
         '''
