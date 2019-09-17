@@ -8,7 +8,7 @@ class Home:
         '''
         Retrieve a registered HomeAdapter
         '''
-        return await self._access.get('home/adapters/', adapter_id)
+        return await self._access.get('home/adapters/{0}'.format(adapter_id))
 
     async def get_adapters(self):
         '''
@@ -26,7 +26,7 @@ class Home:
         '''
         Get endpoint value
         '''
-        return await self._access.get('home/endpoints/{0}/'.format(node_id), endpoint_id)
+        return await self._access.get('home/endpoints/{0}/{1}'.format(node_id, endpoint_id))
 
     async def set_endpoint_value(self, node_id, endpoint_id, value):
         '''
@@ -44,7 +44,7 @@ class Home:
         '''
         Get link
         '''
-        return await self._access.get('home/links/', link_id)
+        return await self._access.get('home/links/{0}'.format(link_id))
 
     async def get_links(self):
         '''
@@ -62,7 +62,7 @@ class Home:
         '''
         Get node id
         '''
-        return await self._access.get('home/nodes/', node_id)
+        return await self._access.get('home/nodes/{0}'.format(node_id))
 
     async def set_node(self, node_id, node_data):
         '''
@@ -80,7 +80,7 @@ class Home:
         '''
         Get the current pairing state
         '''
-        return await self._access.get('home/pairing/', adapter_id)
+        return await self._access.get('home/pairing/{0}'.format(adapter_id))
 
     async def set_rule(self, template_name, create_payload):
         '''
@@ -92,7 +92,7 @@ class Home:
         '''
         Get node rule configuration data
         '''
-        return await self._access.get('home/nodes/{0}/rules/template/{1}'.format(node_id, template_name), role_id)
+        return await self._access.get('home/nodes/{0}/rules/template/{1}/{2}'.format(node_id, template_name, role_id))
 
     async def set_rule_config(self, rule_node_id, node_rule_data):
         '''
@@ -104,7 +104,7 @@ class Home:
         '''
         Get node rules
         '''
-        return await self._access.get('home/nodes/{0}/'.format(node_id), 'rules')
+        return await self._access.get('home/nodes/{0}/rules'.format(node_id))
 
     async def get_secmod(self):
         '''
@@ -122,7 +122,7 @@ class Home:
         '''
         Get the Tile with provided id
         '''
-        return await self._access.get('home/tileset/', tile_id)
+        return await self._access.get('home/tileset/{0}'.format(tile_id))
 
     async def get_tilesets(self):
         '''
