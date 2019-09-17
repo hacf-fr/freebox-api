@@ -180,12 +180,12 @@ class Home:
 
     async def start_home_pairing_step(self, home_adapter_id, start_pairing_step_payload):
         '''
-        Start pairing step
+        Start home pairing step
         '''
         return await self._access.post('home/pairing/{0}'.format(home_adapter_id), start_pairing_step_payload)
 
     async def stop_home_pairing_step(self, home_adapter_id, stop_pairing_step_payload):
         '''
-        Stop pairing
+        Stop home pairing
         '''
         return await self._access.post('home/pairing/{0}'.format(home_adapter_id), stop_pairing_step_payload)
