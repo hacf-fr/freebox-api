@@ -29,12 +29,18 @@ class Lan:
 
     async def get_host_information(self, host_id, interface='pub'):
         '''
-        Get specific host informations on a given interface¶
+        Get specific host informations on a given interface
         '''
         return await self._access.get('lan/browser/{0}/{1}'.format(interface, host_id))
 
     async def set_host_information(self, host_id, conf, interface='pub'):
         '''
-        Update specific host informations on a given interface¶
+        Update specific host informations on a given interface
         '''
         await self._access.put('lan/browser/{0}/{1}'.format(interface, host_id), conf)
+
+    async def wake_lan_host(self, interface, wol):
+        '''
+        Wake lan host
+        '''
+        return await self._access.post('lan/wol/{0}/'.format(interface), wol)
