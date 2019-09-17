@@ -15,6 +15,18 @@ class Dhcp:
         '''
         self._access.put('dhcp/config/', conf)
 
+    async def get_v6_config(self):
+        '''
+        Get DHCP v6 configuration
+        '''
+        return await self._access.get('dhcpv6/config/')
+
+    async def set_v6_config(self, dhcp_v6_configuration_data):
+        '''
+        Update DHCP v6 configuration
+        '''
+        self._access.put('dhcpv6/config/', dhcp_v6_configuration_data)
+
     async def get_dynamic_dhcp_lease(self):
         '''
         Get the list of DHCP dynamic leases
