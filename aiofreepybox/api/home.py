@@ -32,13 +32,13 @@ class Home:
         '''
         Set endpoint value
         '''
-        self._access.put('home/endpoints/{0}/'.format(node_id), endpoint_id, value)
+        self._access.put('home/endpoints/{0}/{1}'.format(node_id, endpoint_id), value)
 
     async def del_link(self, link_id):
         '''
         Delete link
         '''
-        return await self._access.delete('home/links/', link_id)
+        return await self._access.delete('home/links/{0}'.format(link_id))
 
     async def get_link(self, link_id):
         '''
@@ -56,7 +56,7 @@ class Home:
         '''
         Delete node id
         '''
-        return await self._access.delete('home/nodes/', node_id)
+        return await self._access.delete('home/nodes/{0}'.format(node_id))
 
     async def get_node(self, node_id):
         '''
@@ -68,7 +68,7 @@ class Home:
         '''
         Set node data
         '''
-        return await self._access.put('home/nodes/', node_id, node_data)
+        return await self._access.put('home/nodes/{0}'.format(node_id), node_data)
 
     async def get_nodes(self):
         '''
@@ -86,7 +86,7 @@ class Home:
         '''
         Set node rule
         '''
-        return await self._access.post('home/rules/', template_name, create_payload)
+        return await self._access.post('home/rules/{0}'.format(template_name), create_payload)
 
     async def get_rule_config(self, node_id, template_name, role_id):
         '''
@@ -98,7 +98,7 @@ class Home:
         '''
         Set node rule configuration data
         '''
-        self._access.put('home/rules/', rule_node_id, node_rule_data)
+        self._access.put('home/rules/{0}'.format(rule_node_id), node_rule_data)
 
     async def get_rules(self, node_id):
         '''
@@ -134,16 +134,16 @@ class Home:
         '''
         Start pairing step
         '''
-        return await self._access.post('home/pairing/', adapter_id, next_payload)
+        return await self._access.post('home/pairing/{0}'.format(adapter_id), next_payload)
 
     async def pairing_start(self, adapter_id, start_payload):
         '''
         Start pairing step
         '''
-        return await self._access.post('home/pairing/', adapter_id, start_payload)
+        return await self._access.post('home/pairing/{0}'.format(adapter_id), start_payload)
 
     async def pairing_stop(self, adapter_id, stop_payload):
         '''
         Stop pairing
         '''
-        return await self._access.post('home/pairing/', adapter_id, stop_payload)
+        return await self._access.post('home/pairing/{0}'.format(adapter_id), stop_payload)
