@@ -37,49 +37,49 @@ class Tv:
         '''
         Get tv program
         '''
-        return await self._access.get('tv/epg/programs/', program_id)
+        return await self._access.get('tv/epg/programs/{0}'.format(program_id))
 
     async def get_tv_program_highlights(self, channel_id, date):
         '''
         Get tv program highlights
         '''
-        return await self._access.get('tv/epg/highlights/{0}/'.format(channel_id), date)
+        return await self._access.get('tv/epg/highlights/{0}/{1}'.format(channel_id, date))
 
     async def get_tv_programs_by_channel(self, channel_id, date):
         '''
         Get tv programs by channel
         '''
-        return await self._access.get('tv/epg/by_channel/{0}/'.format(channel_id), date)
+        return await self._access.get('tv/epg/by_channel/{0}/{1}'.format(channel_id, date))
 
     async def get_tv_programs_by_date(self, date):
         '''
         Get tv programs by date
         '''
-        return await self._access.get('tv/epg/by_time/', date)
+        return await self._access.get('tv/epg/by_time/{0}'.format(date))
 
     async def create_tv_record(self, tv_record):
         '''
         Create tv record
         '''
-        return await self._access.post('pvr/', 'programmed/', tv_record)
+        return await self._access.post('pvr/programmed/', tv_record)
 
     async def create_tv_record_generator(self, tv_record_generator):
         '''
         Create tv record generator
         '''
-        return await self._access.post('pvr/', 'generator/', tv_record_generator)
+        return await self._access.post('pvr/generator/', tv_record_generator)
 
     async def edit_tv_record_generator(self, generator_id, tv_record_generator):
         '''
         Edit tv record generator
         '''
-        return await self._access.put('pvr/generator/', generator_id, tv_record_generator)
+        return await self._access.put('pvr/generator/{0}'.format(generator_id), tv_record_generator)
 
     async def get_tv_record_generator(self, generator_id):
         '''
         Get tv record generator
         '''
-        return await self._access.get('pvr/generator/', generator_id)
+        return await self._access.get('pvr/generator/{0}'.format(generator_id))
 
     async def get_tv_records_configuration(self):
         '''
