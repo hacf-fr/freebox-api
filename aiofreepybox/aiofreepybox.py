@@ -67,6 +67,7 @@ class Freepybox:
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
         # Instantiate freebox modules
+        self.tv = System(self._access)
         self.system = System(self._access)
         self.dhcp = Dhcp(self._access)
         self.switch = Switch(self._access)
