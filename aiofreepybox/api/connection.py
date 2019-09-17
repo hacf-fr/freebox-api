@@ -21,6 +21,18 @@ class Connection:
         '''
         await self._access.put('connection/config/', conf)
 
+    async def get_lte_config(self):
+        '''
+        Get lte connection configuration:
+        '''
+        return await self._access.get('connection/lte/config/')
+
+    async def set_lte_config(self, lte_configuration_data):
+        '''
+        Update lte connection configuration:
+        '''
+        await self._access.put('connection/lte/config/', lte_configuration_data)
+
     async def get_xdsl(self):
         '''
         Get xdsl infos:
