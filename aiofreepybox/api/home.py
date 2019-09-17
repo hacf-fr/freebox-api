@@ -6,13 +6,13 @@ class Home:
 
     async def get_adapter(self, adapter_id):
         '''
-        Retrieve a registered HomeAdapter
+        Retrieve a registered home adapter
         '''
         return await self._access.get('home/adapters/{0}'.format(adapter_id))
 
     async def get_adapters(self):
         '''
-        Retrieve the list of registered HomeAdapters
+        Retrieve the list of registered home adapters
         '''
         return await self._access.get('home/adapters/')
 
@@ -120,13 +120,13 @@ class Home:
 
     async def get_tile(self, tile_id):
         '''
-        Get the Tile with provided id
+        Get the tile with provided id
         '''
         return await self._access.get('home/tileset/{0}'.format(tile_id))
 
     async def get_tilesets(self):
         '''
-        Get the list of Tileset
+        Get the list of tileset
         '''
         return await self._access.get('home/tileset/all')
 
