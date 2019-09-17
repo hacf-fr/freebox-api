@@ -87,7 +87,7 @@ class Tv:
         '''
         return await self._access.get('pvr/config/')
 
-    async def get_tvrecords_media_list(self):
+    async def get_tv_records_media_list(self):
         '''
         Get tv records media list
         '''
