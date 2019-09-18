@@ -1,3 +1,6 @@
+import time
+
+
 class Tv:
 
     def __init__(self, access):
@@ -39,19 +42,19 @@ class Tv:
         '''
         return await self._access.get('tv/epg/programs/{0}'.format(program_id))
 
-    async def get_tv_program_highlights(self, channel_id, date):
+    async def get_tv_program_highlights(self, channel_id, date=int(time.time())):
         '''
         Get tv program highlights:
         '''
         return await self._access.get('tv/epg/highlights/{0}/{1}'.format(channel_id, date))
 
-    async def get_tv_programs_by_channel(self, channel_id, date):
+    async def get_tv_programs_by_channel(self, channel_id, date=int(time.time())):
         '''
         Get tv programs by channel:
         '''
         return await self._access.get('tv/epg/by_channel/{0}/{1}'.format(channel_id, date))
 
-    async def get_tv_programs_by_date(self, date):
+    async def get_tv_programs_by_date(self, date=int(time.time())):
         '''
         Get tv programs by date:
         '''
