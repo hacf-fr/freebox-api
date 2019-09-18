@@ -39,7 +39,7 @@ class Lan:
         '''
         await self._access.put('lan/browser/{0}/{1}'.format(interface, host_id), conf)
 
-    async def wake_lan_host(self, interface, wol):
+    async def wake_lan_host(self, wol, interface='pub'):
         '''
         Wake lan host
         '''
