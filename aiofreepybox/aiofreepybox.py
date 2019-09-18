@@ -17,6 +17,7 @@ from aiofreepybox.api.tv import Tv
 from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
 from aiofreepybox.api.airmedia import Airmedia
+from aiofreepybox.api.player import Player
 from aiofreepybox.api.switch import Switch
 from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.storage import Storage
@@ -83,6 +84,7 @@ class Freepybox:
         self.system = System(self._access)
         self.dhcp = Dhcp(self._access)
         self.airmedia = Airmedia(self._access)
+        self.player = Player(self._access)
         self.switch = Switch(self._access)
         self.lan = Lan(self._access)
         self.storage = Storage(self._access)
