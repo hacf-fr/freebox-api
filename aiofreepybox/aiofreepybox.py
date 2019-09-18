@@ -15,6 +15,7 @@ from aiofreepybox.exceptions import *
 from aiofreepybox.access import Access
 from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
+from aiofreepybox.api.player import Player
 from aiofreepybox.api.switch import Switch
 from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.wifi import Wifi
@@ -68,6 +69,7 @@ class Freepybox:
         # Instantiate freebox modules
         self.system = System(self._access)
         self.dhcp = Dhcp(self._access)
+        self.player = Player(self._access)
         self.switch = Switch(self._access)
         self.lan = Lan(self._access)
         self.wifi = Wifi(self._access)
