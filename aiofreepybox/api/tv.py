@@ -9,7 +9,7 @@ class Tv:
         '''
         return await self._access.get('pvr/finished/')
 
-    async def get_tv_bouquet_channels(self, bouquet_id):
+    async def get_tv_bouquet_channels(self, bouquet_id='freeboxtv'):
         '''
         Get tv bouquet channels:
         '''
@@ -31,7 +31,7 @@ class Tv:
         '''
         Get tv default bouquet channels:
         '''
-        return await self._access.get('tv/bouquets/freeboxtv/channels/')
+        return await self.get_tv_bouquet_channels()
 
     async def get_tv_program(self, program_id):
         '''
