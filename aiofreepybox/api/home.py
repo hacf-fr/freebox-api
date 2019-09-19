@@ -20,13 +20,13 @@ class Home:
         '''
         Retrieve the list of registered home adapters
         '''
-        return await self._access.get('home/adapters/')
+        return await self._access.get('home/adapters')
 
     async def get_camera(self):
         '''
         Get camera info
         '''
-        return await self._access.get('camera/')
+        return await self._access.get('camera')
 
     async def get_home_endpoint_value(self, node_id, endpoint_id):
         '''
@@ -62,7 +62,7 @@ class Home:
         '''
         Get home links
         '''
-        return await self._access.get('home/links/')
+        return await self._access.get('home/links')
 
     async def del_home_node(self, node_id):
         '''
@@ -86,7 +86,7 @@ class Home:
         '''
         Get home nodes
         '''
-        return await self._access.get('home/nodes/')
+        return await self._access.get('home/nodes')
 
     async def create_home_node_rule(self, template_name, create_home_node_payload):
         '''
@@ -122,7 +122,7 @@ class Home:
         '''
         Get security module
         '''
-        return await self._access.get('home/secmod/')
+        return await self._access.get('home/secmod')
 
     async def create_sms_number(self, sms_number_data):
         '''
