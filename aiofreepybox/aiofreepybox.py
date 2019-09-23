@@ -19,6 +19,7 @@ from aiofreepybox.api.switch import Switch
 from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.wifi import Wifi
 from aiofreepybox.api.fs import Fs
+from aiofreepybox.api.freeplug import Freeplug
 from aiofreepybox.api.call import Call
 from aiofreepybox.api.connection import Connection
 from aiofreepybox.api.nat import Nat
@@ -72,6 +73,7 @@ class Freepybox:
         self.lan = Lan(self._access)
         self.wifi = Wifi(self._access)
         self.fs = Fs(self._access)
+        self.freeplug = Freeplug(self._access)
         self.call = Call(self._access)
         self.connection = Connection(self._access)
         self.nat = Nat(self._access)
