@@ -3,6 +3,11 @@ class Lan:
     def __init__(self, access):
         self._access = access
 
+    wol_schema = {
+        'mac': str(),
+        'password': str()
+    }
+
     async def get_config(self):
         '''
         Get Lan configuration
@@ -39,7 +44,7 @@ class Lan:
         '''
         await self._access.put('lan/browser/{0}/{1}'.format(interface, host_id), conf)
 
-    async def wake_lan_host(self, wol, interface='pub'):
+    async def wake_lan_host(self, wol=wol_schema, interface='pub'):
         '''
         Wake lan host
         '''
