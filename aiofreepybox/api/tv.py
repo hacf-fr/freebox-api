@@ -24,41 +24,41 @@ class Tv:
         '''
         return await self._access.post('pvr/generator/', tv_record_generator)
 
+    async def delete_finished_tv_record(self, record_id):
+        '''
+        Delete finished tv record
+        '''
+        await self._access.delete('pvr/finished/{0}'.format(record_id))
+
     async def delete_programmed_tv_record(self, record_id):
         '''
         Delete programmed tv record
         '''
-        return await self._access.delete('pvr/programmed/{0}'.format(record_id))
-
-    async def delete_tv_record(self, record_id):
-        '''
-        Delete tv record
-        '''
-        return await self._access.delete('pvr/finished/{0}'.format(record_id))
+        await self._access.delete('pvr/programmed/{0}'.format(record_id))
 
     async def delete_tv_record_generator(self, generator_id):
         '''
         Delete tv record generator
         '''
-        return await self._access.delete('pvr/generator/{0}'.format(generator_id))
+        await self._access.delete('pvr/generator/{0}'.format(generator_id))
 
     async def edit_finished_tv_record(self, record_id, finished):
         '''
         Edit finished tv record
         '''
-        await self._access.put('pvr/finished/{0}'.format(record_id), finished)
+        return await self._access.put('pvr/finished/{0}'.format(record_id), finished)
 
     async def edit_programmed_tv_record(self, record_id, tv_record):
         '''
         Edit programmed tv record
         '''
-        await self._access.put('pvr/programmed/{0}'.format(record_id), tv_record)
+        return await self._access.put('pvr/programmed/{0}'.format(record_id), tv_record)
 
     async def edit_tv_record_generator(self, generator_id, tv_record_generator):
         '''
         Edit tv record generator
         '''
-        await self._access.put('pvr/generator/{0}'.format(generator_id), tv_record_generator)
+        return await self._access.put('pvr/generator/{0}'.format(generator_id), tv_record_generator)
 
     async def get_finished_tv_records(self):
         '''
