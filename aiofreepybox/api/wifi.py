@@ -3,17 +3,53 @@ class Wifi:
     def __init__(self, access):
         self._access = access
 
-    async def create_wifi_custom_key(self, wifi_custom_key_data):
+    # accessType can be full or net_only
+    wifi_custom_key_params_schema = {
+        'accessType': 'full',
+        'description': str(),
+        'duration': int,
+        'key': str(),
+        'maxUseCount': int
+    }
+
+    wifi_custom_key_user_schema = {
+        'host': str(),
+        'hostname': str()
+    }
+
+    wifi_custom_key_data_schema = {
+        'id': int,
+        'params': wifi_custom_key_params_schema,
+        'remaining': int,
+        'users': [wifi_custom_key_user_schema]
+    }
+
+    # type can be whitelist or blacklist
+    wifi_mac_filter_schema = {
+        'comment': str(),
+        'mac': str(),
+        'type': 'blacklist'
+    }
+
+    start_wps_session_data_schema = {
+        'bssid': str()
+    }
+
+    stop_wps_session_data_schema = {
+        'sessionid': int
+    }
+
+    async def create_wifi_custom_key(self, wifi_custom_key_data=wifi_custom_key_data_schema):
         '''
         Create wifi custom key
         '''
-        await self._access.post('wifi/custom_key/', wifi_custom_key_data)
+        return await self._access.post('wifi/custom_key/', wifi_custom_key_data)
 
-    async def create_wifi_mac_filter(self, wifi_mac_filter):
+    async def create_wifi_mac_filter(self, wifi_mac_filter=wifi_mac_filter_schema):
         '''
         Create wifi mac filter
         '''
-        await self._access.post('wifi/mac_filter/', wifi_mac_filter)
+        return await self._access.post('wifi/mac_filter/', wifi_mac_filter)
 
     async def delete_wifi_custom_key(self, key_id):
         '''
@@ -37,19 +73,19 @@ class Wifi:
         '''
         Edit wifi access point
         '''
-        await self._access.put('wifi/ap/{0}'.format(ap_id), wifi_ap_configuration_data)
+        return await self._access.put('wifi/ap/{0}'.format(ap_id), wifi_ap_configuration_data)
 
     async def edit_wifi_bss(self, bss_id, wifi_bss_data):
         '''
         Edit wifi bss
         '''
-        await self._access.put('wifi/bss/{0}'.format(bss_id), wifi_bss_data)
+        return await self._access.put('wifi/bss/{0}'.format(bss_id), wifi_bss_data)
 
     async def edit_wifi_mac_filter(self, mac_filter, wifi_mac_filter):
         '''
         Edit wifi mac filter
         '''
-        await self._access.put('wifi/mac_filter/{0}'.format(mac_filter), wifi_mac_filter)
+        return await self._access.put('wifi/mac_filter/{0}'.format(mac_filter), wifi_mac_filter)
 
     async def get_ap(self, ap_id):
         '''
@@ -151,13 +187,13 @@ class Wifi:
         '''
         Update wifi global configuration
         '''
-        await self._access.put('wifi/config/', global_configuration)
+        return await self._access.put('wifi/config/', global_configuration)
 
     async def set_wifi_planning(self, wifi_planning):
         '''
         Set wifi planning
         '''
-        await self._access.put('wifi/planning/', wifi_planning)
+        return await self._access.put('wifi/planning/', wifi_planning)
 
     async def start_wifi_access_point_neighbors_scan(self, ap_id):
         '''
@@ -165,13 +201,13 @@ class Wifi:
         '''
         await self._access.post('wifi/ap/{0}/neighbors/scan/')
 
-    async def start_wps_session(self, start_wps_session_data):
+    async def start_wps_session(self, start_wps_session_data=start_wps_session_data_schema):
         '''
         Start wps session
         '''
-        await self._access.post('wifi/wps/start/', start_wps_session_data)
+        return await self._access.post('wifi/wps/start/', start_wps_session_data)
 
-    async def stop_wps_session(self, stop_wps_session_data):
+    async def stop_wps_session(self, stop_wps_session_data=stop_wps_session_data_schema):
         '''
         stop wps session
         '''
