@@ -3,6 +3,13 @@ class Parental:
     def __init__(self, access):
         self._access = access
 
+    # valid values are: allowed, denied or webonly
+    default_filter_mode = 'allowed'
+
+    parental_control_configuration_schema = {
+        'default_filter_mode': default_filter_mode
+        }
+
     async def create_parental_filter(self, parental_filter):
         '''
         Create parental filter
@@ -45,7 +52,7 @@ class Parental:
         '''
         return await self._access.get('parental/filter/')
 
-    async def set_parental_control_configuration(self, parental_control_configuration):
+    async def set_parental_control_configuration(self, parental_control_configuration=parental_control_configuration_schema):
         '''
         Set parental control configuration
         '''
