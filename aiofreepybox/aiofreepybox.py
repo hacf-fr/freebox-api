@@ -64,22 +64,23 @@ class Freepybox:
         self._session = aiohttp.ClientSession(connector=conn)
 
         # Detect host, port and api_version
-        r = await self._session.get('http://mafreebox.freebox.fr/api_version', timeout=self.timeout)
-        resp = await r.json()
-        if host == 'auto':
-            host = resp['api_domain']
-            logger.debug('host set to {0}'.format(host))
-        if port == 'auto':
-            port = resp['https_port']
-            logger.debug('port set to {0}'.format(port))
-        if self.api_version == 'auto':
-            self.api_version = 'v{0}'.format(resp['api_version'][:1])
-            logger.debug('api version set to {0}'.format(self.api_version))
-        elif resp['api_version'][:1] > self.api_version[1:]:
-            logger.warning('Freebox server support a newer api version: v{0}, check api_version ({1})'.format(resp['api_version'][:1], self.api_version))
-        elif resp['api_version'][:1] < self.api_version[1:]:
-            logger.warning('Freebox server does not support this version ({0}), downgrading to v{1}'.format(self.api_version, resp['api_version'][:1]))
-            self.api_version = 'v{0}'.format(resp['api_version'][:1])
+        if host == 'auto' or port == 'auto' or self.api_version == 'auto':
+            r = await self._session.get('http://mafreebox.freebox.fr/api_version', timeout=self.timeout)
+            resp = await r.json()
+            if host == 'auto':
+                host = resp['api_domain']
+                logger.debug('host set to {0}'.format(host))
+            if port == 'auto':
+                port = resp['https_port']
+                logger.debug('port set to {0}'.format(port))
+            if self.api_version == 'auto':
+                self.api_version = 'v{0}'.format(resp['api_version'][:1])
+                logger.debug('api version set to {0}'.format(self.api_version))
+            elif resp['api_version'][:1] > self.api_version[1:]:
+                logger.warning('Freebox server support a newer api version: v{0}, check api_version ({1})'.format(resp['api_version'][:1], self.api_version))
+            elif resp['api_version'][:1] < self.api_version[1:]:
+                logger.warning('Freebox server does not support this version ({0}), downgrading to v{1}'.format(self.api_version, resp['api_version'][:1]))
+                self.api_version = 'v{0}'.format(resp['api_version'][:1])
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
