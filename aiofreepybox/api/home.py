@@ -82,6 +82,27 @@ class Home:
         '''
         return await self._access.get('camera')
 
+    async def get_camera_screenshot(self, camera_index=0, size=4, quality=5):
+        '''
+        Get camera screenshot
+        '''
+        fbx_cameras = await self.get_camera()
+        return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', 'snapshot.cgi?size={0}&quality={1}'.format(size, quality))[1:])
+
+    async def get_camera_stream_m3u8(self, camera_index=0, channel=2):
+        '''
+        Get camera stream
+        '''
+        fbx_cameras = await self.get_camera()
+        return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', 'stream.m3u8?channel={0}'.format(channel))[1:])
+
+    async def get_camera_ts(self, ts_name, camera_index=0):
+        '''
+        Get camera stream
+        '''
+        fbx_cameras = await self.get_camera()
+        return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', '{0}'.format(ts_name))[1:])
+
     async def get_home_endpoint_value(self, node_id, endpoint_id):
         '''
         Get home endpoint value
