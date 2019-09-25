@@ -88,22 +88,27 @@ class Access:
             "timeout": self.timeout
         }
         r = await verb(url, **request_params)
-        resp = await r.json()
 
-        if resp.get('error_code') in ['auth_required', "invalid_session"]:
-            await self._refresh_session_token()
-            request_params["headers"] = self._get_headers()
-            r = await verb(url, **request_params)
+        # Return response if content is not json
+        if r.content_type not in ['application/json']:
+            return r
+        else:
             resp = await r.json()
 
-        if not resp['success']:
-            errMsg = 'Request failed (APIResponse: {0})'.format(json.dumps(resp))
-            if resp.get('error_code') == 'insufficient_rights':
-                raise InsufficientPermissionsError(errMsg)
-            else:
-                raise HttpRequestError(errMsg)
+            if resp.get('error_code') in ['auth_required', "invalid_session"]:
+                await self._refresh_session_token()
+                request_params["headers"] = self._get_headers()
+                r = await verb(url, **request_params)
+                resp = await r.json()
 
-        return resp['result'] if 'result' in resp else None
+            if not resp['success']:
+                errMsg = 'Request failed (APIResponse: {0})'.format(json.dumps(resp))
+                if resp.get('error_code') == 'insufficient_rights':
+                    raise InsufficientPermissionsError(errMsg)
+                else:
+                    raise HttpRequestError(errMsg)
+
+            return resp['result'] if 'result' in resp else None
 
     async def get(self, end_url):
         '''
