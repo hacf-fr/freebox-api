@@ -82,9 +82,9 @@ class Home:
         '''
         return await self._access.get('camera')
 
-    async def get_camera_screenshot(self, camera_index=0, size=4, quality=5):
+    async def get_camera_snapshot(self, camera_index=0, size=4, quality=5):
         '''
-        Get camera screenshot
+        Get camera snapshot
         '''
         fbx_cameras = await self.get_camera()
         return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', 'snapshot.cgi?size={0}&quality={1}'.format(size, quality))[1:])

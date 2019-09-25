@@ -24,8 +24,8 @@ async def demo():
     # example for the first time
     await fbx.open(host='abcdefgh.fbxos.fr', port=1234)
 
-    # Get a jpg screenshot from a camera
-    fbx_cam_jpg = await fbx.home.get_camera_screenshot()
+    # Get a jpg snapshot from a camera
+    fbx_cam_jpg = await fbx.home.get_camera_snapshot()
 
     # Get a TS stream from a camera
     r = await fbx.home.get_camera_stream_m3u8()
