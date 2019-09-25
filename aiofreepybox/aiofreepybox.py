@@ -64,8 +64,13 @@ class Freepybox:
         self._session = aiohttp.ClientSession(connector=conn)
 
         # Detect host, port and api_version
-        if host == 'auto' or port == 'auto' or self.api_version == 'auto':
-            r = await self._session.get('http://mafreebox.freebox.fr/api_version', timeout=self.timeout)
+        detect = [host, port, self.api_version]
+        if 'auto' in detect:
+            default_host = '212.27.38.253'
+            host_list = ['auto', 'mafreebox.freebox.fr', default_host]
+            if host not in host_list:
+                default_host = host
+            r = await self._session.get('http://{0}/api_version'.format(default_host), timeout=self.timeout)
             resp = await r.json()
             if host == 'auto':
                 host = resp['api_domain']
