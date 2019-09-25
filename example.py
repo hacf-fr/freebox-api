@@ -15,12 +15,12 @@ async def demo():
     fbx = Freepybox()
 
     # To find out the HTTPS host and port of your freebox, go to
-    # http://mafreebox.freebox.fr/api_version
+    # http://mafreebox.freebox.fr/api_version or let auto detect do it for you
 
     # Connect to the freebox
     # Be ready to authorize the application on the Freebox if you use this
     # example for the first time
-    await fbx.open(host='abcdefgh.fbxos.fr', port=1234)
+    await fbx.open()
 
     # Dump freebox configuration using system API
     # Extract temperature and mac address
