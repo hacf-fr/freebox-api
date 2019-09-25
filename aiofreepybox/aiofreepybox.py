@@ -41,14 +41,14 @@ logger = logging.getLogger(__name__)
 
 
 class Freepybox:
-    def __init__(self, app_desc=app_desc, token_file=token_file, api_version='v3', timeout=10):
+    def __init__(self, app_desc=app_desc, token_file=token_file, api_version='auto', timeout=10):
         self.token_file = token_file
         self.api_version = api_version
         self.timeout = timeout
         self.app_desc = app_desc
         self._access = None
 
-    async def open(self, host, port):
+    async def open(self, host='auto', port='auto'):
         '''
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
@@ -62,6 +62,24 @@ class Freepybox:
 
         conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
         self._session = aiohttp.ClientSession(connector=conn)
+
+        # Detect host, port and api_version
+        r = await self._session.get('http://mafreebox.freebox.fr/api_version', timeout=self.timeout)
+        resp = await r.json()
+        if host == 'auto':
+            host = resp['api_domain']
+            logger.debug('host set to {0}'.format(host))
+        if port == 'auto':
+            port = resp['https_port']
+            logger.debug('port set to {0}'.format(port))
+        if self.api_version == 'auto':
+            self.api_version = 'v{0}'.format(resp['api_version'][:1])
+            logger.debug('api version set to {0}'.format(host))
+        elif resp['api_version'][:1] > self.api_version[1:]:
+            logger.warning('Freebox server support a newer api version: v{0}, check api_version ({1})'.format(resp['api_version'][:1], self.api_version))
+        elif resp['api_version'][:1] < self.api_version[1:]:
+            logger.warning('Freebox server does not support this version ({0}), downgrading to v{1}'.format(self.api_version, resp['api_version'][:1]))
+            self.api_version = 'v{0}'.format(resp['api_version'][:1])
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
