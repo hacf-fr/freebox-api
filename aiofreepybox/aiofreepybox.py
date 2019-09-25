@@ -74,7 +74,7 @@ class Freepybox:
             logger.debug('port set to {0}'.format(port))
         if self.api_version == 'auto':
             self.api_version = 'v{0}'.format(resp['api_version'][:1])
-            logger.debug('api version set to {0}'.format(host))
+            logger.debug('api version set to {0}'.format(self.api_version))
         elif resp['api_version'][:1] > self.api_version[1:]:
             logger.warning('Freebox server support a newer api version: v{0}, check api_version ({1})'.format(resp['api_version'][:1], self.api_version))
         elif resp['api_version'][:1] < self.api_version[1:]:
