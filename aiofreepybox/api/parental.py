@@ -20,19 +20,19 @@ class Parental:
         '''
         Delete parental filter
         '''
-        return await self._access.delete('parental/filter/{0}'.format(filter_id))
+        return await self._access.delete(f'parental/filter/{filter_id}')
 
     async def edit_parental_filter(self, filter_id, parental_filter):
         '''
         Edit parental filter
         '''
-        return await self._access.put('parental/filter/{0}'.format(filter_id), parental_filter)
+        return await self._access.put(f'parental/filter/{filter_id}', parental_filter)
 
     async def edit_parental_filter_planning(self, filter_id, parental_filter_planning):
         '''
         Edit parental filter planning
         '''
-        return await self._access.put('parental/filter/{0}/planning/'.format(filter_id), parental_filter_planning)
+        return await self._access.put(f'parental/filter/{filter_id}/planning/', parental_filter_planning)
 
     async def get_parental_config(self):
         '''
@@ -44,7 +44,7 @@ class Parental:
         '''
         Get parental filter planning
         '''
-        return await self._access.get('parental/filter/{0}/planning/'.format(filter_id))
+        return await self._access.get(f'parental/filter/{filter_id}/planning/')
 
     async def get_parental_filters(self):
         '''
