@@ -78,24 +78,24 @@ class Freepybox:
                 ]
             if host not in default_host_list:
                 default_host = host
-            r = await self._session.get('http://{0}/api_version'.format(default_host), timeout=self.timeout)
+            r = await self._session.get(f'http://{default_host}/api_version', timeout=self.timeout)
             resp = await r.json()
             if host == 'auto':
                 host = resp['api_domain']
-                logger.debug('host set to {0}'.format(host))
+                logger.debug(f'host set to {host}')
             if port == 'auto':
                 port = resp['https_port']
-                logger.debug('port set to {0}'.format(port))
+                logger.debug(f'port set to {port}')
             server_version = resp['api_version'][:1]
             short_api_version = self.api_version[1:]
             if self.api_version == 'auto':
-                self.api_version = 'v{0}'.format(server_version)
-                logger.debug('api version set to {0}'.format(self.api_version))
+                self.api_version = f'v{server_version}'
+                logger.debug(f'api version set to {self.api_version}')
             elif server_version > short_api_version:
-                logger.warning('Freebox server support a newer api version: v{0}, check api_version ({1})'.format(server_version, self.api_version))
+                logger.warning(f'Freebox server support a newer api version: v{server_version}, check api_version ({self.api_version})')
             elif server_version < short_api_version:
-                logger.warning('Freebox server does not support this version ({0}), downgrading to v{1}'.format(self.api_version, server_version))
-                self.api_version = 'v{0}'.format(server_version)
+                logger.warning(f'Freebox server does not support this version ({self.api_version}), downgrading to v{server_version}')
+                self.api_version = f'v{server_version}'
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
@@ -182,7 +182,7 @@ class Freepybox:
 
             # Store application token in file
             self._writefile_app_token(app_token, track_id, app_desc, token_file)
-            logger.info('Application token file was generated: {0}'.format(token_file))
+            logger.info(f'Application token file was generated: {token_file}')
 
         # Create freebox http access module
         fbx_access = Access(self._session, base_url, app_token, app_desc['app_id'], timeout)
@@ -199,7 +199,7 @@ class Freepybox:
             granted 	the app_token is valid and can be used to open a session
             denied 	    the user denied the authorization request
         '''
-        url = urljoin(base_url, 'login/authorize/{0}'.format(track_id))
+        url = urljoin(base_url, f'login/authorize/{track_id}')
         r = await self._session.get(url, timeout=timeout)
         resp = await r.json()
         return resp['result']['status']
@@ -217,7 +217,7 @@ class Freepybox:
 
         # raise exception if resp.success != True
         if not resp.get('success'):
-            raise AuthorizationError('Authorization failed (APIResponse: {0})'
+            raise AuthorizationError('Authorization failed (APIResponse: {})'
                                      .format(json.dumps(resp)))
 
         app_token = resp['result']['app_token']
@@ -255,7 +255,7 @@ class Freepybox:
         Returns base url for HTTPS requests
         :return:
         '''
-        return 'https://{0}:{1}/api/{2}/'.format(host, port, freebox_api_version)
+        return f'https://{host}:{port}/api/{freebox_api_version}/'
 
     def _is_app_desc_valid(self, app_desc):
         '''
