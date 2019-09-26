@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class Dhcp:
 
     def __init__(self, access):
@@ -50,7 +55,7 @@ class Dhcp:
 
     async def set_config(self, dhcp_configuration=dhcp_configuration_schema):
         '''
-        Update a config with new conf dictionary
+        Update DHCP configuration
         '''
         return await self._access.put('dhcp/config/', dhcp_configuration)
 
@@ -66,14 +71,30 @@ class Dhcp:
         '''
         return await self._access.put('dhcpv6/config/', dhcp_v6_configuration_data)
 
-    async def get_dynamic_dhcp_lease(self):
+    async def get_dhcp_dynamic_leases(self):
         '''
         Get the list of DHCP dynamic leases
         '''
         return await self._access.get('dhcp/dynamic_lease/')
 
-    async def get_static_dhcp_lease(self):
+    async def get_dhcp_static_leases(self):
         '''
         Get the list of DHCP static leases
         '''
         return await self._access.get('dhcp/static_lease/')
+
+# TODO: remove
+    async def get_dynamic_dhcp_lease(self):
+        '''
+        Get the list of DHCP dynamic leases
+        '''
+        logger.warning('Using deprecated call get_dynamic_dhcp_lease, please use get_dhcp_dynamic_leases instead')
+        return await self.get_dhcp_dynamic_leases()
+
+# TODO: remove
+    async def get_static_dhcp_lease(self):
+        '''
+        Get the list of DHCP static leases
+        '''
+        logger.warning('Using deprecated call get_static_dhcp_lease, please use get_dhcp_static_leases instead')
+        return await self.get_dhcp_static_leases()
