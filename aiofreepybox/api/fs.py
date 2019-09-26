@@ -64,6 +64,10 @@ class Fs:
         'state': ''
     }
 
+    eject_schema = {
+        'state': 'disabled'
+    }
+
     def pwd(self):
         '''
         Returns the working directory
@@ -175,3 +179,15 @@ class Fs:
         Set file task state
         '''
         return await self._access.put(f'fs/tasks/{task_id}', update_task_state)
+
+    async def eject_storage_disk(self, disk_id, eject=eject_schema):
+        '''
+        Eject storage disk
+        '''
+        return await self._access.put(f'storage/disk/{disk_id}', eject)
+
+    async def get_storage_disks(self):
+        '''
+        Get storage disks
+        '''
+        return await self._access.get('storage/disk/')
