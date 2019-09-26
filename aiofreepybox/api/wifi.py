@@ -6,15 +6,15 @@ class Wifi:
     # accessType can be full or net_only
     wifi_custom_key_params_schema = {
         'accessType': 'full',
-        'description': str(),
+        'description': '',
         'duration': int,
-        'key': str(),
+        'key': '',
         'maxUseCount': int
     }
 
     wifi_custom_key_user_schema = {
-        'host': str(),
-        'hostname': str()
+        'host': '',
+        'hostname': ''
     }
 
     wifi_custom_key_data_schema = {
@@ -26,13 +26,13 @@ class Wifi:
 
     # type can be whitelist or blacklist
     wifi_mac_filter_schema = {
-        'comment': str(),
-        'mac': str(),
+        'comment': '',
+        'mac': '',
         'type': 'blacklist'
     }
 
     start_wps_session_data_schema = {
-        'bssid': str()
+        'bssid': ''
     }
 
     stop_wps_session_data_schema = {
@@ -55,13 +55,13 @@ class Wifi:
         '''
         Delete wifi custom key
         '''
-        return await self._access.delete('wifi/custom_key/{0}'.format(key_id))
+        return await self._access.delete(f'wifi/custom_key/{key_id}')
 
     async def delete_wifi_mac_filter(self, filter_id):
         '''
         Delete wifi mac filter
         '''
-        return await self._access.delete('wifi/mac_filter/{0}'.format(filter_id))
+        return await self._access.delete(f'wifi/mac_filter/{filter_id}')
 
     async def delete_wps_sessions(self):
         '''
@@ -73,55 +73,55 @@ class Wifi:
         '''
         Edit wifi access point
         '''
-        return await self._access.put('wifi/ap/{0}'.format(ap_id), wifi_ap_configuration_data)
+        return await self._access.put(f'wifi/ap/{ap_id}', wifi_ap_configuration_data)
 
     async def edit_wifi_bss(self, bss_id, wifi_bss_data):
         '''
         Edit wifi bss
         '''
-        return await self._access.put('wifi/bss/{0}'.format(bss_id), wifi_bss_data)
+        return await self._access.put(f'wifi/bss/{bss_id}', wifi_bss_data)
 
     async def edit_wifi_mac_filter(self, mac_filter, wifi_mac_filter):
         '''
         Edit wifi mac filter
         '''
-        return await self._access.put('wifi/mac_filter/{0}'.format(mac_filter), wifi_mac_filter)
+        return await self._access.put(f'wifi/mac_filter/{mac_filter}', wifi_mac_filter)
 
     async def get_ap(self, ap_id):
         '''
         Get wifi access point with the specific id
         '''
-        return await self._access.get('wifi/ap/{0}'.format(ap_id))
+        return await self._access.get(f'wifi/ap/{ap_id}')
 
     async def get_ap_allowed_channel(self, ap_id):
         '''
         Get allowed channels of the wifi access point
         '''
-        return await self._access.get('wifi/ap/{0}/allowed_channel_comb/'.format(ap_id))
+        return await self._access.get(f'wifi/ap/{ap_id}/allowed_channel_comb/')
 
     async def get_wifi_access_point_channel_usage(self, ap_id):
         '''
         get wifi access point channel usage
         '''
-        return await self._access.get('wifi/ap/{0}/channel_usage/'.format(ap_id))
+        return await self._access.get(f'wifi/ap/{ap_id}/channel_usage/')
 
     async def get_ap_neighbors(self, ap_id):
         '''
         Get the list of Wifi neighbors seen by the AP
         '''
-        return await self._access.get('wifi/ap/{0}/neighbors/'.format(ap_id))
+        return await self._access.get(f'wifi/ap/{ap_id}/neighbors/')
 
     async def get_wifi_access_point_station(self, ap_id, mac):
         '''
         get wifi access point station
         '''
-        return await self._access.get('wifi/ap/{0}/stations/{1}'.format(ap_id, mac))
+        return await self._access.get(f'wifi/ap/{ap_id}/stations/{mac}')
 
     async def get_station_list(self, ap_id):
         '''
         Get the list of Wifi Stations associated to the AP
         '''
-        return await self._access.get('wifi/ap/{0}/stations/'.format(ap_id))
+        return await self._access.get(f'wifi/ap/{ap_id}/stations/')
 
     async def get_ap_list(self):
         '''
@@ -169,7 +169,7 @@ class Wifi:
         '''
         Get wps session
         '''
-        return await self._access.get('wifi/wps/sessions/{0}'.format(session_id))
+        return await self._access.get(f'wifi/wps/sessions/{session_id}')
 
     async def get_wps_sessions(self, session_id):
         '''
