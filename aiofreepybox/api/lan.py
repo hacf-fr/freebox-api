@@ -24,21 +24,21 @@ class Lan:
     ]
 
     lan_host_data_schema = {
-        'id': str(),
-        'primaryName': str(),
+        'id': '',
+        'primaryName': '',
         'hostType': host_type[0]
     }
 
     wol_schema = {
-        'mac': str(),
-        'password': str()
+        'mac': '',
+        'password': ''
     }
 
     async def delete_lan_host(self, host_id, interface='pub'):
         '''
         Delete lan host
         '''
-        await self._access.delete('lan/browser/{0}/{1}/'.format(interface, host_id))
+        await self._access.delete(f'lan/browser/{interface}/{host_id}/')
 
     async def get_config(self):
         '''
@@ -62,22 +62,22 @@ class Lan:
         '''
         Get the list of hosts on a given interface
         '''
-        return await self._access.get('lan/browser/{0}'.format(interface))
+        return await self._access.get(f'lan/browser/{interface}')
 
     async def get_host_information(self, host_id, interface='pub'):
         '''
         Get specific host informations on a given interface
         '''
-        return await self._access.get('lan/browser/{0}/{1}'.format(interface, host_id))
+        return await self._access.get(f'lan/browser/{interface}/{host_id}')
 
     async def set_host_information(self, host_id, lan_host_data=lan_host_data_schema, interface='pub'):
         '''
         Update specific host informations on a given interface
         '''
-        return await self._access.put('lan/browser/{0}/{1}'.format(interface, host_id), lan_host_data)
+        return await self._access.put(f'lan/browser/{interface}/{host_id}', lan_host_data)
 
     async def wake_lan_host(self, wol=wol_schema, interface='pub'):
         '''
         Wake lan host
         '''
-        return await self._access.post('lan/wol/{0}/'.format(interface), wol)
+        return await self._access.post(f'lan/wol/{interface}/', wol)
