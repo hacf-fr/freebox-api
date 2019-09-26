@@ -36,4 +36,4 @@ class Switch:
         '''
         Get port_id Port stats
         '''
-        return await self._access.get('switch/port/{}/stats'.format(port_id))
+        return await self._access.get(f'switch/port/{port_id}/stats')
