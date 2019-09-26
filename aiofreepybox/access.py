@@ -26,7 +26,7 @@ class Access:
 
         # raise exception if resp.success != True
         if not resp.get('success'):
-            raise AuthorizationError('Getting challenge failed (APIResponse: {0})'
+            raise AuthorizationError('Getting challenge failed (APIResponse: {})'
                                      .format(json.dumps(resp)))
 
         return resp['result']['challenge']
@@ -50,7 +50,7 @@ class Access:
 
         # raise exception if resp.success != True
         if not resp.get('success'):
-            raise AuthorizationError('Starting session failed (APIResponse: {0})'
+            raise AuthorizationError('Starting session failed (APIResponse: {})'
                                      .format(json.dumps(resp)))
 
         session_token = resp.get('result').get('session_token')
@@ -96,13 +96,14 @@ class Access:
             resp = await r.json()
 
             if resp.get('error_code') in ['auth_required', "invalid_session"]:
+                logger.debug('Invalid session')
                 await self._refresh_session_token()
                 request_params["headers"] = self._get_headers()
                 r = await verb(url, **request_params)
                 resp = await r.json()
 
             if not resp['success']:
-                errMsg = 'Request failed (APIResponse: {0})'.format(json.dumps(resp))
+                errMsg = 'Request failed (APIResponse: {})'.format(json.dumps(resp))
                 if resp.get('error_code') == 'insufficient_rights':
                     raise InsufficientPermissionsError(errMsg)
                 else:
