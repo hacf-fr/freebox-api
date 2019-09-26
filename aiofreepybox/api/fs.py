@@ -14,8 +14,8 @@ class Fs:
         self._path = '/'
 
     archive_schema = {
-        'dst': str(),
-        'files': [str()]
+        'dst': '',
+        'files': ['']
     }
 
     copy_mode = [
@@ -26,42 +26,42 @@ class Fs:
     ]
 
     copy_schema = {
-        'dst': str(),
-        'files': [str()],
+        'dst': '',
+        'files': [''],
         'mode': copy_mode[0]
     }
 
     create_directory_schema = {
-        'dirname': str(),
-        'parent': str()
+        'dirname': '',
+        'parent': ''
     }
 
     create_path_schema = {
-        'path': str(),
+        'path': '',
     }
 
     extract_schema = {
-        'src': str(),
-        'dst': str()
+        'src': '',
+        'dst': ''
     }
 
     move_schema = {
-        'dst': str(),
-        'files': [str()],
+        'dst': '',
+        'files': [''],
         'mode': copy_mode[0]
     }
 
     remove_schema = {
-        'files': [str()]
+        'files': ['']
     }
 
     rename_schema = {
-        'src': str(),
-        'dst': str()
+        'src': '',
+        'dst': ''
     }
 
     update_task_state_schema = {
-        'state': str()
+        'state': ''
     }
 
     def pwd(self):
@@ -77,7 +77,7 @@ class Fs:
         if await self._path_exists(path):
             self._path = os.path.join(self._path, path)
         else:
-            logger.error('{0} does not exist'.format(os.path.join(self._path, path)))
+            logger.error('{} does not exist'.format(os.path.join(self._path, path)))
 
     async def _path_exists(self, path):
         '''
@@ -124,7 +124,7 @@ class Fs:
         '''
         Delete file task
         '''
-        return await self._access.delete('fs/tasks/{}'.format(task_id))
+        return await self._access.delete(f'fs/tasks/{task_id}')
 
     async def rm(self, remove=remove_schema):
         '''
@@ -149,14 +149,14 @@ class Fs:
         Returns the list of files for the given path
         '''
         path_b64 = base64.b64encode(path.encode('utf-8')).decode('utf-8')
-        return await self._access.get('fs/ls/{0}?removeHidden={1}&countSubFolder={2}'.format(path_b64, remove_hidden, count_sub_folder))
+        return await self._access.get(f'fs/ls/{path_b64}?removeHidden={remove_hidden}&countSubFolder={count_sub_folder}')
 
     async def get_file_info(self, path):
         '''
         Returns information for the given path
         '''
         path_b64 = base64.b64encode(path.encode('utf-8')).decode('utf-8')
-        return await self._access.get('fs/ls/{0}'.format(path_b64))
+        return await self._access.get(f'fs/ls/{path_b64}')
 
     async def mv(self, move=move_schema):
         '''
@@ -174,4 +174,4 @@ class Fs:
         '''
         Set file task state
         '''
-        return await self._access.put('fs/tasks/{0}'.format(task_id), update_task_state)
+        return await self._access.put(f'fs/tasks/{task_id}', update_task_state)
