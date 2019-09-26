@@ -13,4 +13,4 @@ class Freeplug:
         '''
         Reset freeplug
         '''
-        await self._access.post('freeplug/{0}/reset/'.format(freeplug_id))
+        await self._access.post(f'freeplug/{freeplug_id}/reset/')
