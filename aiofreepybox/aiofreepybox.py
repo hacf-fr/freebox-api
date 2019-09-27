@@ -74,10 +74,18 @@ class Freepybox:
             default_host_list = [
                 'auto',
                 'mafreebox.freebox.fr',
+                '192.168.0.254',
                 default_host
                 ]
             if host not in default_host_list:
                 default_host = host
+                logger.debug(f'host set to {host}')
+                if port == 'auto':
+                    logger.warning('Port is set to auto, but host is not in default host list, checking port 80')
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    result = sock.connect_ex((default_host,80))
+                    if result != 0:
+                        raise HttpRequestError('port 80 is closed, cannot detect freebox')
             r = await self._session.get(f'http://{default_host}/api_version', timeout=self.timeout)
             resp = await r.json()
             if host == 'auto':
