@@ -64,10 +64,6 @@ class Fs:
         'state': ''
     }
 
-    eject_schema = {
-        'state': 'disabled'
-    }
-
     def pwd(self):
         '''
         Returns the working directory
@@ -81,7 +77,7 @@ class Fs:
         if await self._path_exists(path):
             self._path = os.path.join(self._path, path)
         else:
-            logger.error('{} does not exist'.format(os.path.join(self._path, path)))
+            logger.error('{} path does not exist'.format(os.path.join(self._path, path)))
 
     async def _path_exists(self, path):
         '''
@@ -91,7 +87,7 @@ class Fs:
             await self.get_file_info(os.path.join(self._path, path))
             return True
         except aiofreepybox.exceptions.HttpRequestError:
-            logger.debug('{} does not exist'.format(os.path.join(self._path, path)))
+            logger.debug('{} path does not exist'.format(os.path.join(self._path, path)))
             return False
 
     async def ls(self):
@@ -179,15 +175,3 @@ class Fs:
         Set file task state
         '''
         return await self._access.put(f'fs/tasks/{task_id}', update_task_state)
-
-    async def eject_storage_disk(self, disk_id, eject=eject_schema):
-        '''
-        Eject storage disk
-        '''
-        return await self._access.put(f'storage/disk/{disk_id}', eject)
-
-    async def get_storage_disks(self):
-        '''
-        Get storage disks
-        '''
-        return await self._access.get('storage/disk/')
