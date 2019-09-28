@@ -10,6 +10,12 @@ class Call:
         'new': bool
     }
 
+    async def delete_call_log(self, log_id):
+        '''
+        Delete call log
+        '''
+        await self._access.delete(f'call/log/{log_id}')
+
     async def get_call_log(self):
         '''
         Get call logs
@@ -23,12 +29,6 @@ class Call:
         '''
         logger.warning('Using deprecated get_call_list, please use get_call_log instead')
         return await self.get_call_log()
-
-    async def delete_call_log(self, log_id):
-        '''
-        Delete call log
-        '''
-        await self._access.delete(f'call/log/{log_id}')
 
     async def mark_call_log_as_read(self, log_id, mark_call_log_as_read_data=mark_call_log_as_read_data_schema):
         '''
