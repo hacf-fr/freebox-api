@@ -16,6 +16,7 @@ from aiofreepybox.access import Access
 from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
 from aiofreepybox.api.switch import Switch
+from aiofreepybox.api.vpn import Vpn
 from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.wifi import Wifi
 from aiofreepybox.api.fs import Fs
@@ -69,6 +70,7 @@ class Freepybox:
         self.system = System(self._access)
         self.dhcp = Dhcp(self._access)
         self.switch = Switch(self._access)
+        self.vpn = Vpn(self._access)
         self.lan = Lan(self._access)
         self.wifi = Wifi(self._access)
         self.fs = Fs(self._access)
