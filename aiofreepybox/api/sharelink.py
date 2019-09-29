@@ -18,7 +18,7 @@ class Sharelink:
         '''
         Delete share link
         '''
-        return await self._access.delete(f'share_link/{token}')
+        await self._access.delete(f'share_link/{token}')
 
     async def get_share_links(self):
         '''
