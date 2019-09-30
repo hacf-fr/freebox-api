@@ -4,8 +4,8 @@ class Phone:
         self._access = access
 
     dect_configuration_schema = {
-        'dect_enabled': bool,
-        'dect_registration': bool
+        'dect_enabled': True,
+        'dect_registration': True
     }
 
     async def get_dect_vendors(self):
