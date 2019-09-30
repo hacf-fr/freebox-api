@@ -5,7 +5,7 @@ class Upnpigd:
 
     async def delete_redir(self, id):
         '''
-        Deletes the given upnp redirection
+        Deletes the given upnpigd redirection
         '''
         return await self._access.delete(f'upnpigd/redir/{id}')
 
@@ -17,7 +17,7 @@ class Upnpigd:
 
     async def get_redirs(self):
         '''
-        Get the list of upnp redirections
+        Get the list of upnpigd redirections
         '''
         return await self._access.get('upnpigd/redir/')
 
