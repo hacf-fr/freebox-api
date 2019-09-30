@@ -22,6 +22,7 @@ from aiofreepybox.api.fs import Fs
 from aiofreepybox.api.call import Call
 from aiofreepybox.api.connection import Connection
 from aiofreepybox.api.nat import Nat
+from aiofreepybox.api.rrd import Rrd
 
 
 # Token file default location
@@ -75,6 +76,7 @@ class Freepybox:
         self.call = Call(self._access)
         self.connection = Connection(self._access)
         self.nat = Nat(self._access)
+        self.rrd = Rrd(self._access)
 
     async def close(self):
         '''
