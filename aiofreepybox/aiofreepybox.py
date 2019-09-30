@@ -70,23 +70,24 @@ class Freepybox:
             self.api_version
             ]
         if 'auto' in detect:
-            default_host = '212.27.38.253'
+            default_host = 'mafreebox.freebox.fr'
             default_host_list = [
                 'auto',
-                'mafreebox.freebox.fr',
-                '192.168.0.254',
+                'freeplayer.freebox.fr',
                 default_host
                 ]
+            secure = 's'
             if host not in default_host_list:
                 default_host = host
                 logger.debug(f'Host set to {host}')
+                secure = ''
                 if port == 'auto':
                     logger.warning('Port is set to auto, but host is not in default host list, checking port 80')
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     result = sock.connect_ex((default_host,80))
                     if result != 0:
                         raise HttpRequestError('Port 80 is closed, cannot detect freebox')
-            r = await self._session.get(f'http://{default_host}/api_version', timeout=self.timeout)
+            r = await self._session.get(f'http{secure}://{default_host}/api_version', timeout=self.timeout)
             resp = await r.json()
             if host == 'auto':
                 host = resp['api_domain']
@@ -94,7 +95,7 @@ class Freepybox:
             if port == 'auto':
                 port = resp['https_port']
                 logger.debug(f'Port set to {port}')
-            server_version = resp['api_version'][:1]
+            server_version = resp['api_version'].split('.')[0]
             short_api_version = self.api_version[1:]
             if self.api_version == 'auto':
                 self.api_version = f'v{server_version}'
