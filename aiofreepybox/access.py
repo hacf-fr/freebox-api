@@ -96,7 +96,10 @@ class Access:
             r = await verb(url, **request_params)
             resp = await r.json()
 
-        if not resp['success']:
+        if not resp['success'] if 'success' in resp else True:
+            if not resp['error']:
+                return resp['data'] if 'data' in resp else None
+
             errMsg = 'Request failed (APIResponse: {0})'.format(json.dumps(resp))
             if resp.get('error_code') == 'insufficient_rights':
                 raise InsufficientPermissionsError(errMsg)
@@ -105,11 +108,12 @@ class Access:
 
         return resp['result'] if 'result' in resp else None
 
-    async def get(self, end_url):
+    async def get(self, end_url, params_url=None):
         '''
         Send get request and return results
         '''
-        return await self._perform_request(self.session.get, end_url)
+        params = params_url if params_url is not None else None
+        return await self._perform_request(self.session.get, end_url, params=params)
 
     async def post(self, end_url, payload=None):
         '''
