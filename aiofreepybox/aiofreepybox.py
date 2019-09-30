@@ -22,6 +22,9 @@ from aiofreepybox.api.fs import Fs
 from aiofreepybox.api.call import Call
 from aiofreepybox.api.connection import Connection
 from aiofreepybox.api.nat import Nat
+from aiofreepybox.api.notifications import Notifications
+from aiofreepybox.api.rrd import Rrd
+from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
 
@@ -76,6 +79,9 @@ class Freepybox:
         self.call = Call(self._access)
         self.connection = Connection(self._access)
         self.nat = Nat(self._access)
+        self.notifications = Notifications(self._access)
+        self.rrd = Rrd(self._access)
+        self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
 
     async def close(self):
