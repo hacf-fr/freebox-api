@@ -7,9 +7,9 @@ class Wifi:
     wifi_custom_key_params_schema = {
         'accessType': 'full',
         'description': '',
-        'duration': int,
+        'duration': 0,
         'key': '',
-        'maxUseCount': int
+        'maxUseCount': 0
     }
 
     wifi_custom_key_user_schema = {
@@ -18,9 +18,9 @@ class Wifi:
     }
 
     wifi_custom_key_data_schema = {
-        'id': int,
+        'id': 0,
         'params': wifi_custom_key_params_schema,
-        'remaining': int,
+        'remaining': 0,
         'users': [wifi_custom_key_user_schema]
     }
 
@@ -36,7 +36,7 @@ class Wifi:
     }
 
     stop_wps_session_data_schema = {
-        'sessionid': int
+        'sessionid': 0
     }
 
     async def create_wifi_custom_key(self, wifi_custom_key_data=wifi_custom_key_data_schema):
