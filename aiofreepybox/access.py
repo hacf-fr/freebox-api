@@ -90,7 +90,7 @@ class Access:
         r = await verb(url, **request_params)
 
         # Return response if content is not json
-        if r.content_type not in ['application/json']:
+        if r.content_type != 'application/json':
             return r
         else:
             resp = await r.json()
