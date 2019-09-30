@@ -10,17 +10,17 @@ class Home:
 
     create_home_node_rule_payload_schema = {
         'iconUrl': '',
-        'id': int,
+        'id': 0,
         'label': '',
         'name': '',
-        'role': int,
+        'role': 0,
         'roleLabel': '',
         'type': ''
     }
 
     node_rule_role_schema = {
-        'node': [int],
-        'role': int
+        'node': [0],
+        'role': 0
     }
 
     node_rule_configuration_data_schema = {
@@ -43,8 +43,8 @@ class Home:
     }
 
     next_pairing_step_payload_schema = {
-        'session': int,
-        'pageid': int,
+        'session': 0,
+        'pageid': 0,
         'fields': [object]
     }
 
@@ -55,7 +55,7 @@ class Home:
     }
 
     stop_pairing_step_payload_schema = {
-        'session': int,
+        'session': 0
     }
 
     async def del_home_adapter(self, home_adapter_id):
