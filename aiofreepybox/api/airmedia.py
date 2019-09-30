@@ -18,7 +18,7 @@ class Airmedia:
         'media': '',
         'mediaType': media_type[1],
         'password': '',
-        'position': int
+        'position': 0
     }
 
     airmedia_configuration_schema = {
