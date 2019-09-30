@@ -5,7 +5,7 @@ class Sharelink:
 
     share_link_data_schema = {
         'path': '',
-        'expire': int
+        'expire': 0
     }
 
     async def create_share_link(self, share_link_data=share_link_data_schema):
