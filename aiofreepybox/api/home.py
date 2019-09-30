@@ -92,6 +92,9 @@ class Home:
     async def get_camera_stream_m3u8(self, camera_index=0, channel=2):
         '''
         Get camera stream
+
+        `camera_index`: ``int``
+        `channel`: 1 is SD, 2 is HD
         '''
         fbx_cameras = await self.get_camera()
         return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', f'stream.m3u8?channel={channel}')[1:])
