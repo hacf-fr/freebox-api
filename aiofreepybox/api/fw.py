@@ -10,22 +10,22 @@ class Fw:
 
     port_forwarding_config_schema = {
         'comment': '',
-        'enabled': bool,
+        'enabled': True,
         'ipProto': ip_proto[0],
         'lanIp': '',
-        'lanPort': int,
+        'lanPort': 0,
         'srcIp': '',
-        'wanPortEnd': int,
-        'wanPortStart': int
+        'wanPortEnd': 0,
+        'wanPortStart': 0
     }
 
     incoming_port_configuration_data_schema = {
-        'enabled': bool,
-        'inPort': int
+        'enabled': True,
+        'inPort': 0
     }
 
     dmz_configuration_schema = {
-        'enabled': bool,
+        'enabled': False,
         'ip': ''
     }
 
