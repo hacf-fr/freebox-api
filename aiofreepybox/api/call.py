@@ -7,7 +7,7 @@ class Call:
         self._access = access
 
     mark_call_log_as_read_data_schema = {
-        'new': bool
+        'new': False
     }
 
     async def delete_call_log(self, log_id):
