@@ -11,12 +11,12 @@ class Contact:
     ]
 
     add_to_group_schema = {
-        'group_id': int,
-        'contact_id': int
+        'group_id': 1,
+        'contact_id': 1
     }
 
     import_contacts_schema = {
-        'emptyBeforeAdding': bool,
+        'emptyBeforeAdding': False,
         'contacts': ['']
     }
 
