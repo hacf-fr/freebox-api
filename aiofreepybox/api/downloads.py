@@ -7,7 +7,7 @@ class Downloads:
         'download_url_list': [''],
         'username': '',
         'password': '',
-        'recursive': bool,
+        'recursive': False,
         'download_dir': ''
     }
 
@@ -17,7 +17,7 @@ class Downloads:
 
     download_blacklist_data_schema = {
         'host': '',
-        'expire': int
+        'expire': 0
     }
 
     rss_feed_data_schema = {
@@ -43,7 +43,7 @@ class Downloads:
     ]
 
     download_ratio_schema = {
-        'ratio': int
+        'ratio': 0
     }
 
     download_state = [
