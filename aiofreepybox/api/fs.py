@@ -60,8 +60,16 @@ class Fs:
         'dst': ''
     }
 
+    task_state = [
+        'queued',
+        'running',
+        'paused',
+        'done',
+        'failed'       
+    ]
+
     update_task_state_schema = {
-        'state': ''
+        'state': task_state[0]
     }
 
     def pwd(self):
@@ -96,13 +104,13 @@ class Fs:
         '''
         return [i['name'] for i in await self.list_file(self._path)]
 
-    async def archive_files(self, archive=archive_schema):
+    async def archive_files(self, archive):
         '''
         Archive files
         '''
         return await self._access.post('fs/archive/', archive)
 
-    async def cp(self, copy=copy_schema):
+    async def cp(self, copy):
         '''
         Copy files
         '''
@@ -114,7 +122,7 @@ class Fs:
         '''
         return await self._access.post('fs/mkdir/', create_directory)
 
-    async def mkpath(self, create_path=create_path_schema):
+    async def mkpath(self, create_path):
         '''
         Create path
         '''
@@ -126,13 +134,13 @@ class Fs:
         '''
         return await self._access.delete(f'fs/tasks/{task_id}')
 
-    async def rm(self, remove=remove_schema):
+    async def rm(self, remove):
         '''
         Delete files
         '''
         return await self._access.post('fs/rm/', remove)
 
-    async def extract_archive(self, extract=extract_schema):
+    async def extract_archive(self, extract):
         '''
         Extract archive
         '''
@@ -158,19 +166,19 @@ class Fs:
         path_b64 = base64.b64encode(path.encode('utf-8')).decode('utf-8')
         return await self._access.get(f'fs/ls/{path_b64}')
 
-    async def mv(self, move=move_schema):
+    async def mv(self, move):
         '''
         Move files
         '''
         return await self._access.post('fs/mv/', move)
 
-    async def rename_file(self, rename=rename_schema):
+    async def rename_file(self, rename):
         '''
         Rename file
         '''
         return await self._access.post('fs/rename/', rename)
 
-    async def set_file_task_state(self, task_id, update_task_state=update_task_state_schema):
+    async def set_file_task_state(self, task_id, update_task_state):
         '''
         Set file task state
         '''
