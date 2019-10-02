@@ -30,7 +30,7 @@ class Contact:
         '''
         return await self._access.post('contact/', contact_data)
 
-    async def add_to_group(self, add_to_group=add_to_group_schema):
+    async def add_to_group(self, add_to_group):
         '''
         Add to group
         '''
@@ -96,7 +96,7 @@ class Contact:
         '''
         return await self._access.post('contact/import/step1/', import_contacts_vcard)
 
-    async def import_contacts_step2(self, import_contacts=import_contacts_schema):
+    async def import_contacts_step2(self, import_contacts):
         '''
         Import contacts step 2
         '''
@@ -114,7 +114,7 @@ class Contact:
         '''
         return await self._access.put(f'contact/{contact_id}', contact_data)
 
-    async def update_contact_photo(self, contact_id, photo_url=photo_url_schema):
+    async def update_contact_photo(self, contact_id, photo_url):
         '''
         Update contact photo
         '''
