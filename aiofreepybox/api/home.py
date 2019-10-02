@@ -5,7 +5,7 @@ class Home:
         self._access = access
 
     home_endpoint_value_schema = {
-        'value': object
+        'value': None
     }
 
     create_home_node_rule_payload_schema = {
@@ -30,8 +30,8 @@ class Home:
     sms_number_data_schema = {
         'description': 'Mon numero',
         'phoneNumber': '',
-        'smsEnabled': bool(True),
-        'voicemailEnabled': bool(True)
+        'smsEnabled': True,
+        'voicemailEnabled': True
     }
 
     sms_validation_data_schema = {
@@ -45,12 +45,12 @@ class Home:
     next_pairing_step_payload_schema = {
         'session': 0,
         'pageid': 0,
-        'fields': [object]
+        'fields': [None]
     }
 
     start_pairing_step_payload_schema = {
-        'nfc': bool(True),
-        'qrcode': bool(),
+        'nfc': True,
+        'qrcode': False,
         'type': ''
     }
 
@@ -122,7 +122,7 @@ class Home:
         '''
         return await self._access.post('home/endpoints/get', endpoint_list)
 
-    async def set_home_endpoint_value(self, node_id, endpoint_id, home_endpoint_value=home_endpoint_value_schema):
+    async def set_home_endpoint_value(self, node_id, endpoint_id, home_endpoint_value):
         '''
         Set home endpoint value
         '''
@@ -170,7 +170,7 @@ class Home:
         '''
         return await self._access.get('home/nodes')
 
-    async def create_home_node_rule(self, template_name, create_home_node_rule_payload=create_home_node_rule_payload_schema):
+    async def create_home_node_rule(self, template_name, create_home_node_rule_payload):
         '''
         Create home node rule
         '''
@@ -188,7 +188,7 @@ class Home:
         '''
         return await self._access.get(f'home/nodes/{node_id}/rules/template/{template_name}/{role_id}')
 
-    async def set_home_node_rule_config(self, rule_node_id, node_rule_configuration_data=node_rule_configuration_data_schema):
+    async def set_home_node_rule_config(self, rule_node_id, node_rule_configuration_data):
         '''
         Set node rule configuration data
         '''
@@ -212,7 +212,7 @@ class Home:
         '''
         return await self._access.post('home/sms/numbers', sms_number_data)
 
-    async def edit_sms_number(self, sms_number_id, sms_number_data=sms_number_data_schema):
+    async def edit_sms_number(self, sms_number_id, sms_number_data):
         '''
         Edit sms number
         '''
@@ -224,13 +224,13 @@ class Home:
         '''
         return await self._access.get('home/sms/numbers')
 
-    async def send_sms_number_validation(self, sms_number_id, sms_validation_data=sms_validation_data_schema):
+    async def send_sms_number_validation(self, sms_number_id, sms_validation_data):
         '''
         Send sms number validation
         '''
         return await self._access.post(f'home/sms/numbers/{sms_number_id}/send_validation_sms', sms_validation_data)
 
-    async def validate_sms_number(self, sms_number_id, sms_number_validation_data=sms_number_validation_data_schema):
+    async def validate_sms_number(self, sms_number_id, sms_number_validation_data):
         '''
         Validate sms number
         '''
@@ -254,19 +254,19 @@ class Home:
         '''
         return await self._access.get(f'home/pairing/{home_adapter_id}')
 
-    async def next_home_pairing_step(self, home_adapter_id, next_pairing_step_payload=next_pairing_step_payload_schema):
+    async def next_home_pairing_step(self, home_adapter_id, next_pairing_step_payload):
         '''
         Next home pairing step
         '''
         return await self._access.post(f'home/pairing/{home_adapter_id}', next_pairing_step_payload)
 
-    async def start_home_pairing_step(self, home_adapter_id, start_pairing_step_payload=start_pairing_step_payload_schema):
+    async def start_home_pairing_step(self, home_adapter_id, start_pairing_step_payload):
         '''
         Start home pairing step
         '''
         return await self._access.post(f'home/pairing/{home_adapter_id}', start_pairing_step_payload)
 
-    async def stop_home_pairing_step(self, home_adapter_id, stop_pairing_step_payload=stop_pairing_step_payload_schema):
+    async def stop_home_pairing_step(self, home_adapter_id, stop_pairing_step_payload):
         '''
         Stop home pairing
         '''
