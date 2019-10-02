@@ -10,11 +10,11 @@ class Vpn:
     }
 
     allowed_auth_schema = {
-        'chap': bool,
-        'eap': bool,
-        'mschap': bool,
+        'chap': False,
+        'eap': False,
+        'mschap': False,
         'mschapv2': True,
-        'pap': bool
+        'pap': False
     }
 
     mppe = [
@@ -32,7 +32,7 @@ class Vpn:
     }
 
     vpn_client_configuration_schema = {
-        'active': bool,
+        'active': False,
         'confOpenvpn': open_vpn_config_schema,
         'confPptp': pptp_config_schema,
         'description': '',
@@ -46,13 +46,13 @@ class Vpn:
         'password': ''
     }
 
-    async def create_vpn_client_configurations(self, vpn_client_configuration=vpn_client_configuration_schema):
+    async def create_vpn_client_configurations(self, vpn_client_configuration):
         '''
         Create vpn client configurations
         '''
         return await self._access.post('vpn_client/config/', vpn_client_configuration)
 
-    async def create_vpn_user(self, vpn_user_data=vpn_user_data_schema):
+    async def create_vpn_user(self, vpn_user_data):
         '''
         Create vpn user
         '''
