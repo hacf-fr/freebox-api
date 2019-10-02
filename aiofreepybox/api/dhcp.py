@@ -15,21 +15,21 @@ class Dhcp:
     }
 
     dhcp_configuration_schema = {
-        'alwaysBroadcast': bool,
+        'alwaysBroadcast': True,
         'dns': [''],
-        'enabled': bool,
+        'enabled': True,
         'ipRangeStart': '',
         'ipRangeEnd': '',
-        'stickyAssign': bool
+        'stickyAssign': True
     }
 
     dhcp_v6_configuration_data_schema = {
         'dns': [''],
-        'enabled': bool,
-        'useCustomDns': bool
+        'enabled': True,
+        'useCustomDns': False
     }
 
-    async def create_dhcp_static_lease(self, static_lease=static_lease_schema):
+    async def create_dhcp_static_lease(self, static_lease):
         '''
         Create dhcp static lease
         '''
@@ -41,7 +41,7 @@ class Dhcp:
         '''
         await self._access.delete(f'dhcp/static_lease/{lease_id}')
 
-    async def edit_dhcp_static_lease(self, lease_id, static_lease=static_lease_schema):
+    async def edit_dhcp_static_lease(self, lease_id, static_lease):
         '''
         Edit dhcp static lease
         '''
@@ -53,7 +53,7 @@ class Dhcp:
         '''
         return await self._access.get('dhcp/config/')
 
-    async def set_config(self, dhcp_configuration=dhcp_configuration_schema):
+    async def set_config(self, dhcp_configuration):
         '''
         Update DHCP configuration
         '''
@@ -65,7 +65,7 @@ class Dhcp:
         '''
         return await self._access.get('dhcpv6/config/')
 
-    async def set_v6_config(self, dhcp_v6_configuration_data=dhcp_v6_configuration_data_schema):
+    async def set_v6_config(self, dhcp_v6_configuration_data):
         '''
         Update DHCP v6 configuration
         '''
