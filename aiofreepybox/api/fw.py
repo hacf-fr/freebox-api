@@ -29,7 +29,7 @@ class Fw:
         'ip': ''
     }
 
-    async def create_port_forwarding_configuration(self, port_forwarding_config=port_forwarding_config_schema):
+    async def create_port_forwarding_configuration(self, port_forwarding_config):
         '''
         Create port forwarding configuration
         '''
@@ -41,7 +41,7 @@ class Fw:
         '''
         await self._access.delete(f'fw/redir/{config_id}')
 
-    async def edit_incoming_port_configuration(self, port_id, incoming_port_configuration_data=incoming_port_configuration_data_schema):
+    async def edit_incoming_port_configuration(self, port_id, incoming_port_configuration_data):
         '''
         Edit incoming port configuration
         '''
