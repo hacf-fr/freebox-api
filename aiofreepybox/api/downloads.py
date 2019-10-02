@@ -69,7 +69,7 @@ class Downloads:
         'isRead': True
     }
 
-    async def add_download_advanced(self, download_advanced=download_advanced_schema):
+    async def add_download_advanced(self, download_advanced):
         '''
         Add download advanced
         '''
@@ -81,13 +81,13 @@ class Downloads:
         '''
         await self._access.post('downloads/add/', download_file)
 
-    async def add_download_from_url(self, download_url=download_url_schema):
+    async def add_download_from_url(self, download_url):
         '''
         Add download from url
         '''
         await self._access.post('downloads/add/', download_url)
 
-    async def create_download_blacklist_entry(self, download_blacklist_data=download_blacklist_data_schema):
+    async def create_download_blacklist_entry(self, download_blacklist_data):
         '''
         Create download blacklist entry
         '''
@@ -99,7 +99,7 @@ class Downloads:
         '''
         return await self._access.post('downloads/feeds/', rss_feed_data)
 
-    async def create_download_tracker(self, download_id, new_download_tracker_data=new_download_tracker_data_schema):
+    async def create_download_tracker(self, download_id, new_download_tracker_data):
         '''
         Create download tracker
         '''
@@ -147,13 +147,13 @@ class Downloads:
         '''
         return await self._access.put(f'downloads/{download_id}/files/{file_id}', download_file_data)
 
-    async def edit_download_ratio(self, download_id, download_ratio=download_ratio_schema):
+    async def edit_download_ratio(self, download_id, download_ratio):
         '''
         Edit download ratio
         '''
         return await self._access.put(f'downloads/{download_id}', download_ratio)
 
-    async def edit_download_state(self, download_id, download_state_data=download_state_data_schema):
+    async def edit_download_state(self, download_id, download_state_data):
         '''
         Edit download state
         '''
