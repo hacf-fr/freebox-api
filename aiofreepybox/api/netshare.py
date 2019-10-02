@@ -18,19 +18,19 @@ class Netshare:
     ]
 
     afp_configuration_schema = {
-        'enabled': bool,
-        'guestAllow': bool,
+        'enabled': False,
+        'guestAllow': False,
         'loginName': '',
         'loginPassword': '',
         'serverType': server_type[0]
     }
 
     samba_configuration_schema = {
-        'fileShareEnabled': bool,
-        'logonEnabled': bool,
+        'fileShareEnabled': False,
+        'logonEnabled': False,
         'logonPassword': '',
         'logonUser': '',
-        'printShareEnabled': bool,
+        'printShareEnabled': True,
         'workgroup': 'workgroup'
     }
 
@@ -46,13 +46,13 @@ class Netshare:
         '''
         return await self._access.get('netshare/samba/')
 
-    async def set_afp_configuration(self, afp_configuration=afp_configuration_schema):
+    async def set_afp_configuration(self, afp_configuration):
         '''
         Set afp configuration
         '''
         return await self._access.put('netshare/afp/', afp_configuration)
 
-    async def set_samba_configuration(self, samba_configuration=samba_configuration_schema):
+    async def set_samba_configuration(self, samba_configuration):
         '''
         Set samba configuration
         '''
