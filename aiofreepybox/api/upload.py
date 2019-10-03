@@ -11,7 +11,7 @@ class Upload:
 
     async def clean_uploads(self):
         '''
-        Clean upload
+        Clean uploads
         '''
         await self._access.delete(f'upload/clean')
 
