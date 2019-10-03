@@ -86,7 +86,7 @@ class Rrd:
         'precision': 10
     }
 
-    async def get_rrd_stats(self, rrd_data=rrd_data_schema):
+    async def get_rrd_stats(self, rrd_data):
         '''
         Get rrd stats
         '''

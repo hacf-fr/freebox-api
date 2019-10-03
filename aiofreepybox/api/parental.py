@@ -52,7 +52,7 @@ class Parental:
         '''
         return await self._access.get('parental/filter/')
 
-    async def set_parental_control_configuration(self, parental_control_configuration=parental_control_configuration_schema):
+    async def set_parental_control_configuration(self, parental_control_configuration):
         '''
         Set parental control configuration
         '''

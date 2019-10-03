@@ -13,25 +13,25 @@ class Nat:
         '''
         Get a specific port forwarding
         '''
-        return await self._access.get('fw/redir/{0}'.format(redir_id))
+        return await self._access.get(f'fw/redir/{redir_id}')
 
-    async def set_port_forwarding(self, redir_id, conf):
+    async def set_port_forwarding(self, redir_id, port_configuration):
         '''
         Update a port forwarding
         '''
-        return await self._access.put('fw/redir/{0}'.format(redir_id), conf)
+        return await self._access.put(f'fw/redir/{redir_id}', port_configuration)
 
-    async def create_port_forwarding(self, conf):
+    async def create_port_forwarding(self, port_configuration):
         '''
         Add a port forwarding
         '''
-        return await self._access.post('fw/redir/', conf)
+        return await self._access.post('fw/redir/', port_configuration)
 
     async def delete_port_forwarding(self, redir_id):
         '''
         Delete a port forwarding
         '''
-        return await self._access.delete('fw/redir/{0}'.format(redir_id))
+        return await self._access.delete(f'fw/redir/{redir_id}')
 
     async def get_incoming_port_list(self):
         '''
@@ -43,13 +43,13 @@ class Nat:
         '''
         Get a specific incoming port
         '''
-        return await self._access.get('fw/incoming/{}'.format(inc_port_id))
+        return await self._access.get(f'fw/incoming/{inc_port_id}')
 
-    async def set_incoming_port(self, inc_port_id, conf):
+    async def set_incoming_port(self, inc_port_id, port_configuration):
         '''
         Update an incoming port
         '''
-        return await self._access.put('fw/incoming/{}'.format(inc_port_id), conf)
+        return await self._access.put(f'fw/incoming/{inc_port_id}', port_configuration)
 
     async def get_dmz(self):
         '''
@@ -57,8 +57,8 @@ class Nat:
         '''
         return await self._access.get('fw/dmz/')
 
-    async def set_dmz(self, conf):
+    async def set_dmz(self, dmz_configuration):
         '''
         Update the current DMZ configuration
         '''
-        return await self._access.put('fw/dmz/', conf)
+        return await self._access.put('fw/dmz/', dmz_configuration)

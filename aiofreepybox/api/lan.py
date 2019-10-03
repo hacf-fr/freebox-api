@@ -70,13 +70,13 @@ class Lan:
         '''
         return await self._access.get(f'lan/browser/{interface}/{host_id}')
 
-    async def set_host_information(self, host_id, lan_host_data=lan_host_data_schema, interface='pub'):
+    async def set_host_information(self, host_id, lan_host_data, interface='pub'):
         '''
         Update specific host informations on a given interface
         '''
         return await self._access.put(f'lan/browser/{interface}/{host_id}', lan_host_data)
 
-    async def wake_lan_host(self, wol=wol_schema, interface='pub'):
+    async def wake_lan_host(self, wol, interface='pub'):
         '''
         Wake lan host
         '''

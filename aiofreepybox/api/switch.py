@@ -26,7 +26,7 @@ class Switch:
         '''
         return await self._access.get(f'switch/port/{port_id}')
 
-    async def set_port_conf(self, port_id, switch_port_configuration=switch_port_configuration_schema):
+    async def set_port_conf(self, port_id, switch_port_configuration):
         '''
         Update port_id Port configuration with conf dictionary
         '''

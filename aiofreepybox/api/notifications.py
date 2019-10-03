@@ -23,7 +23,7 @@ class Notifications:
         'type': os_type[0]
     }
 
-    async def create_notification_target(self, notification_target_data=notification_target_data_schema):
+    async def create_notification_target(self, notification_target_data):
         '''
         Create notification target
         '''

@@ -3,11 +3,11 @@ class Upnpigd:
     def __init__(self, access):
         self._access = access
 
-    async def delete_redir(self, id):
+    async def delete_redir(self, redir_id):
         '''
         Deletes the given upnpigd redirection
         '''
-        return await self._access.delete(f'upnpigd/redir/{id}')
+        return await self._access.delete(f'upnpigd/redir/{redir_id}')
 
     async def get_configuration(self):
         '''
