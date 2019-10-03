@@ -65,7 +65,7 @@ class Fs:
         'running',
         'paused',
         'done',
-        'failed'       
+        'failed'
     ]
 
     update_task_state_schema = {
