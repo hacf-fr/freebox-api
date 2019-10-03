@@ -27,6 +27,7 @@ from aiofreepybox.api.parental import Parental
 from aiofreepybox.api.nat import Nat
 from aiofreepybox.api.notifications import Notifications
 from aiofreepybox.api.rrd import Rrd
+from aiofreepybox.api.upload import Upload
 from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
@@ -87,6 +88,7 @@ class Freepybox:
         self.nat = Nat(self._access)
         self.notifications = Notifications(self._access)
         self.rrd = Rrd(self._access)
+        self.upload = Upload(self._access)
         self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
 
