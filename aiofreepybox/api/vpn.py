@@ -47,97 +47,97 @@ class Vpn:
     }
 
     async def create_vpn_client_configurations(self, vpn_client_configuration):
-        '''
+        """
         Create vpn client configurations
-        '''
+        """
         return await self._access.post('vpn_client/config/', vpn_client_configuration)
 
     async def create_vpn_user(self, vpn_user_data):
-        '''
+        """
         Create vpn user
-        '''
+        """
         return await self._access.post('vpn/user/', vpn_user_data)
 
     async def delete_vpn_client_configurations(self, config_id):
-        '''
+        """
         Delete vpn client configurations
-        '''
+        """
         return await self._access.delete(f'vpn_client/config/{config_id}')
 
     async def delete_vpn_server_connection(self, connection_id):
-        '''
+        """
         Delete vpn server connection
-        '''
+        """
         return await self._access.delete(f'vpn/connection/{connection_id}')
 
     async def delete_vpn_user(self, user_login):
-        '''
+        """
         Delete vpn user
-        '''
+        """
         await self._access.delete(f'vpn/user/{user_login}')
 
     async def download_vpn_user_configuration(self, server_name, user_login):
-        '''
+        """
         Download vpn user configuration
-        '''
+        """
         return await self._access.get(f'vpn/download_config/{server_name}/{user_login}')
 
     async def edit_vpn_client_configurations(self, config_id, vpn_client_configuration):
-        '''
+        """
         Edit vpn client configurations
-        '''
+        """
         return await self._access.put(f'vpn_client/config/{config_id}', vpn_client_configuration)
 
     async def edit_vpn_server_configuration(self, vpn_server_id, vpn_server_configuration):
-        '''
+        """
         Edit vpn server configurations
-        '''
+        """
         return await self._access.put(f'vpn/{vpn_server_id}/config/', vpn_server_configuration)
 
     async def get_vpn_client_applications(self):
-        '''
+        """
         Get vpn client applications
-        '''
+        """
         return await self._access.get('vpn_client/apps/')
 
     async def get_vpn_client_configurations(self):
-        '''
+        """
         Get vpn client configurations
-        '''
+        """
         return await self._access.get('vpn_client/config/')
 
     async def get_vpn_client_status(self):
-        '''
+        """
         Get vpn client status
-        '''
+        """
         return await self._access.get('vpn_client/status/')
 
     async def get_vpn_ip_reservations(self):
-        '''
+        """
         Get vpn ip reservations
-        '''
+        """
         return await self._access.get('vpn/ip_pool/')
 
     async def get_vpn_server_configuration(self, vpn_server_id):
-        '''
+        """
         Get vpn server configuration
-        '''
+        """
         return await self._access.get(f'vpn/{vpn_server_id}/config/')
 
     async def get_vpn_server_connections(self):
-        '''
+        """
         Get vpn server connections
-        '''
+        """
         return await self._access.get('vpn/connection/')
 
     async def get_vpn_servers(self):
-        '''
+        """
         Get vpn servers
-        '''
+        """
         return await self._access.get('vpn/')
 
     async def get_vpn_users(self):
-        '''
+        """
         Get vpn users
-        '''
+        """
         return await self._access.get('vpn/user/')
