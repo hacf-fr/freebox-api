@@ -36,22 +36,28 @@ class Contact:
         '''
         return await self._access.post('contact/addtogroup', add_to_group)
 
-    async def create_contact_object(self, contact_id, contact_data, contact_object_type=contact_object_type[0]):
+    async def create_contact_object(self, contact_id, contact_data, contact_object_type=None):
         '''
         Create contact object
         '''
+        if contact_object_type is None:
+            contact_object_type = self.contact_object_type[0]
         return await self._access.post(f'contact/{contact_id}/{contact_object_type}', contact_data)
 
-    async def delete_contact_object(self, contact_id, contact_object_type=contact_object_type[0]):
+    async def delete_contact_object(self, contact_id, contact_object_type=None):
         '''
         Delete contact object
         '''
+        if contact_object_type is None:
+            contact_object_type = self.contact_object_type[0]
         await self._access.delete(f'contact/{contact_id}/{contact_object_type}')
 
-    async def edit_contact_object(self, contact_id, contact_data, contact_object_type=contact_object_type[0]):
+    async def edit_contact_object(self, contact_id, contact_data, contact_object_type=None):
         '''
         Edit contact object
         '''
+        if contact_object_type is None:
+            contact_object_type = self.contact_object_type[0]
         return await self._access.put(f'contact/{contact_id}/{contact_object_type}', contact_data)
 
     async def export_contacts(self):
@@ -66,10 +72,12 @@ class Contact:
         '''
         return await self._access.get(f'contact/{contact_id}')
 
-    async def get_contact_data(self, contact_id, contact_object_type=contact_object_type[0]):
+    async def get_contact_data(self, contact_id, contact_object_type=None):
         '''
         Get contact data
         '''
+        if contact_object_type is None:
+            contact_object_type = self.contact_object_type[0]
         return await self._access.get(f'contact/{contact_id}/{contact_object_type}')
 
     async def get_contacts(self):
