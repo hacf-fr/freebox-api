@@ -49,10 +49,10 @@ class Freepybox:
         self._access = None
 
     async def open(self, host='auto', port='auto'):
-        '''
+        """
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
-        '''
+        """
         if not self._is_app_desc_valid(self.app_desc):
             raise InvalidTokenError('Invalid application descriptor')
 
@@ -84,7 +84,7 @@ class Freepybox:
                 if port == 'auto':
                     logger.warning('Port is set to auto, but host is not in default host list, checking port 80')
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    result = sock.connect_ex((default_host,80))
+                    result = sock.connect_ex((default_host, 80))
                     if result != 0:
                         raise HttpRequestError('Port 80 is closed, cannot detect freebox')
             r = await self._session.get(f'http{secure}://{default_host}/api_version', timeout=self.timeout)
@@ -120,9 +120,9 @@ class Freepybox:
         self.nat = Nat(self._access)
 
     async def close(self):
-        '''
+        """
         Close the freebox session
-        '''
+        """
         if self._access is None:
             raise NotOpenError('Freebox is not open')
 
@@ -130,7 +130,7 @@ class Freepybox:
         await self._session.close()
 
     async def get_permissions(self):
-        '''
+        """
         Returns the permissions for this app.
 
         The permissions are returned as a dictionary key->boolean where the
@@ -142,16 +142,16 @@ class Freepybox:
         opened. If they have been changed in the meantime, they may be outdated
         until the session token is refreshed.
         If the session has not been opened yet, returns None.
-        '''
+        """
         if self._access:
             return await self._access.get_permissions()
         else:
             return None
 
     async def _get_freebox_access(self, host, port, api_version, token_file, app_desc, timeout=10):
-        '''
+        """
         Returns an access object used for HTTP requests.
-        '''
+        """
 
         base_url = self._get_base_url(host, port, api_version)
 
@@ -199,7 +199,7 @@ class Freepybox:
         return fbx_access
 
     async def _get_authorization_status(self, base_url, track_id, timeout):
-        '''
+        """
         Get authorization status of the application token
         Returns:
             unknown 	the app_token is invalid or has been revoked
@@ -207,7 +207,7 @@ class Freepybox:
             timeout 	the user did not confirmed the authorization within the given time
             granted 	the app_token is valid and can be used to open a session
             denied 	    the user denied the authorization request
-        '''
+        """
         url = urljoin(base_url, f'login/authorize/{track_id}')
         r = await self._session.get(url, timeout=timeout)
         resp = await r.json()
@@ -260,14 +260,14 @@ class Freepybox:
             return (None, None, None)
 
     def _get_base_url(self, host, port, freebox_api_version):
-        '''
+        """
         Returns base url for HTTPS requests
         :return:
-        '''
+        """
         return f'https://{host}:{port}/api/{freebox_api_version}/'
 
     def _is_app_desc_valid(self, app_desc):
-        '''
+        """
         Check validity of the application descriptor
-        '''
+        """
         return all(k in app_desc for k in ('app_id', 'app_name', 'app_version', 'device_name'))
