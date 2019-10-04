@@ -65,8 +65,10 @@ class Fw:
         '''
         return await self._access.get('fw/redir/')
 
-    async def set_dmz_configuration(self, dmz_configuration=dmz_configuration_schema):
+    async def set_dmz_configuration(self, dmz_configuration=None):
         '''
         Set dmz configuration
         '''
+        if dmz_configuration is None:
+            dmz_configuration = self.dmz_configuration_schema
         return await self._access.put('fw/dmz/', dmz_configuration)
