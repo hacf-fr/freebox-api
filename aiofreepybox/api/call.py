@@ -35,5 +35,5 @@ class Call:
         Mark call log as read
         '''
         if mark_call_log_as_read_data is None:
-            mark_call_log_as_read_data = mark_call_log_as_read_data_schema
+            mark_call_log_as_read_data = self.mark_call_log_as_read_data_schema
         return await self._access.put(f'call/log/{log_id}', mark_call_log_as_read_data)
