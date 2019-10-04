@@ -20,5 +20,5 @@ class Lcd:
         Set configuration
         '''
         if lcd_config is None:
-            lcd_config = lcd_config_schema
+            lcd_config = self.lcd_config_schema
         return await self._access.put('lcd/config', lcd_config)
