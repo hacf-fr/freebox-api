@@ -198,7 +198,7 @@ class Meta:
         }
         return await self._access.get('meta/search/catchup', query)
 
-    async def search_meta_emissions(self, search_emissions_query, search_emission_filter={}):
+    async def search_meta_emissions(self, search_emissions_query, search_emission_filter=None):
         '''
         Search meta emissions
 
@@ -207,7 +207,8 @@ class Meta:
         query = {
             'query': search_emissions_query
         }
-        query.update(search_emission_filter)
+        if search_emission_filter is not None:
+            query.update(search_emission_filter)
         return await self._access.get('meta/search/plurimedia/emissions?limit=20', query)
 
     async def search_meta_tv_channel(self, search_tv_channel_query):
