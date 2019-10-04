@@ -20,5 +20,5 @@ class HttpRequestError(Exception):
 
 
 class InsufficientPermissionsError(HttpRequestError):
-	def __init__(self, *args, **kwargs):
-		HttpRequestError.__init__(self, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        HttpRequestError.__init__(self, *args, **kwargs)

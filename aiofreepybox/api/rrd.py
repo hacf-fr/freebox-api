@@ -69,14 +69,14 @@ class Rrd:
         fields[12],
         fields[13],
         fields[14]
-   ]
+    ]
 
     fields_switch_tx = [
         fields[15],
         fields[16],
         fields[17],
         fields[18]
-   ]
+    ]
 
     rrd_data_schema = {
         'dateStart': int(time.time() - 3600),
@@ -87,7 +87,7 @@ class Rrd:
     }
 
     async def get_rrd_stats(self, rrd_data):
-        '''
+        """
         Get rrd stats
-        '''
+        """
         return await self._access.post('rrd/', rrd_data)
