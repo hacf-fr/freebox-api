@@ -6,6 +6,7 @@ from aiofreepybox.exceptions import *
 
 logger = logging.getLogger(__name__)
 
+
 class Access:
     def __init__(self, session, base_url, app_token, app_id, http_timeout):
         self.session = session
@@ -17,9 +18,9 @@ class Access:
         self.session_permissions = None
 
     async def _get_challenge(self, base_url, timeout=10):
-        '''
+        """
         Return challenge from freebox API
-        '''
+        """
         url = urljoin(base_url, 'login')
         r = await self.session.get(url, timeout=timeout)
         resp = await r.json()
@@ -75,9 +76,9 @@ class Access:
         return {'X-Fbx-App-Auth': self.session_token}
 
     async def _perform_request(self, verb, end_url, **kwargs):
-        '''
+        """
         Perform the given request, refreshing the session token if needed
-        '''
+        """
         if not self.session_token:
             await self._refresh_session_token()
 
@@ -97,7 +98,7 @@ class Access:
             resp = await r.json()
 
         if not resp['success'] if 'success' in resp else True:
-            if not resp['error']:
+            if not resp['error'] if 'error' in resp else False:
                 return resp['data'] if 'data' in resp else None
 
             errMsg = 'Request failed (APIResponse: {0})'.format(json.dumps(resp))
@@ -109,37 +110,39 @@ class Access:
         return resp['result'] if 'result' in resp else None
 
     async def get(self, end_url, params_url=None):
-        '''
+        """
         Send get request and return results
-        '''
+        """
         params = params_url if params_url is not None else None
         return await self._perform_request(self.session.get, end_url, params=params)
 
     async def post(self, end_url, payload=None):
-        '''
+        """
         Send post request and return results
-        '''
+        """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.post, end_url, data=data)
 
     async def put(self, end_url, payload=None):
-        '''
+        """
         Send post request and return results
-        '''
+        """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.put, end_url, data=data)
 
     async def delete(self, end_url, payload=None):
-        '''
+        """
         Send delete request and return results
-        '''
+        """
+
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.delete, end_url, data=data)
 
     async def get_permissions(self):
-        '''
+        """
         Returns the permissions for this session/app.
-        '''
+        """
+
         if not self.session_permissions:
             await self._refresh_session_token()
         return self.session_permissions
