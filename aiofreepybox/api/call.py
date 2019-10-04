@@ -30,8 +30,10 @@ class Call:
         logger.warning('Using deprecated get_call_list, please use get_call_log instead')
         return await self.get_call_log()
 
-    async def mark_call_log_as_read(self, log_id, mark_call_log_as_read_data=mark_call_log_as_read_data_schema):
+    async def mark_call_log_as_read(self, log_id, mark_call_log_as_read_data=None):
         '''
         Mark call log as read
         '''
+        if mark_call_log_as_read_data is None:
+            mark_call_log_as_read_data = mark_call_log_as_read_data_schema
         return await self._access.put(f'call/log/{log_id}', mark_call_log_as_read_data)
