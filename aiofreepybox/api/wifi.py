@@ -39,13 +39,13 @@ class Wifi:
         'sessionid': 0
     }
 
-    async def create_wifi_custom_key(self, wifi_custom_key_data=wifi_custom_key_data_schema):
+    async def create_wifi_custom_key(self, wifi_custom_key_data):
         '''
         Create wifi custom key
         '''
         return await self._access.post('wifi/custom_key/', wifi_custom_key_data)
 
-    async def create_wifi_mac_filter(self, wifi_mac_filter=wifi_mac_filter_schema):
+    async def create_wifi_mac_filter(self, wifi_mac_filter):
         '''
         Create wifi mac filter
         '''
@@ -201,13 +201,13 @@ class Wifi:
         '''
         await self._access.post('wifi/ap/{0}/neighbors/scan/')
 
-    async def start_wps_session(self, start_wps_session_data=start_wps_session_data_schema):
+    async def start_wps_session(self, start_wps_session_data):
         '''
         Start wps session
         '''
         return await self._access.post('wifi/wps/start/', start_wps_session_data)
 
-    async def stop_wps_session(self, stop_wps_session_data=stop_wps_session_data_schema):
+    async def stop_wps_session(self, stop_wps_session_data):
         '''
         stop wps session
         '''

@@ -26,10 +26,12 @@ class Phone:
         '''
         return await self._access.get('phone/config/')
 
-    async def start_dect_configuration(self, dect_configuration=dect_configuration_schema):
+    async def start_dect_configuration(self, dect_configuration=None):
         '''
         Start dect configuration
         '''
+        if not dect_configuration:
+            dect_configuration=dect_configuration_schema
         return await self._access.put('phone/config/', dect_configuration)
 
     async def start_dect_page(self):

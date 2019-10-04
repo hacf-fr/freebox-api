@@ -55,8 +55,10 @@ class Connection:
         '''
         await self._access.put('connection/config/', connection_configuration)
 
-    async def set_lte_config(self, lte_configuration_data=lte_configuration_data_schema):
+    async def set_lte_config(self, lte_configuration_data=None):
         '''
         Update lte connection configuration
         '''
+        if not lte_configuration_data:
+            lte_configuration_data=lte_configuration_data_schema
         await self._access.put('connection/lte/config/', lte_configuration_data)
