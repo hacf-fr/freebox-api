@@ -26,25 +26,25 @@ class Airmedia:
     }
 
     async def get_airmedia_configuration(self):
-        '''
+        """
         Get airmedia configuration
-        '''
+        """
         return await self._access.get('airmedia/config/')
 
     async def get_airmedia_receivers(self):
-        '''
+        """
         Get airmedia receivers
-        '''
+        """
         return await self._access.get('airmedia/receivers/')
 
     async def send_airmedia(self, receiver_name, airmedia_data):
-        '''
+        """
         Send airmedia
-        '''
+        """
         await self._access.post('airmedia/receivers/{receiver_name}/', airmedia_data)
 
     async def update_airmedia_configuration(self, airmedia_configuration):
-        '''
+        """
         Update airmedia configuration
-        '''
+        """
         return await self._access.put('airmedia/config/', airmedia_configuration)
