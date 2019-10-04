@@ -31,7 +31,7 @@ class Phone:
         Start dect configuration
         '''
         if not dect_configuration:
-            dect_configuration=dect_configuration_schema
+            dect_configuration = self.dect_configuration_schema
         return await self._access.put('phone/config/', dect_configuration)
 
     async def start_dect_page(self):
