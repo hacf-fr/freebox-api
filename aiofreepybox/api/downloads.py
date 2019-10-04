@@ -243,10 +243,12 @@ class Downloads:
         '''
         await self._access.post(f'downloads/feeds/{feed_id}/mark_all_as_read/')
 
-    async def mark_download_item_as_read(self, feed_id, item_id, mark_item_as_read=mark_item_as_read_schema):
+    async def mark_download_item_as_read(self, feed_id, item_id, mark_item_as_read=None):
         '''
         Mark download feed item as read
         '''
+        if mark_item_as_read is None:
+            mark_item_as_read = self.mark_item_as_read_schema
         await self._access.post(f'downloads/feeds/{feed_id}/items/{item_id}', mark_item_as_read)
 
     async def remove_download_tracker(self, download_id, tracker_url, download_tracker):
