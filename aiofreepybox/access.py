@@ -2,7 +2,7 @@ import hmac
 import json
 import logging
 from urllib.parse import urljoin
-from aiofreepybox.exceptions import *
+from aiofreepybox.exceptions import AuthorizationError, HttpRequestError, InsufficientPermissionsError
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,6 @@ class Access:
         """
         Returns the permissions for this session/app.
         """
-
         if not self.session_permissions:
             await self._refresh_session_token()
         return self.session_permissions
