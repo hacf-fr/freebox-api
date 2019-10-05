@@ -97,8 +97,11 @@ class Access:
             r = await verb(url, **request_params)
             resp = await r.json()
 
+        # Check for 'result' response success
         if not resp['success'] if 'success' in resp else True:
+            # Check for 'data' response success
             if not resp['error'] if 'error' in resp else False:
+                # Return 'data' response
                 return resp['data'] if 'data' in resp else None
 
             errMsg = 'Request failed (APIResponse: {0})'.format(json.dumps(resp))
@@ -107,6 +110,7 @@ class Access:
             else:
                 raise HttpRequestError(errMsg)
 
+        # Return 'result' response
         return resp['result'] if 'result' in resp else None
 
     async def get(self, end_url, params_url=None):
@@ -134,7 +138,6 @@ class Access:
         """
         Send delete request and return results
         """
-
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.delete, end_url, data=data)
 
