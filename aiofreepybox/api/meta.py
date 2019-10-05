@@ -78,7 +78,7 @@ class Meta:
         """
         Get meta diffusions
         """
-        return await self._access.get(f'meta/static/epg/diffusions?limit=20&join_emission=1', diffusions_filter)
+        return await self._access.get('meta/static/epg/diffusions?limit=20&join_emission=1', diffusions_filter)
 
     async def get_meta_emission_casting(self, emission_id):
         """
@@ -125,7 +125,7 @@ class Meta:
         """
         Get meta emissions
         """
-        return await self._access.get(f'meta/static/plurimedia/emissions?limit=20', emissions_filter)
+        return await self._access.get('meta/static/plurimedia/emissions?limit=20', emissions_filter)
 
     async def get_meta_epg_highlights(self):
         """
