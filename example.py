@@ -36,7 +36,9 @@ async def demo():
     # Dump freebox configuration using system API
     # Extract temperature and mac address
     fbx_config = await fbx.system.get_config()
-    print('Freebox temperature : {0}'.format(fbx_config['temp_sw']))
+    sensors = fbx_config['sensors']
+    temp_sw = next(s for s in sensors if s['id'] == 'temp_sw')
+    print('Freebox temperature : {0}'.format(temp_sw['value']))
     print('Freebox mac address : {0}'.format(fbx_config['mac']))
 
     # Dump DHCP configuration using dhcp API
