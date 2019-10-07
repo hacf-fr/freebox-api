@@ -3,6 +3,11 @@ class Contact:
     def __init__(self, access):
         self._access = access
 
+    add_to_group_schema = {
+        'group_id': 1,
+        'contact_id': 1
+    }
+
     contact_object_type = [
         'numbers',
         'emails',
@@ -10,9 +15,10 @@ class Contact:
         'addresses'
     ]
 
-    add_to_group_schema = {
-        'group_id': 1,
-        'contact_id': 1
+    group_schema = {
+        'id': 0,
+        'name': '',
+        'nb_contact': 0
     }
 
     import_contacts_schema = {
@@ -44,6 +50,12 @@ class Contact:
             contact_object_type = self.contact_object_type[0]
         return await self._access.post(f'contact/{contact_id}/{contact_object_type}', contact_data)
 
+    async def create_group(self, group_data):
+        """
+        Create group
+        """
+        return await self._access.post(f'group/', group_data)
+
     async def delete_contact_object(self, contact_id, contact_object_type=None):
         """
         Delete contact object
@@ -51,6 +63,12 @@ class Contact:
         if contact_object_type is None:
             contact_object_type = self.contact_object_type[0]
         await self._access.delete(f'contact/{contact_id}/{contact_object_type}')
+
+    async def delete_group(self, group_id):
+        """
+        Delete group
+        """
+        await self._access.delete(f'group/{group_id}')
 
     async def edit_contact_object(self, contact_id, contact_data, contact_object_type=None):
         """
@@ -92,11 +110,23 @@ class Contact:
         """
         return await self._access.get('contact/count')
 
-    async def get_groups(self):
+    async def get_contact_groups(self):
         """
         Get contacts groups
         """
         return await self._access.get('contact/groups')
+
+    async def get_group(self, group_id):
+        """
+        Get group
+        """
+        return await self._access.get(f'group/{group_id}')
+
+    async def get_groups(self):
+        """
+        Get groups
+        """
+        return await self._access.get('group/?page=1&start=0&limit=200')
 
     async def import_contacts_step1(self, import_contacts_vcard):
         """
