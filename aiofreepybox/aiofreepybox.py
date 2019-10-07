@@ -44,6 +44,7 @@ class Freepybox:
     def __init__(self, app_desc=app_desc, token_file=token_file, api_version='auto', timeout=10):
         self.token_file = token_file
         self.api_version = api_version
+        self.api_version_target = 'v6'
         self.timeout = timeout
         self.app_desc = app_desc
         self._access = None
@@ -68,42 +69,64 @@ class Freepybox:
             host,
             port,
             self.api_version
-            ]
+        ]
+
         if 'auto' in detect:
             default_host = 'mafreebox.freebox.fr'
             default_host_list = [
                 'auto',
                 'freeplayer.freebox.fr',
                 default_host
-                ]
+            ]
             secure = 's'
+
             if host not in default_host_list:
                 default_host = host
                 logger.debug(f'Host set to {host}')
                 secure = ''
+
                 if port == 'auto':
                     logger.warning('Port is set to auto, but host is not in default host list, checking port 80')
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     result = sock.connect_ex((default_host, 80))
                     if result != 0:
                         raise HttpRequestError('Port 80 is closed, cannot detect freebox')
+
             r = await self._session.get(f'http{secure}://{default_host}/api_version', timeout=self.timeout)
             resp = await r.json()
+
             if host == 'auto':
                 host = resp['api_domain']
                 logger.debug(f'Host set to {host}')
+
             if port == 'auto':
                 port = resp['https_port']
                 logger.debug(f'Port set to {port}')
+
             server_version = resp['api_version'].split('.')[0]
-            short_api_version = self.api_version[1:]
+            short_api_version_target = self.api_version_target[1:]
+
+            # Check auto api version
             if self.api_version == 'auto':
+                # Check server version
+                if server_version >= short_api_version_target:
+                    self.api_version = self.api_version_target
+                    logger.debug(f'API version set to target version {self.api_version}')
+                else:
+                    # This should never happen unless time is going backward
+                    self.api_version = f'v{server_version}'
+                    logger.warning(f'Target API version not supported ({self.api_version_target}), downgrading to server version {self.api_version}')
+            # Check server api version
+            elif self.api_version == 'server':
                 self.api_version = f'v{server_version}'
-                logger.debug(f'API version set to {self.api_version}')
-            elif server_version > short_api_version:
-                logger.warning(f'Freebox server support a newer api version: v{server_version}, check api_version ({self.api_version})')
+                logger.debug(f'API version set to server version {self.api_version}')
+
+            short_api_version = self.api_version[1:]
+
+            if server_version > short_api_version:
+                logger.debug(f'Freebox server supports a newer api version: v{server_version}, check api_version ({self.api_version}) for support.')
             elif server_version < short_api_version:
-                logger.warning(f'Freebox server does not support this version ({self.api_version}), downgrading to v{server_version}')
+                logger.warning(f'Freebox server does not support this version ({self.api_version}), downgrading to v{server_version}.')
                 self.api_version = f'v{server_version}'
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
