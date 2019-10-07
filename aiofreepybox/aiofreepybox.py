@@ -16,6 +16,7 @@ from aiofreepybox.access import Access
 from aiofreepybox.api.tv import Tv
 from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
+from aiofreepybox.api.domain import Domain
 from aiofreepybox.api.switch import Switch
 from aiofreepybox.api.lan import Lan
 from aiofreepybox.api.wifi import Wifi
@@ -77,6 +78,7 @@ class Freepybox:
         self.tv = Tv(self._access)
         self.system = System(self._access)
         self.dhcp = Dhcp(self._access)
+        self.domain = Domain(self._access)
         self.switch = Switch(self._access)
         self.lan = Lan(self._access)
         self.wifi = Wifi(self._access)
