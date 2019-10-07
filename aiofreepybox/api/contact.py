@@ -54,7 +54,7 @@ class Contact:
         """
         Create group
         """
-        return await self._access.post(f'group/', group_data)
+        return await self._access.post('group/', group_data)
 
     async def delete_contact_object(self, contact_id, contact_object_type=None):
         """
