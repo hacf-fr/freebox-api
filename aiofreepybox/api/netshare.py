@@ -19,18 +19,18 @@ class Netshare:
 
     afp_configuration_schema = {
         'enabled': False,
-        'guestAllow': False,
-        'loginName': '',
-        'loginPassword': '',
-        'serverType': server_type[0]
+        'guest_allow': False,
+        'login_name': '',
+        'login_password': '',
+        'server_type': server_type[0]
     }
 
     samba_configuration_schema = {
-        'fileShareEnabled': False,
-        'logonEnabled': False,
-        'logonPassword': '',
-        'logonUser': '',
-        'printShareEnabled': True,
+        'file_share_enabled': False,
+        'logon_enabled': False,
+        'logon_password': '',
+        'logon_user': '',
+        'print_share_enabled': True,
         'workgroup': 'workgroup'
     }
 
