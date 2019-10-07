@@ -6,6 +6,8 @@ This example can be run safely as it won't change anything in your box configura
 '''
 
 import asyncio
+import m3u8
+
 from aiofreepybox import Freepybox
 
 
@@ -21,6 +23,15 @@ async def demo():
     # Be ready to authorize the application on the Freebox if you use this
     # example for the first time
     await fbx.open(host='abcdefgh.fbxos.fr', port=1234)
+
+    if fbx.api_version == 'v6':
+        # Get a jpg snapshot from a camera
+        fbx_cam_jpg = await fbx.home.get_camera_snapshot()
+
+        # Get a TS stream from a camera
+        r = await fbx.home.get_camera_stream_m3u8()
+        m3u8_obj = m3u8.loads(await r.text())
+        fbx_ts = await fbx.home.get_camera_ts(m3u8_obj.files[0])
 
     # Dump freebox configuration using system API
     # Extract temperature and mac address
