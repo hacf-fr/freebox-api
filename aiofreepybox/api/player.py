@@ -13,7 +13,7 @@ class Player:
     }
 
     media_control_seek_args = {
-        'seekPosition': int,
+        'seek_position': int,
         'type': 'seek_position'
     }
 
@@ -28,7 +28,7 @@ class Player:
     }
 
     media_control_track_args = {
-        'trackId': int,
+        'track_id': int,
         'type': 'track_id'
     }
 
