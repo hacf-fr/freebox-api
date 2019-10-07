@@ -22,7 +22,7 @@ class Contact:
     }
 
     import_contacts_schema = {
-        'emptyBeforeAdding': False,
+        'empty_before_adding': False,
         'contacts': ['']
     }
 
