@@ -11,17 +11,17 @@ class Fw:
     port_forwarding_config_schema = {
         'comment': '',
         'enabled': True,
-        'ipProto': ip_proto[0],
-        'lanIp': '',
-        'lanPort': 0,
-        'srcIp': '',
-        'wanPortEnd': 0,
-        'wanPortStart': 0
+        'ip_proto': ip_proto[0],
+        'lan_ip': '',
+        'lan_port': 0,
+        'src_ip': '',
+        'wan_port_end': 0,
+        'wan_port_start': 0
     }
 
     incoming_port_configuration_data_schema = {
         'enabled': True,
-        'inPort': 0
+        'in_port': 0
     }
 
     dmz_configuration_schema = {
