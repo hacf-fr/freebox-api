@@ -16,7 +16,7 @@ class Airmedia:
     airmedia_data_schema = {
         'action': action[0],
         'media': '',
-        'mediaType': media_type[1],
+        'media_type': media_type[1],
         'password': '',
         'position': 0
     }
