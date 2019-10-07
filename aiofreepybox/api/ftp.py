@@ -4,10 +4,13 @@ class Ftp:
         self._access = access
 
     ftp_configuration_schema = {
-        'allowAnonymous': False,
-        'allowAnonymousWrite': False,
         'enabled': False,
-        'password': ''
+        'allow_anonymous': False,
+        'allow_anonymous_write': False,
+        'allow_remote_access': False,
+        'remote_domain': '',
+        'port_ctrl': 12345,
+        'port_data': 45678
     }
 
     async def get_ftp_configuration(self):
