@@ -4,7 +4,7 @@ class Vpn:
         self._access = access
 
     open_vpn_config_schema = {
-        'configFile': '',
+        'config_file': '',
         'password': '',
         'username': ''
     }
@@ -24,24 +24,24 @@ class Vpn:
     ]
 
     pptp_config_schema = {
-        'allowedAuth': allowed_auth_schema,
+        'allowed_auth': allowed_auth_schema,
         'mppe': mppe[2],
         'password': '',
-        'remoteHost': '',
+        'remote_host': '',
         'username': ''
     }
 
     vpn_client_configuration_schema = {
         'active': False,
-        'confOpenvpn': open_vpn_config_schema,
-        'confPptp': pptp_config_schema,
+        'conf_openvpn': open_vpn_config_schema,
+        'conf_pptp': pptp_config_schema,
         'description': '',
         'id': '',
         'type': 'openvpn',
     }
 
     vpn_user_data_schema = {
-        'ipReservation': '',
+        'ip_reservation': '',
         'login': '',
         'password': ''
     }
