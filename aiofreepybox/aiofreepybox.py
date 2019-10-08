@@ -14,6 +14,7 @@ import aiofreepybox
 from aiofreepybox.exceptions import *
 from aiofreepybox.access import Access
 from aiofreepybox.api.tv import Tv
+from aiofreepybox.api.vm import Vm
 from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
 from aiofreepybox.api.switch import Switch
@@ -76,6 +77,7 @@ class Freepybox:
 
         # Instantiate freebox modules
         self.tv = Tv(self._access)
+        self.vm = Vm(self._access)
         self.system = System(self._access)
         self.dhcp = Dhcp(self._access)
         self.switch = Switch(self._access)
