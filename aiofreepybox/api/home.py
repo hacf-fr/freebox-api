@@ -9,12 +9,12 @@ class Home:
     }
 
     create_home_node_rule_payload_schema = {
-        'iconUrl': '',
+        'icon_url': '',
         'id': 0,
         'label': '',
         'name': '',
         'role': 0,
-        'roleLabel': '',
+        'role_label': '',
         'type': ''
     }
 
@@ -29,17 +29,17 @@ class Home:
 
     sms_number_data_schema = {
         'description': 'Mon numero',
-        'phoneNumber': '',
-        'smsEnabled': True,
-        'voicemailEnabled': True
+        'phone_number': '',
+        'sms_enabled': True,
+        'voicemail_enabled': True
     }
 
     sms_validation_data_schema = {
-        'applicationHash': ''
+        'application_hash': ''
     }
 
     sms_number_validation_data_schema = {
-        'validationCode': ''
+        'validation_code': ''
     }
 
     next_pairing_step_payload_schema = {

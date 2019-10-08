@@ -15,18 +15,18 @@ class Dhcp:
     }
 
     dhcp_configuration_schema = {
-        'alwaysBroadcast': True,
+        'always_broadcast': True,
         'dns': [''],
         'enabled': True,
-        'ipRangeStart': '',
-        'ipRangeEnd': '',
-        'stickyAssign': True
+        'ip_range_start': '',
+        'ip_range_end': '',
+        'sticky_assign': True
     }
 
     dhcp_v6_configuration_data_schema = {
         'dns': [''],
         'enabled': True,
-        'useCustomDns': False
+        'use_custom_dns': False
     }
 
     async def create_dhcp_static_lease(self, static_lease):
