@@ -5,11 +5,11 @@ class Wifi:
 
     # accessType can be full or net_only
     wifi_custom_key_params_schema = {
-        'accessType': 'full',
+        'access_type': 'full',
         'description': '',
         'duration': 0,
         'key': '',
-        'maxUseCount': 0
+        'max_use_count': 0
     }
 
     wifi_custom_key_user_schema = {

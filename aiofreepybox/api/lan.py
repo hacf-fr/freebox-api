@@ -25,8 +25,8 @@ class Lan:
 
     lan_host_data_schema = {
         'id': '',
-        'primaryName': '',
-        'hostType': host_type[0]
+        'primary_name': '',
+        'host_type': host_type[0]
     }
 
     wol_schema = {
