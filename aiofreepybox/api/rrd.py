@@ -16,15 +16,12 @@ class Rrd:
     fields = [
         'bw_down',
         'bw_up',
-        'cpub',
-        'cpum',
-        'fan_speed',
-        'hdd',
         'rate_down',
         'rate_up',
+        'vpn_rate_down',
+        'vpn_rate_up',
         'snr_down',
         'snr_up',
-        'sw',
         'rx_1',
         'rx_2',
         'rx_3',
@@ -33,50 +30,45 @@ class Rrd:
         'tx_2',
         'tx_3',
         'tx_4',
-        'femto',
-        'vpn_rate_down',
-        'vpn_rate_up',
         'time'
     ]
 
     fields_net = [
         fields[0],
         fields[1],
-        fields[6],
-        fields[7],
-        fields[20],
-        fields[21]
-    ]
-
-    fields_temp = [
         fields[2],
         fields[3],
         fields[4],
-        fields[5],
-        fields[10],
-        fields[19]
+        fields[5]
     ]
 
+    '''
+    fields_temp = [
+        get temp fields from system.get_config['sensors']
+        get fans fields from system.get_config['fans']
+    ]
+    '''
+
     fields_dsl = [
+        fields[2],
+        fields[3],
         fields[6],
-        fields[7],
-        fields[8],
-        fields[9]
+        fields[7]
     ]
 
     fields_switch_rx = [
-        fields[11],
-        fields[12],
-        fields[13],
-        fields[14]
-   ]
+        fields[8],
+        fields[9],
+        fields[10],
+        fields[11]
+    ]
 
     fields_switch_tx = [
-        fields[15],
-        fields[16],
-        fields[17],
-        fields[18]
-   ]
+        fields[12],
+        fields[13],
+        fields[14],
+        fields[15]
+    ]
 
     rrd_data_schema = {
         'dateStart': int(time.time() - 3600),
@@ -86,8 +78,10 @@ class Rrd:
         'precision': 10
     }
 
-    async def get_rrd_stats(self, rrd_data=rrd_data_schema):
+    async def get_rrd_stats(self, rrd_data=None):
         '''
         Get rrd stats
         '''
+        if rrd_data is None:
+            rrd_data = rrd_data_schema
         return await self._access.post('rrd/', rrd_data)
