@@ -18,18 +18,20 @@ from aiofreepybox.api.system import System
 from aiofreepybox.api.dhcp import Dhcp
 from aiofreepybox.api.switch import Switch
 from aiofreepybox.api.lan import Lan
+from aiofreepybox.api.lcd import Lcd
 from aiofreepybox.api.wifi import Wifi
 from aiofreepybox.api.phone import Phone
 from aiofreepybox.api.fs import Fs
+from aiofreepybox.api.freeplug import Freeplug
 from aiofreepybox.api.call import Call
 from aiofreepybox.api.connection import Connection
+from aiofreepybox.api.home import Home
 from aiofreepybox.api.parental import Parental
 from aiofreepybox.api.nat import Nat
 from aiofreepybox.api.notifications import Notifications
 from aiofreepybox.api.rrd import Rrd
 from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
-
 
 # Token file default location
 token_filename = 'app_auth'
@@ -78,11 +80,14 @@ class Freepybox:
         self.dhcp = Dhcp(self._access)
         self.switch = Switch(self._access)
         self.lan = Lan(self._access)
+        self.lcd = Lcd(self._access)
         self.wifi = Wifi(self._access)
         self.phone = Phone(self._access)
         self.fs = Fs(self._access)
+        self.freeplug = Freeplug(self._access)
         self.call = Call(self._access)
         self.connection = Connection(self._access)
+        self.home = Home(self._access)
         self.parental = Parental(self._access)
         self.nat = Nat(self._access)
         self.notifications = Notifications(self._access)
