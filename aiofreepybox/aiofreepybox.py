@@ -105,6 +105,7 @@ class Freepybox:
 
             server_version = resp['api_version'].split('.')[0]
             short_api_version_target = self.api_version_target[1:]
+            short_api_version = self.api_version[1:]
 
             # Check auto api version
             if self.api_version == 'auto':
@@ -120,10 +121,8 @@ class Freepybox:
             elif self.api_version == 'server':
                 self.api_version = f'v{server_version}'
                 logger.debug(f'API version set to server version {self.api_version}')
-
-            short_api_version = self.api_version[1:]
-
-            if server_version > short_api_version:
+            # Check user api version
+            elif server_version > short_api_version:
                 logger.debug(f'Freebox server supports a newer api version: v{server_version}, check api_version ({self.api_version}) for support.')
             elif server_version < short_api_version:
                 logger.warning(f'Freebox server does not support this version ({self.api_version}), downgrading to v{server_version}.')
