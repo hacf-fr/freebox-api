@@ -109,24 +109,24 @@ class Freepybox:
 
             # Check auto api version
             if self.api_version == 'auto':
+                self.api_version = self.api_version_target
                 # Check server version
-                if server_version >= short_api_version_target:
-                    self.api_version = self.api_version_target
-                    logger.debug(f'API version set to target version {self.api_version}')
-                else:
-                    # This should never happen unless time is going backward
-                    self.api_version = f'v{server_version}'
-                    logger.warning(f'Target API version not supported ({self.api_version_target}), downgrading to server version {self.api_version}')
+                if server_version > short_api_version_target:
+                    logger.debug(f'Freebox server supports a newer api version: v{server_version}, check api_version ({self.api_version}) for support.')
             # Check server api version
             elif self.api_version == 'server':
                 self.api_version = f'v{server_version}'
                 logger.debug(f'API version set to server version {self.api_version}')
+                if server_version > short_api_version_target:
+                    logger.warning(f'Using new API version {self.api_version}, results may vary ')
             # Check user api version
-            elif server_version > short_api_version:
-                logger.debug(f'Freebox server supports a newer api version: v{server_version}, check api_version ({self.api_version}) for support.')
+            elif short_api_version < short_api_version_target and int(short_api_version) > 0:
+                logger.warning(f'Using deprecated API version {self.api_version}, results may vary ')
             elif server_version < short_api_version:
-                logger.warning(f'Freebox server does not support this version ({self.api_version}), downgrading to v{server_version}.')
+                logger.warning(f'Freebox server does not support this API version ({self.api_version}), downgrading to v{server_version}.')
                 self.api_version = f'v{server_version}'
+            elif short_api_version != short_api_version_target:
+                logger.warning(f'User defined API version set to {self.api_version}, results may vary')
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
