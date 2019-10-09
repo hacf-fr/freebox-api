@@ -7,7 +7,7 @@ class Meta:
         """
         Get catchup channel
 
-        `channel_id`: ``int``
+        channel_id : `int`
         """
         return await self._access.get(f'meta/static/catchup/channels/{channel_id}')
 
@@ -15,8 +15,8 @@ class Meta:
         """
         Get catchup group
 
-        `channel_id`: ``int``
-        `group_id`: ``int``
+        channel_id : `int`
+        group_id : `int`
         """
         return await self._access.get(f'meta/static/catchup/channels/{channel_id}/groups/{group_id}')
 
@@ -24,8 +24,9 @@ class Meta:
         """
         Get catchup group programs
 
-        `channel_id`: ``int``
-        `group_id`: ``int``
+        channel_id : `int`
+        group_id : `int`
+        catchup_program_filter : `dict`
         """
         return await self._access.get(f'meta/static/catchup/channels/{channel_id}/groups/{group_id}/programs?limit=20', catchup_program_filter)
 
@@ -39,7 +40,7 @@ class Meta:
         """
         Get catchup highlights
 
-        `heading_id`: ``int``
+        heading_id : `int`
         """
         return await self._access.get(f'meta/static/catchup/highlights/{heading_id}')
 
@@ -53,8 +54,8 @@ class Meta:
         """
         Get catchup program
 
-        `channel_id`: ``int``
-        `program_id`: ``int``
+        channel_id : `int`
+        program_id : `int`
         """
         return await self._access.get(f'meta/static/catchup/channels/{channel_id}/programs/{program_id}')
 
@@ -62,7 +63,8 @@ class Meta:
         """
         Get catchup programs
 
-        `channel_id`: ``int``
+        channel_id : `int`
+        catchup_program_filter : `dict`
         """
         return await self._access.get(f'meta/static/catchup/channels/{channel_id}/programs?limit=20', catchup_program_filter)
 
@@ -70,13 +72,16 @@ class Meta:
         """
         Get catchup top program
 
-        `channel_id`: ``int``
+        channel_id : `int`
+        catchup_program_filter : `dict`
         """
         return await self._access.get(f'meta/static/catchup/channels/{channel_id}/top', catchup_program_filter)
 
     async def get_meta_diffusions(self, diffusions_filter):
         """
         Get meta diffusions
+
+        diffusions_filter : `dict`
         """
         return await self._access.get('meta/static/epg/diffusions?limit=20&join_emission=1', diffusions_filter)
 
@@ -84,7 +89,7 @@ class Meta:
         """
         Get meta emission casting
 
-        `emission_id`: ``int``
+        emission_id : `int`
         """
         return await self._access.get(f'meta/static/plurimedia/emissions/{emission_id}/casting')
 
@@ -92,7 +97,7 @@ class Meta:
         """
         Get meta emission collections
 
-        `filter_emission_id`: ``int``
+        filter_emission_id : `int`
         """
         query = {
             'filter_emission_id': filter_emission_id
@@ -103,7 +108,7 @@ class Meta:
         """
         Get meta emission diffusions
 
-        `filter_emission_id`: ``int``
+        filter_emission_id : `int`
         """
         query = {
             'filter_emission_id': filter_emission_id
@@ -114,7 +119,7 @@ class Meta:
         """
         Get meta emission vod entries
 
-        `filter_plurimedia_emission_id`: ``int``
+        filter_plurimedia_emission_id : `int`
         """
         query = {
             'filter_plurimedia_emission_id': filter_plurimedia_emission_id
@@ -124,6 +129,8 @@ class Meta:
     async def get_meta_emissions(self, emissions_filter):
         """
         Get meta emissions
+
+        emissions_filter : `dict`
         """
         return await self._access.get('meta/static/plurimedia/emissions?limit=20', emissions_filter)
 
@@ -137,7 +144,7 @@ class Meta:
         """
         Get meta format
 
-        `format_id`: ``int``
+        format_id : `int`
         """
         return await self._access.get(f'meta/static/plurimedia/formats/{format_id}')
 
@@ -151,7 +158,7 @@ class Meta:
         """
         Get meta genre
 
-        `genre_id`: ``int``
+        genre_id : `int`
         """
         return await self._access.get(f'meta/static/plurimedia/genres/{genre_id}')
 
@@ -159,13 +166,15 @@ class Meta:
         """
         Get meta tv channel
 
-        `channel_uuid`: ``str``
+        channel_uuid : `str`
         """
         return await self._access.get(f'meta/static/tv/channels_by_uuid/{channel_uuid}')
 
     async def get_meta_tv_channels(self, channel_filter):
         """
         Get meta tv channels
+
+        channel_filter : `dict`
         """
         return await self._access.get(f'meta/static/tv/channels/', channel_filter)
 
@@ -173,8 +182,8 @@ class Meta:
         """
         Get meta vod entry links
 
-        `vod_entry_id`: ``int``
-        `model`: ``str``
+        vod_entry_id : `int`
+        model : `str`
         """
         query = {
             'model': model
@@ -191,7 +200,7 @@ class Meta:
         """
         Search catchup
 
-        `search_catchup_query`: ``str``
+        search_catchup_query : `str`
         """
         query = {
             'query': search_catchup_query
@@ -202,7 +211,9 @@ class Meta:
         """
         Search meta emissions
 
-        `search_emissions_query`: ``str``
+        search_emissions_query : `str`
+        search_emission_filter : `dict`, optional
+            , by default None
         """
         query = {
             'query': search_emissions_query
@@ -215,7 +226,7 @@ class Meta:
         """
         Search meta tv channel
 
-        `search_tv_channel_query`: ``str``
+        search_tv_channel_query : `str`
         """
         query = {
             'query': search_tv_channel_query
