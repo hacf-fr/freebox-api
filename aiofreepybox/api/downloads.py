@@ -93,10 +93,12 @@ class Downloads:
         """
         await self._access.post('downloads/blacklist/', download_blacklist_data)
 
-    async def create_download_feed(self, rss_feed_data=rss_feed_data_schema):
+    async def create_download_feed(self, rss_feed_data=None):
         """
         Create download feed
         """
+        if rss_feed_data is None:
+            rss_feed_data = self.rss_feed_data_schema
         return await self._access.post('downloads/feeds/', rss_feed_data)
 
     async def create_download_tracker(self, download_id, new_download_tracker_data):
