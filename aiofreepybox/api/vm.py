@@ -14,20 +14,20 @@ class Vm:
     }
 
     vm_init_schema = {
-        'name':'',
-        'disk_path':'',
-        'disk_type':'qcow2',
-        'cd_path':'',
-        'memory':957,
-        'vcpus':2,
-        'status':'',
-        'enable_screen':false,
-        'bind_usb_ports':[],
-        'enable_cloudinit':true,
-        'cloudinit_hostname':'freebox-vm',
-        'cloudinit_userdata':'#cloud-config\nsystem_info:\n  default_user:\n    name: freebox\npassword: ubuntoutou\nchpasswd: { expire: False }\nssh_pwauth: True\n',
-        'mac':'',
-        'os':'ubuntu'
+        'name': '',
+        'disk_path': '',
+        'disk_type': 'qcow2',
+        'cd_path': '',
+        'memory': 957,
+        'vcpus': 2,
+        'status': '',
+        'enable_screen': False,
+        'bind_usb_ports': [],
+        'enable_cloudinit': True,
+        'cloudinit_hostname': 'freebox-vm',
+        'cloudinit_userdata': '#cloud-config\nsystem_info:\n  default_user:\n    name: freebox\npassword: ubuntoutou\nchpasswd: { expire: False }\nssh_pwauth: True\n',
+        'mac': '',
+        'os': 'ubuntu'
     }
 
     async def create_vm(self, vm_init_data):
