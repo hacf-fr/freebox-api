@@ -58,10 +58,12 @@ class Domain:
         """
         return await self._access.post(f'domain/owned/{domain_id}/import_cert', cert_data)
 
-    async def request_certificate(self, domain_id, request_cert_data):
+    async def request_certificate(self, domain_id, request_cert_data=None):
         """
         Request certificate
         """
+        if request_cert_data is None:
+            request_cert_data = self.request_cert_schema
         return await self._access.post(f'domain/owned/{domain_id}/request_cert', request_cert_data)
 
     async def reserve_domain(self, reserve_data):
