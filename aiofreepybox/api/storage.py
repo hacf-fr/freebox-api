@@ -13,11 +13,13 @@ class Storage:
         """
         return await self._access.put(f'storage/partition/{id}/check')
 
-    async def eject_disk(self, disk_id, eject=eject_schema):
+    async def eject_disk(self, disk_id, eject_data=None):
         """
         Eject storage disk
         """
-        return await self._access.put(f'storage/disk/{disk_id}', eject)
+        if eject_data is None:
+            eject_data = self.eject_schema
+        return await self._access.put(f'storage/disk/{disk_id}', eject_data)
 
     async def format_partition(self, id, format_data):
         """
