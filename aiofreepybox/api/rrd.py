@@ -83,5 +83,5 @@ class Rrd:
         Get rrd stats
         '''
         if rrd_data is None:
-            rrd_data = rrd_data_schema
+            rrd_data = self.rrd_data_schema
         return await self._access.post('rrd/', rrd_data)
