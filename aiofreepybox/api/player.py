@@ -2,6 +2,7 @@ class Player:
 
     def __init__(self, access):
         self._access = access
+        self._api_version_target = 'v6'
 
     player_volume_data_schema = {
         'mute': bool(),
@@ -61,38 +62,80 @@ class Player:
         'cmd': media_control_command[0]
     }
 
+    async def get_player_status(self, player_id, api_version=None):
+        """
+        Get player status
+
+        player_id : `int`
+        api_version : `str`, optional
+            , by default `self.api_version_target`
+        """
+        if api_version is None:
+            api_version = self.api_version_target
+        return await self._access.get(f'player/{player_id}/api/{api_version}/status/')
+
+    async def get_player_volume(self, player_id, api_version=None):
+        """
+        Get player volume
+
+        player_id : `int`
+        api_version : `str`, optional
+            , by default `self.api_version_target`
+        """
+        if api_version is None:
+            api_version = self.api_version_target
+        return await self._access.get(f'player/{player_id}/api/{api_version}/control/volume')
+
     async def get_players(self):
         """
         Get players
         """
         return await self._access.get('player')
 
-    async def get_player_status(self, player_id, api_version='v6'):
-        """
-        Get player status
-        """
-        return await self._access.get(f'player/{player_id}/api/{api_version}/status/')
-
-    async def get_player_volume(self, player_id, api_version='v6'):
-        """
-        Get player volume
-        """
-        return await self._access.get(f'player/{player_id}/api/{api_version}/control/volume')
-
-    async def set_player_volume(self, player_id, player_volume_data=player_volume_data_schema, api_version='v6'):
-        """
-        Set player volume
-        """
-        await self._access.put(f'player/{player_id}/api/{api_version}/control/volume', player_volume_data)
-
-    async def open_player_url(self, player_id, player_url_data=player_url_data_schema, api_version='v6'):
+    async def open_player_url(self, player_id, player_url_data=None, api_version=None):
         """
         Open player url
+
+        player_id : `int`
+        player_url_data : `dict`, optional
+            , by default `self.player_url_data_schema`
+        api_version : `str`, optional
+            , by default `self.api_version_target`
         """
+        if player_url_data is None:
+            player_url_data = self.player_url_data_schema
+        if api_version is None:
+            api_version = self.api_version_target
         await self._access.post(f'player/{player_id}/api/{api_version}/control/open', player_url_data)
 
-    async def send_media_control(self, player_id, media_control_data=media_control_data_schema, api_version='v6'):
+    async def send_media_control(self, player_id, media_control_data=None, api_version=None):
         """
         Send media control
+
+        player_id : `int`
+        media_control_data : `dict`, optional
+            , by default `self.media_control_data_schema`
+        api_version : `str`, optional
+            , by default `self.api_version_target`
         """
+        if media_control_data is None:
+            media_control_data = self.media_control_data_schema
+        if api_version is None:
+            api_version = self.api_version_target
         await self._access.post(f'player/{player_id}/api/{api_version}/control/mediactrl', media_control_data)
+
+    async def set_player_volume(self, player_id, player_volume_data=None, api_version=None):
+        """
+        Set player volume
+
+        player_id : `int`
+        player_volume_data : `dict`, optional
+            , by default `self.player_volume_data_schema`
+        api_version : `str`, optional
+            , by default `self.api_version_target`
+        """
+        if player_volume_data is None:
+            player_volume_data = self.player_volume_data_schema
+        if api_version is None:
+            api_version = self.api_version_target
+        await self._access.put(f'player/{player_id}/api/{api_version}/control/volume', player_volume_data)
