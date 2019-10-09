@@ -8,10 +8,12 @@ class Sharelink:
         'expire': 0
     }
 
-    async def create_share_link(self, share_link_data=share_link_data_schema):
+    async def create_share_link(self, share_link_data=None):
         """
         Create share link
         """
+        if share_link_data is None:
+            share_link_data = self.share_link_data_schema
         return await self._access.post('share_link/', share_link_data)
 
     async def delete_share_link(self, token):
