@@ -38,6 +38,8 @@ class System:
     def get_img_fbx_gw_back(self, img_id):
         """
         Get freebox gateway back image
+
+        img_id : `int`
         """
         return f'{self._access.host_url}{self.images_fbx_gw_back[img_id]}'
 
@@ -45,8 +47,8 @@ class System:
         """
         Get freebox gateway back expansion image
 
-        `img_expansion_types` = `expansion_types`[index]
-        `slot_index` can be 0 or 1
+        img_expansion_types : `expansion_types`[index]
+        slot_index : 0 | 1
         """
         return f'{self._access.host_url}resources/images/fbx/gw_back_v7_{img_expansion_types}_{slot_index}.png'
 
