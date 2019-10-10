@@ -1,9 +1,11 @@
 import time
+import operator
 
 
 class Rrd:
 
     def __init__(self, access):
+        self._setup = False
         self._access = access
 
     db = [
@@ -14,69 +16,64 @@ class Rrd:
     ]
 
     fields = [
+        'time'
+    ]
+
+    fields_net = [
         'bw_down',
         'bw_up',
         'rate_down',
         'rate_up',
         'vpn_rate_down',
-        'vpn_rate_up',
-        'snr_down',
-        'snr_up',
-        'rx_1',
-        'rx_2',
-        'rx_3',
-        'rx_4',
-        'tx_1',
-        'tx_2',
-        'tx_3',
-        'tx_4',
-        'time'
+        'vpn_rate_up'
     ]
 
-    fields_net = [
-        fields[0],
-        fields[1],
-        fields[2],
-        fields[3],
-        fields[4],
-        fields[5]
-    ]
+    fields_fans = []
 
-    '''
-    fields_temp = [
-        get temp fields from system.get_config['sensors']
-        get fans fields from system.get_config['fans']
-    ]
-    '''
+    fields_temp = []
+
+    fields_temps = []
 
     fields_dsl = [
-        fields[2],
-        fields[3],
-        fields[6],
-        fields[7]
+        'rate_down',
+        'rate_up',
+        'snr_down',
+        'snr_up'
     ]
 
     fields_switch_rx = [
-        fields[8],
-        fields[9],
-        fields[10],
-        fields[11]
+        'rx_1',
+        'rx_2',
+        'rx_3',
+        'rx_4'
     ]
 
     fields_switch_tx = [
-        fields[12],
-        fields[13],
-        fields[14],
-        fields[15]
+        'tx_1',
+        'tx_2',
+        'tx_3',
+        'tx_4'
     ]
 
     rrd_data_schema = {
         'dateStart': int(time.time() - 3600),
         'dateEnd': int(time.time()),
-        'db': db[0],
-        'fields': fields,
+        'db': db[1],
+        'fields': fields_temps,
         'precision': 10
     }
+
+    async def init(self):
+        """
+        Init
+            Call Init on startup to setup temp and fans fields
+        """
+        if not self._setup:
+            resp = await self._access.get('system/')
+            self.fields_temp = list(map(operator.itemgetter('id'), resp['sensors']))
+            self.fields_fans = list(map(operator.itemgetter('id'), resp['fans']))
+            self.fields_temps = self.fields_temp + self.fields_fans
+            self._setup = True
 
     async def get_rrd_stats(self, rrd_data=None):
         '''
