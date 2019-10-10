@@ -57,7 +57,7 @@ class Access:
         session_token = resp.get('result').get('session_token')
         session_permissions = resp.get('result').get('permissions')
 
-        return(session_token, session_permissions)
+        return session_token, session_permissions
 
     async def _refresh_session_token(self):
         # Get token for the current session
@@ -110,11 +110,11 @@ class Access:
                 # Return 'data' response
                 return resp['data'] if 'data' in resp else None
 
-            errMsg = 'Request failed (APIResponse: {})'.format(json.dumps(resp))
+            error_message = 'Request failed (APIResponse: {})'.format(json.dumps(resp))
             if resp.get('error_code') == 'insufficient_rights':
-                raise InsufficientPermissionsError(errMsg)
+                raise InsufficientPermissionsError(error_message)
             else:
-                raise HttpRequestError(errMsg)
+                raise HttpRequestError(error_message)
 
         # Return 'result' response
         return resp['result'] if 'result' in resp else None
