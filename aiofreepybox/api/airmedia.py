@@ -40,11 +40,18 @@ class Airmedia:
     async def send_airmedia(self, receiver_name, airmedia_data):
         """
         Send airmedia
+
+        receiver_name : `str`
+        airmedia_data : `dict`
         """
         await self._access.post('airmedia/receivers/{receiver_name}/', airmedia_data)
 
-    async def update_airmedia_configuration(self, airmedia_configuration):
+    async def update_airmedia_configuration(self, airmedia_enabled):
         """
         Update airmedia configuration
+
+        airmedia_enabled : `bool`
         """
-        return await self._access.put('airmedia/config/', airmedia_configuration)
+        airmedia_configuration_data = self.airmedia_configuration_schema
+        airmedia_configuration_data['enabled'] = airmedia_enabled
+        return await self._access.put('airmedia/config/', airmedia_configuration_data)
