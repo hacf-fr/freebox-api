@@ -33,18 +33,26 @@ class Contact:
     async def add_contact(self, contact_data):
         """
         Add contact
+
+        contact_data : `dict`
         """
         return await self._access.post('contact/', contact_data)
 
     async def add_to_group(self, add_to_group):
         """
         Add to group
+
+        add_to_group : `dict`
         """
         return await self._access.post('contact/addtogroup', add_to_group)
 
     async def create_contact_object(self, contact_id, contact_data, contact_object_type=None):
         """
         Create contact object
+
+        contact_id : `int`
+        contact_data : `dict`
+        contact_object_type : `str`
         """
         if contact_object_type is None:
             contact_object_type = self.contact_object_type[0]
@@ -53,12 +61,17 @@ class Contact:
     async def create_group(self, group_data):
         """
         Create group
+
+        group_data : `dict`
         """
         return await self._access.post('group/', group_data)
 
     async def delete_contact_object(self, contact_id, contact_object_type=None):
         """
         Delete contact object
+
+        contact_id : `int`
+        contact_object_type : `str`
         """
         if contact_object_type is None:
             contact_object_type = self.contact_object_type[0]
@@ -67,12 +80,18 @@ class Contact:
     async def delete_group(self, group_id):
         """
         Delete group
+
+        group_id : `int`
         """
         await self._access.delete(f'group/{group_id}')
 
     async def edit_contact_object(self, contact_id, contact_data, contact_object_type=None):
         """
         Edit contact object
+
+        contact_id : `int`
+        contact_data : `dict`
+        contact_object_type : `str`
         """
         if contact_object_type is None:
             contact_object_type = self.contact_object_type[0]
@@ -87,12 +106,17 @@ class Contact:
     async def get_contact(self, contact_id):
         """
         Get contact
+
+        contact_id : `int`
         """
         return await self._access.get(f'contact/{contact_id}')
 
     async def get_contact_data(self, contact_id, contact_object_type=None):
         """
         Get contact data
+
+        contact_id : `int`
+        contact_object_type : `str`
         """
         if contact_object_type is None:
             contact_object_type = self.contact_object_type[0]
@@ -119,6 +143,8 @@ class Contact:
     async def get_group(self, group_id):
         """
         Get group
+
+        group_id : `int`
         """
         return await self._access.get(f'group/{group_id}')
 
@@ -131,29 +157,43 @@ class Contact:
     async def import_contacts_step1(self, import_contacts_vcard):
         """
         Import contacts step 1
+
+        import_contacts_vcard : `dict`
         """
         return await self._access.post('contact/import/step1/', import_contacts_vcard)
 
     async def import_contacts_step2(self, import_contacts):
         """
         Import contacts step 2
+
+        import_contacts : `dict`
         """
         return await self._access.post('contact/import/step2/', import_contacts)
 
-    async def remove_from_group(self, remove_from_group=add_to_group_schema):
+    async def remove_from_group(self, remove_from_group=None):
         """
         Remove from group
+
+        remove_from_group : `dict`
         """
+        if remove_from_group is None:
+            remove_from_group = self.add_to_group_schema
         return await self._access.post('contact/removefromgroup', remove_from_group)
 
     async def update_contact(self, contact_id, contact_data):
         """
         Update contact
+
+        contact_id : `int`
+        contact_data : `dict`
         """
         return await self._access.put(f'contact/{contact_id}', contact_data)
 
     async def update_contact_photo(self, contact_id, photo_url):
         """
         Update contact photo
+
+        contact_id : `int`
+        photo_url : `dict`
         """
         return await self._access.put(f'contact/{contact_id}/update_photo/', photo_url)
