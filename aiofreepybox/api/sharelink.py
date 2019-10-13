@@ -11,6 +11,8 @@ class Sharelink:
     async def create_share_link(self, share_link_data=None):
         """
         Create share link
+
+        share_link_data : `dict`
         """
         if share_link_data is None:
             share_link_data = self.share_link_data_schema
@@ -19,6 +21,8 @@ class Sharelink:
     async def delete_share_link(self, token):
         """
         Delete share link
+
+        token : `str`
         """
         await self._access.delete(f'share_link/{token}')
 
