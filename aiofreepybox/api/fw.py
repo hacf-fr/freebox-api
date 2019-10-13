@@ -32,18 +32,25 @@ class Fw:
     async def create_port_forwarding_configuration(self, port_forwarding_config):
         """
         Create port forwarding configuration
+
+        port_forwarding_config : `dict`
         """
         return await self._access.post('fw/redir/', port_forwarding_config)
 
     async def delete_port_forwarding_configuration(self, config_id):
         """
         Delete port forwarding configuration
+
+        config_id : `int`
         """
         await self._access.delete(f'fw/redir/{config_id}')
 
     async def edit_incoming_port_configuration(self, port_id, incoming_port_configuration_data):
         """
         Edit incoming port configuration
+
+        port_id : `int`
+        incoming_port_configuration_data : `dict`
         """
         return await self._access.put(f'fw/incoming/{port_id}', incoming_port_configuration_data)
 
@@ -68,6 +75,8 @@ class Fw:
     async def set_dmz_configuration(self, dmz_configuration=None):
         """
         Set dmz configuration
+
+        dmz_configuration : `dict`
         """
         if dmz_configuration is None:
             dmz_configuration = self.dmz_configuration_schema
