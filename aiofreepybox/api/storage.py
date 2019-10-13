@@ -10,12 +10,17 @@ class Storage:
     async def check_partition(self, id):
         """
         Check partition
+
+        id : `int`
         """
         return await self._access.put(f'storage/partition/{id}/check')
 
     async def eject_disk(self, disk_id, eject_data=None):
         """
         Eject storage disk
+
+        disk_id : `int`
+        eject_data : `dict`
         """
         if eject_data is None:
             eject_data = self.eject_schema
@@ -24,6 +29,9 @@ class Storage:
     async def format_partition(self, id, format_data):
         """
         Format partition
+
+        id : `int`
+        format_data : `dict`
         """
         return await self._access.put(f'storage/partition/{id}/format', format_data)
 
@@ -36,6 +44,8 @@ class Storage:
     async def get_disk(self, id):
         """
         Get disk
+
+        id : `int`
         """
         return await self._access.get(f'storage/disk/{id}')
 
@@ -48,6 +58,8 @@ class Storage:
     async def get_partition(self, id):
         """
         Get partition
+
+        id : `int`
         """
         return await self._access.get(f'storage/partition/{id}')
 
@@ -60,6 +72,8 @@ class Storage:
     async def get_raid(self, id=0):
         """
         Get raid
+
+        id : `int`
         """
         return await self._access.get(f'storage/raid/{id}')
 
