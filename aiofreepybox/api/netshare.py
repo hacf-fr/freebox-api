@@ -49,11 +49,15 @@ class Netshare:
     async def set_afp_configuration(self, afp_configuration):
         """
         Set afp configuration
+
+        afp_configuration : `dict`
         """
         return await self._access.put('netshare/afp/', afp_configuration)
 
     async def set_samba_configuration(self, samba_configuration):
         """
         Set samba configuration
+
+        samba_configuration : `dict`
         """
         return await self._access.put('netshare/samba/', samba_configuration)
