@@ -6,6 +6,8 @@ class Upload:
     async def cancel_upload(self, upload_id):
         """
         Cancel upload
+
+        upload_id : `int`
         """
         await self._access.delete(f'upload/{upload_id}/cancel')
 
@@ -18,6 +20,8 @@ class Upload:
     async def delete_upload(self, upload_id):
         """
         Delete upload
+
+        upload_id : `int`
         """
         await self._access.delete(f'upload/{upload_id}')
 
@@ -30,6 +34,8 @@ class Upload:
     async def get_upload(self, upload_id):
         """
         Get upload
+
+        upload_id : `int`
         """
         return await self._access.get(f'upload/{upload_id}')
 
