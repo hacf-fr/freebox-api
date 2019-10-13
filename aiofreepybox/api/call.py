@@ -13,6 +13,8 @@ class Call:
     async def delete_call_log(self, log_id):
         """
         Delete call log
+
+        log_id : `int`
         """
         await self._access.delete(f'call/log/{log_id}')
 
@@ -30,10 +32,13 @@ class Call:
         logger.warning('Using deprecated get_call_list, please use get_call_log instead')
         return await self.get_call_log()
 
-    async def mark_call_log_as_read(self, log_id, mark_call_log_as_read_data=None):
+    async def mark_call_log_as_read(self, log_id, mark_call_log_as_new=False):
         """
         Mark call log as read
+
+        log_id : `int`
+        mark_call_log_as_new : `bool`
         """
-        if mark_call_log_as_read_data is None:
-            mark_call_log_as_read_data = self.mark_call_log_as_read_data_schema
+        mark_call_log_as_read_data = self.mark_call_log_as_read_data_schema
+        mark_call_log_as_read_data['new'] = mark_call_log_as_new
         return await self._access.put(f'call/log/{log_id}', mark_call_log_as_read_data)
