@@ -49,48 +49,67 @@ class Vpn:
     async def create_vpn_client_configurations(self, vpn_client_configuration):
         """
         Create vpn client configurations
+
+        vpn_client_configuration : `dict`
         """
         return await self._access.post('vpn_client/config/', vpn_client_configuration)
 
     async def create_vpn_user(self, vpn_user_data):
         """
         Create vpn user
+
+        vpn_user_data : `dict`
         """
         return await self._access.post('vpn/user/', vpn_user_data)
 
     async def delete_vpn_client_configurations(self, config_id):
         """
         Delete vpn client configurations
+
+        config_id : `int`
         """
         return await self._access.delete(f'vpn_client/config/{config_id}')
 
     async def delete_vpn_server_connection(self, connection_id):
         """
         Delete vpn server connection
+
+        connection_id : `int`
         """
         return await self._access.delete(f'vpn/connection/{connection_id}')
 
     async def delete_vpn_user(self, user_login):
         """
         Delete vpn user
+
+        user_login : `str`
         """
         await self._access.delete(f'vpn/user/{user_login}')
 
     async def download_vpn_user_configuration(self, server_name, user_login):
         """
         Download vpn user configuration
+
+        server_name : `str`
+        user_login : `str`
         """
         return await self._access.get(f'vpn/download_config/{server_name}/{user_login}')
 
     async def edit_vpn_client_configurations(self, config_id, vpn_client_configuration):
         """
         Edit vpn client configurations
+
+        config_id : `int`
+        vpn_client_configuration : `dict`
         """
         return await self._access.put(f'vpn_client/config/{config_id}', vpn_client_configuration)
 
     async def edit_vpn_server_configuration(self, vpn_server_id, vpn_server_configuration):
         """
         Edit vpn server configurations
+
+        vpn_server_id : `int`
+        vpn_server_configuration : `dict`
         """
         return await self._access.put(f'vpn/{vpn_server_id}/config/', vpn_server_configuration)
 
@@ -121,6 +140,8 @@ class Vpn:
     async def get_vpn_server_configuration(self, vpn_server_id):
         """
         Get vpn server configuration
+
+        vpn_server_id : `int`
         """
         return await self._access.get(f'vpn/{vpn_server_id}/config/')
 
