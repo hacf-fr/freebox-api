@@ -86,6 +86,28 @@ class Home:
         """
         return await self._access.get('camera')
 
+    async def get_camera_configuration(self):
+        """
+        Get camera configuration
+        """
+        return await self._access.get('camera/config')
+
+    async def set_camera_configuration(self, camera_configuration):
+        """
+        Set camera configuration
+
+        camera_configuration : `dict`
+        """
+        await self._access.put('camera/config', camera_configuration)
+
+    async def get_camera_records(self, camera_id):
+        """
+        Get camera records
+
+        camera_id : `int`
+        """
+        return await self._access.get(f'camera/{camera_id}/records')
+
     async def get_camera_snapshot(self, camera_index=0, size=4, quality=5):
         """
         Get camera snapshot
