@@ -12,5 +12,7 @@ class Upnpav:
     async def set_configuration(self, configuration):
         """
         Set upnpav configuration
+
+        configuration : `dict`
         """
         return await self._access.put('upnpav/config/', configuration)

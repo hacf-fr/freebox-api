@@ -12,5 +12,7 @@ class Freeplug:
     async def reset_freeplug(self, freeplug_id):
         """
         Reset freeplug
+
+        freeplug_id : `int`
         """
         await self._access.post(f'freeplug/{freeplug_id}/reset/')

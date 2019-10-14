@@ -52,12 +52,16 @@ class Connection:
     async def set_config(self, connection_configuration):
         """
         Update connection configuration
+
+        connection_configuration : `dict`
         """
         await self._access.put('connection/config/', connection_configuration)
 
     async def set_lte_config(self, lte_configuration_data=None):
         """
         Update lte connection configuration
+
+        lte_configuration_data : `dict`
         """
         if lte_configuration_data is None:
             lte_configuration_data = self.lte_configuration_data_schema

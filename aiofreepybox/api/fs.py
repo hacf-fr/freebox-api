@@ -20,6 +20,8 @@ class Fs:
     async def cd(self, path):
         '''
         Changes the current directory
+
+        path : `str`
         '''
         if await self._path_exists(path):
             self._path = os.path.join(self._path, path)
@@ -29,6 +31,8 @@ class Fs:
     async def _path_exists(self, path):
         '''
         Returns True if the path exists
+
+        path : `str`
         '''
         try:
             await self.get_file_info(os.path.join(self._path, path))
@@ -51,6 +55,8 @@ class Fs:
     async def list_file(self, path):
         '''
         Returns the list of files for the given path
+
+        path : `str`
         '''
         path_b64 = base64.b64encode(path.encode('utf-8')).decode('utf-8')
         return await self._access.get('fs/ls/{0}'.format(path_b64))
@@ -58,6 +64,8 @@ class Fs:
     async def get_file_info(self, path):
         '''
         Returns information for the given path
+
+        path : `str`
         '''
         path_b64 = base64.b64encode(path.encode('utf-8')).decode('utf-8')
         return await self._access.get('fs/ls/{0}'.format(path_b64))

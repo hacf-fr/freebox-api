@@ -32,18 +32,25 @@ class Dhcp:
     async def create_dhcp_static_lease(self, static_lease):
         """
         Create dhcp static lease
+
+        static_lease : `dict`
         """
         return await self._access.post('dhcp/static_lease/', static_lease)
 
     async def delete_dhcp_static_lease(self, lease_id):
         """
         Delete dhcp static lease
+
+        lease_id : `int`
         """
         await self._access.delete(f'dhcp/static_lease/{lease_id}')
 
     async def edit_dhcp_static_lease(self, lease_id, static_lease):
         """
         Edit dhcp static lease
+
+        lease_id : `int`
+        static_lease : `dict`
         """
         return await self._access.put(f'dhcp/static_lease/{lease_id}', static_lease)
 
@@ -56,6 +63,8 @@ class Dhcp:
     async def set_config(self, dhcp_configuration):
         """
         Update DHCP configuration
+
+        dhcp_configuration : `dict`
         """
         return await self._access.put('dhcp/config/', dhcp_configuration)
 
@@ -68,6 +77,8 @@ class Dhcp:
     async def set_v6_config(self, dhcp_v6_configuration_data):
         """
         Update DHCP v6 configuration
+
+        dhcp_v6_configuration_data : `dict`
         """
         return await self._access.put('dhcpv6/config/', dhcp_v6_configuration_data)
 

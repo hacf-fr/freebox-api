@@ -18,6 +18,8 @@ class Lcd:
     async def set_configuration(self, lcd_config=None):
         """
         Set configuration
+
+        lcd_config : `dict`
         """
         if lcd_config is None:
             lcd_config = self.lcd_config_schema

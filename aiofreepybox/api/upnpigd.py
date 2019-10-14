@@ -6,6 +6,8 @@ class Upnpigd:
     async def delete_redir(self, redir_id):
         """
         Deletes the given upnpigd redirection
+
+        redir_id : `int`
         """
         return await self._access.delete(f'upnpigd/redir/{redir_id}')
 
@@ -24,5 +26,7 @@ class Upnpigd:
     async def update_configuration(self, upnpigd_config):
         """
         Update the upnpigd configuration
+
+        upnpigd_config : `dict`
         """
         return await self._access.put('upnpigd/config/', upnpigd_config)

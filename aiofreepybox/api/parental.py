@@ -13,24 +13,34 @@ class Parental:
     async def create_parental_filter(self, parental_filter):
         """
         Create parental filter
+
+        parental_filter : `dict`
         """
         return await self._access.post('parental/filter/', parental_filter)
 
     async def delete_parental_filter(self, filter_id):
         """
         Delete parental filter
+
+        filter_id : `int`
         """
         return await self._access.delete(f'parental/filter/{filter_id}')
 
     async def edit_parental_filter(self, filter_id, parental_filter):
         """
         Edit parental filter
+
+        filter_id : `int`
+        parental_filter : `dict`
         """
         return await self._access.put(f'parental/filter/{filter_id}', parental_filter)
 
     async def edit_parental_filter_planning(self, filter_id, parental_filter_planning):
         """
         Edit parental filter planning
+
+        filter_id : `int`
+        parental_filter_planning : `dict`
         """
         return await self._access.put(f'parental/filter/{filter_id}/planning/', parental_filter_planning)
 
@@ -43,6 +53,8 @@ class Parental:
     async def get_parental_filter_planning(self, filter_id):
         """
         Get parental filter planning
+
+        filter_id : `int`
         """
         return await self._access.get(f'parental/filter/{filter_id}/planning/')
 
@@ -55,5 +67,7 @@ class Parental:
     async def set_parental_control_configuration(self, parental_control_configuration):
         """
         Set parental control configuration
+
+        parental_control_configuration : `dict`
         """
         return await self._access.put('parental/config/', parental_control_configuration)

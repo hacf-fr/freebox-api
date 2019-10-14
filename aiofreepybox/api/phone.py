@@ -29,6 +29,8 @@ class Phone:
     async def start_dect_configuration(self, dect_configuration=None):
         """
         Start dect configuration
+
+        dect_configuration : `dict`
         """
         if dect_configuration is None:
             dect_configuration = self.dect_configuration_schema

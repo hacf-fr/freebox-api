@@ -42,24 +42,32 @@ class Wifi:
     async def create_wifi_custom_key(self, wifi_custom_key_data):
         """
         Create wifi custom key
+
+        wifi_custom_key_data : `dict`
         """
         return await self._access.post('wifi/custom_key/', wifi_custom_key_data)
 
     async def create_wifi_mac_filter(self, wifi_mac_filter):
         """
         Create wifi mac filter
+
+        wifi_mac_filter : `dict`
         """
         return await self._access.post('wifi/mac_filter/', wifi_mac_filter)
 
     async def delete_wifi_custom_key(self, key_id):
         """
         Delete wifi custom key
+
+        key_id : `int`
         """
         return await self._access.delete(f'wifi/custom_key/{key_id}')
 
     async def delete_wifi_mac_filter(self, filter_id):
         """
         Delete wifi mac filter
+
+        key_id : `int`
         """
         return await self._access.delete(f'wifi/mac_filter/{filter_id}')
 
@@ -72,54 +80,76 @@ class Wifi:
     async def edit_wifi_access_point(self, ap_id, wifi_ap_configuration_data):
         """
         Edit wifi access point
+
+        ap_id : `int`
+        wifi_ap_configuration_data : `dict`
         """
         return await self._access.put(f'wifi/ap/{ap_id}', wifi_ap_configuration_data)
 
     async def edit_wifi_bss(self, bss_id, wifi_bss_data):
         """
         Edit wifi bss
+
+        bss_id : `int`
+        wifi_bss_data : `dict`
         """
         return await self._access.put(f'wifi/bss/{bss_id}', wifi_bss_data)
 
     async def edit_wifi_mac_filter(self, mac_filter, wifi_mac_filter):
         """
         Edit wifi mac filter
+
+        mac_filter : `str`
+        wifi_mac_filter : `dict`
         """
         return await self._access.put(f'wifi/mac_filter/{mac_filter}', wifi_mac_filter)
 
     async def get_ap(self, ap_id):
         """
         Get wifi access point with the specific id
+
+        ap_id : `int`
         """
         return await self._access.get(f'wifi/ap/{ap_id}')
 
     async def get_ap_allowed_channel(self, ap_id):
         """
         Get allowed channels of the wifi access point
+
+        ap_id : `int`
         """
         return await self._access.get(f'wifi/ap/{ap_id}/allowed_channel_comb/')
 
     async def get_wifi_access_point_channel_usage(self, ap_id):
         """
         get wifi access point channel usage
+
+        ap_id : `int`
         """
         return await self._access.get(f'wifi/ap/{ap_id}/channel_usage/')
 
     async def get_ap_neighbors(self, ap_id):
         """
         Get the list of Wifi neighbors seen by the AP
+
+        ap_id : `int`
         """
         return await self._access.get(f'wifi/ap/{ap_id}/neighbors/')
 
     async def get_wifi_access_point_station(self, ap_id, mac):
         """
         get wifi access point station
+
+        ap_id : `int`
+        mac : `str`
         """
         return await self._access.get(f'wifi/ap/{ap_id}/stations/{mac}')
 
     async def get_station_list(self, ap_id):
         """
         Get the list of Wifi Stations associated to the AP
+
+        ap_id : `int`
         """
         return await self._access.get(f'wifi/ap/{ap_id}/stations/')
 
@@ -168,12 +198,16 @@ class Wifi:
     async def get_wps_session(self, session_id):
         """
         Get wps session
+
+        session_id : `int`
         """
         return await self._access.get(f'wifi/wps/sessions/{session_id}')
 
     async def get_wps_sessions(self, session_id):
         """
         Get wps sessions
+
+        session_id : `int`
         """
         return await self._access.get('wifi/wps/sessions/')
 
@@ -186,29 +220,39 @@ class Wifi:
     async def set_global_config(self, global_configuration):
         """
         Update wifi global configuration
+
+        global_configuration : `dict`
         """
         return await self._access.put('wifi/config/', global_configuration)
 
     async def set_wifi_planning(self, wifi_planning):
         """
         Set wifi planning
+
+        wifi_planning : `dict`
         """
         return await self._access.put('wifi/planning/', wifi_planning)
 
     async def start_wifi_access_point_neighbors_scan(self, ap_id):
         """
         Start wifi access point neighbors scan
+
+        ap_id : `int`
         """
         await self._access.post(f'wifi/ap/{ap_id}/neighbors/scan/')
 
     async def start_wps_session(self, start_wps_session_data):
         """
         Start wps session
+
+        start_wps_session_data : `dict`
         """
         return await self._access.post('wifi/wps/start/', start_wps_session_data)
 
     async def stop_wps_session(self, stop_wps_session_data):
         """
         stop wps session
+
+        stop_wps_session_data : `dict`
         """
         await self._access.post('wifi/wps/stop/', stop_wps_session_data)
