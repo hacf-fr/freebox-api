@@ -139,7 +139,7 @@ class Fs:
         Get the hash value
 
         To get the hash,
-        the task must have succeeded and also to be in the state “done”.
+        the task must have succeeded and also to be in the state "done".
 
         hash_id : `int`
         """
