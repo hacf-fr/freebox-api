@@ -69,7 +69,7 @@ class Storage:
         """
         return await self._access.get('storage/partition/')
 
-    async def get_raid(self, id=0):
+    async def get_raid(self, id):
         """
         Get raid
 
