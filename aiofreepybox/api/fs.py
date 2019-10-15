@@ -169,7 +169,7 @@ class Fs:
         Returns the list of files for the given path
         """
         path_b64 = base64.b64encode(path.encode('utf-8')).decode('utf-8')
-        return await self._access.get(f'fs/ls/{path_b64}?removeHidden={remove_hidden}&countSubFolder={count_sub_folder}')
+        return await self._access.get(f'fs/ls/{path_b64}?removeHidden={1 if remove_hidden else 0}&countSubFolder={1 if count_sub_folder else 0}')
 
     async def ls(self):
         """
