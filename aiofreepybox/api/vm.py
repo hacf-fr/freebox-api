@@ -6,6 +6,13 @@ class Vm:
     def __init__(self, access):
         self._access = access
 
+    oses = [
+        'fedora',
+        'debian',
+        'ubuntu',
+        'freebsd'
+    ]
+
     disk_info_schema = {
         'disk_path': ''
     }
