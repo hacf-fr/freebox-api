@@ -47,6 +47,7 @@ class Freepybox:
         self.api_version_target = 'v6'
         self.timeout = timeout
         self.app_desc = app_desc
+        self.fbx_desc = {}
         self._access = None
 
     async def open(self, host='auto', port='auto'):
@@ -57,6 +58,27 @@ class Freepybox:
         if not self._is_app_desc_valid(self.app_desc):
             raise InvalidTokenError('Invalid application descriptor')
 
+        default_host = 'mafreebox.freebox.fr'
+        default_port = 443
+        secure = 's'
+
+        # Detect host, port and api_version
+        if host != 'auto':
+            default_host = host
+
+        if port != 'auto':
+            default_port = port
+            if default_port == 80:
+                secure = ''
+
+        # Checking host and port
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex((default_host, default_port))
+        if result != 0:
+            raise HttpRequestError(f'Port {default_port} is closed, cannot detect freebox')
+        else:
+            sock.close()
+
         cert_path = os.path.join(os.path.dirname(__file__), 'freebox_certificates.pem')
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cafile=cert_path)
@@ -64,69 +86,35 @@ class Freepybox:
         conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
         self._session = aiohttp.ClientSession(connector=conn)
 
-        # Detect host, port and api_version
-        detect = [
-            host,
-            port,
-            self.api_version
-        ]
+        r = await self._session.get(f'http{secure}://{default_host}:{default_port}/api_version', timeout=self.timeout)
+        self.fbx_desc = await r.json()
 
-        if 'auto' in detect:
-            default_host = 'mafreebox.freebox.fr'
-            default_host_list = [
-                'auto',
-                'freeplayer.freebox.fr',
-                default_host
-            ]
-            secure = 's'
+        if host == 'auto':
+            host = self.fbx_desc['api_domain']
 
-            if host not in default_host_list:
-                default_host = host
-                logger.debug(f'Host set to {host}')
-                secure = ''
+        if port == 'auto':
+            port = self.fbx_desc['https_port']
 
-                if port == 'auto':
-                    logger.warning('Port is set to auto, but host is not in default host list, checking port 80')
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    result = sock.connect_ex((default_host, 80))
-                    if result != 0:
-                        raise HttpRequestError('Port 80 is closed, cannot detect freebox')
+        server_version = self.fbx_desc['api_version'].split('.')[0]
+        short_api_version_target = self.api_version_target[1:]
+        short_api_version = self.api_version[1:]
 
-            r = await self._session.get(f'http{secure}://{default_host}/api_version', timeout=self.timeout)
-            resp = await r.json()
-
-            if host == 'auto':
-                host = resp['api_domain']
-                logger.debug(f'Host set to {host}')
-
-            if port == 'auto':
-                port = resp['https_port']
-                logger.debug(f'Port set to {port}')
-
-            server_version = resp['api_version'].split('.')[0]
-            short_api_version_target = self.api_version_target[1:]
-            short_api_version = self.api_version[1:]
-
-            # Check auto api version
-            if self.api_version == 'auto':
-                self.api_version = self.api_version_target
-                # Check server version
-                if server_version > short_api_version_target:
-                    logger.debug(f'Freebox server supports a newer api version: v{server_version}, check api_version ({self.api_version}) for support.')
-            # Check server api version
-            elif self.api_version == 'server':
-                self.api_version = f'v{server_version}'
-                logger.debug(f'API version set to server version {self.api_version}')
-                if server_version > short_api_version_target:
-                    logger.warning(f'Using new API version {self.api_version}, results may vary ')
-            # Check user api version
-            elif short_api_version < short_api_version_target and int(short_api_version) > 0:
-                logger.warning(f'Using deprecated API version {self.api_version}, results may vary ')
-            elif server_version < short_api_version:
-                logger.warning(f'Freebox server does not support this API version ({self.api_version}), downgrading to v{server_version}.')
-                self.api_version = f'v{server_version}'
-            elif short_api_version != short_api_version_target:
-                logger.warning(f'User defined API version set to {self.api_version}, results may vary')
+        # Check auto api version
+        if self.api_version == 'auto':
+            self.api_version = self.api_version_target
+        # Check server api version
+        elif self.api_version == 'server':
+            self.api_version = f'v{server_version}'
+            if server_version > short_api_version_target:
+                logger.warning(f'Using new API version {self.api_version}, results may vary ')
+        # Check user api version
+        elif short_api_version < short_api_version_target and int(short_api_version) > 0:
+            logger.warning(f'Using deprecated API version {self.api_version}, results may vary ')
+        elif server_version < short_api_version:
+            logger.warning(f'Freebox server does not support this API version ({self.api_version}), downgrading to v{server_version}.')
+            self.api_version = f'v{server_version}'
+        elif short_api_version != short_api_version_target:
+            logger.warning(f'User defined API version set to {self.api_version}, results may vary')
 
         self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
 
@@ -286,7 +274,8 @@ class Freepybox:
         Returns base url for HTTPS requests
         :return:
         """
-        return f'https://{host}:{port}/api/{freebox_api_version}/'
+        abu = self.fbx_desc['api_base_url']
+        return f'https://{host}:{port}{abu}{freebox_api_version}/'
 
     def _is_app_desc_valid(self, app_desc):
         """
