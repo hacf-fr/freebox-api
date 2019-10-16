@@ -35,98 +35,119 @@ from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
 # Token file default location
-token_filename = 'app_auth'
+token_filename = "app_auth"
 token_dir = os.path.dirname(os.path.abspath(__file__))
 token_file = os.path.join(token_dir, token_filename)
 
 # Default application descriptor
 app_desc = {
-    'app_id': 'aiofpbx',
-    'app_name': 'aiofreepybox',
-    'app_version': aiofreepybox.__version__,
-    'device_name': socket.gethostname()
-    }
+    "app_id": "aiofpbx",
+    "app_name": "aiofreepybox",
+    "app_version": aiofreepybox.__version__,
+    "device_name": socket.gethostname()
+}
 
 logger = logging.getLogger(__name__)
 
 
 class Freepybox:
-    def __init__(self, app_desc=app_desc, token_file=token_file, api_version='auto', timeout=10):
-        self.token_file = token_file
+    """
+    This python library is implementing the freebox OS API.
+    It handles the authentication process and provides a raw access to the freebox API in an asynchronous manner.
+    """
+
+    def __init__(
+        self, app_desc=app_desc, token_file=token_file, api_version="auto", timeout=10
+    ):
+        self._access = None
         self.api_version = api_version
-        self.api_version_target = 'v6'
-        self.timeout = timeout
+        self.api_version_target = "v6"
         self.app_desc = app_desc
         self.fbx_desc = {}
-        self._access = None
+        self.timeout = timeout
+        self.token_file = token_file
 
-    async def open(self, host='auto', port='auto'):
+    async def open(self, host="auto", port="auto"):
         """
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
         """
         if not self._is_app_desc_valid(self.app_desc):
-            raise InvalidTokenError('Invalid application descriptor')
-
-        default_host = 'mafreebox.freebox.fr'
-        default_port = 443
-        secure = 's'
+            raise InvalidTokenError("Invalid application descriptor")
 
         # Detect host, port and api_version
-        if host != 'auto':
-            default_host = host
-
-        if port != 'auto':
-            default_port = port
-            if default_port == 80:
-                secure = ''
+        if host != "auto" and port == "auto":
+            # Fallback to http
+            port = 80
+        default_host = host if host != "auto" else "mafreebox.freebox.fr"
+        default_port = port if port != "auto" else 443
+        s = "s" if default_port != 80 else ""
 
         # Checking host and port
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex((default_host, default_port))
         if result != 0:
-            raise HttpRequestError(f'Port {default_port} is closed, cannot detect freebox')
+            raise HttpRequestError(
+                f"Port {default_port} is closed, cannot detect freebox"
+            )
         else:
             sock.close()
 
-        cert_path = os.path.join(os.path.dirname(__file__), 'freebox_certificates.pem')
+        # Session setup
+        cert_path = os.path.join(os.path.dirname(__file__), "freebox_certificates.pem")
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cafile=cert_path)
-
         conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
         self._session = aiohttp.ClientSession(connector=conn)
-
-        r = await self._session.get(f'http{secure}://{default_host}:{default_port}/api_version', timeout=self.timeout)
+        r = await self._session.get(
+            f"http{s}://{default_host}:{default_port}/api_version", timeout=self.timeout
+        )
         self.fbx_desc = await r.json()
 
-        if host == 'auto':
-            host = self.fbx_desc['api_domain']
+        # Setting host and port
+        host = (
+            self.fbx_desc["api_domain"]
+            if host == "auto" or port == 80
+            else default_host
+        )
+        port = self.fbx_desc["https_port"] if port in ["auto", 80] else default_port
 
-        if port == 'auto':
-            port = self.fbx_desc['https_port']
-
-        server_version = self.fbx_desc['api_version'].split('.')[0]
+        # Check auto and server api version
+        server_version = self.fbx_desc["api_version"].split(".")[0]
         short_api_version_target = self.api_version_target[1:]
-        short_api_version = self.api_version[1:]
+        self.api_version = (
+            self.api_version_target
+            if self.api_version == "auto"
+            else f"v{server_version}"
+            if self.api_version == "server"
+            else self.api_version
+        )
 
-        # Check auto api version
-        if self.api_version == 'auto':
-            self.api_version = self.api_version_target
-        # Check server api version
-        elif self.api_version == 'server':
-            self.api_version = f'v{server_version}'
-            if server_version > short_api_version_target:
-                logger.warning(f'Using new API version {self.api_version}, results may vary ')
         # Check user api version
-        elif short_api_version < short_api_version_target and int(short_api_version) > 0:
-            logger.warning(f'Using deprecated API version {self.api_version}, results may vary ')
-        elif server_version < short_api_version:
-            logger.warning(f'Freebox server does not support this API version ({self.api_version}), downgrading to v{server_version}.')
-            self.api_version = f'v{server_version}'
-        elif short_api_version != short_api_version_target:
-            logger.warning(f'User defined API version set to {self.api_version}, results may vary')
+        short_api_version = self.api_version[1:]
+        if (
+            short_api_version_target < server_version
+            and short_api_version == server_version
+        ):
+            logger.warning(
+                f"Using new API version {self.api_version}, results may vary "
+            )
+        elif (
+            short_api_version < short_api_version_target and int(short_api_version) > 0
+        ):
+            logger.warning(
+                f"Using deprecated API version {self.api_version}, results may vary "
+            )
+        elif short_api_version > server_version:
+            logger.warning(
+                f"Freebox server does not support this API version ({self.api_version}), downgrading to {self.api_version_target}."
+            )
+            self.api_version = self.api_version_target
 
-        self._access = await self._get_freebox_access(host, port, self.api_version, self.token_file, self.app_desc, self.timeout)
+        # Get API access
+        self._access = await self._get_freebox_access(
+            host, port, self.api_version, self.token_file, self.app_desc, self.timeout
+        )
 
         # Instantiate freebox modules
         self.tv = Tv(self._access)
@@ -155,9 +176,9 @@ class Freepybox:
         Close the freebox session
         """
         if self._access is None:
-            raise NotOpenError('Freebox is not open')
+            raise NotOpenError("Freebox is not open")
 
-        await self._access.post('login/logout')
+        await self._access.post("login/logout")
         await self._session.close()
 
     async def get_permissions(self):
@@ -179,7 +200,9 @@ class Freepybox:
         else:
             return None
 
-    async def _get_freebox_access(self, host, port, api_version, token_file, app_desc, timeout=10):
+    async def _get_freebox_access(
+        self, host, port, api_version, token_file, app_desc, timeout=10
+    ):
         """
         Returns an access object used for HTTP requests.
         """
@@ -187,12 +210,12 @@ class Freepybox:
         base_url = self._get_base_url(host, port, api_version)
 
         # Read stored application token
-        logger.info('Read application authorization file')
+        logger.info("Read application authorization file")
         app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
 
         # If no valid token is stored then request a token to freebox api - Only for LAN connection
         if app_token is None or file_app_desc != app_desc:
-            logger.info('No valid authorization file found')
+            logger.info("No valid authorization file found")
 
             # Get application token from the freebox
             app_token, track_id = await self._get_app_token(base_url, app_desc, timeout)
@@ -200,32 +223,38 @@ class Freepybox:
             # Check the authorization status
             out_msg_flag = False
             status = None
-            while(status != 'granted'):
-                status = await self._get_authorization_status(base_url, track_id, timeout)
+            while status != "granted":
+                status = await self._get_authorization_status(
+                    base_url, track_id, timeout
+                )
 
                 # denied status = authorization failed
-                if status == 'denied':
-                    raise AuthorizationError('The app token is invalid or has been revoked')
+                if status == "denied":
+                    raise AuthorizationError(
+                        "The app token is invalid or has been revoked"
+                    )
 
                 # Pending status : user must accept the app request on the freebox
-                elif status == 'pending':
+                elif status == "pending":
                     if not out_msg_flag:
                         out_msg_flag = True
-                        print('Please confirm the authentification on the freebox')
+                        print("Please confirm the authentification on the freebox")
                     await asyncio.sleep(1)
 
                 # timeout = authorization failed
-                elif status == 'timeout':
-                    raise AuthorizationError('Authorization timed out')
+                elif status == "timeout":
+                    raise AuthorizationError("Authorization timed out")
 
-            logger.info('Application authorization granted')
+            logger.info("Application authorization granted")
 
             # Store application token in file
             self._writefile_app_token(app_token, track_id, app_desc, token_file)
-            logger.info(f'Application token file was generated: {token_file}')
+            logger.info(f"Application token file was generated: {token_file}")
 
         # Create freebox http access module
-        fbx_access = Access(self._session, base_url, app_token, app_desc['app_id'], timeout)
+        fbx_access = Access(
+            self._session, base_url, app_token, app_desc["app_id"], timeout
+        )
 
         return fbx_access
 
@@ -239,10 +268,10 @@ class Freepybox:
             granted 	the app_token is valid and can be used to open a session
             denied 	    the user denied the authorization request
         """
-        url = urljoin(base_url, f'login/authorize/{track_id}')
+        url = urljoin(base_url, f"login/authorize/{track_id}")
         r = await self._session.get(url, timeout=timeout)
         resp = await r.json()
-        return resp['result']['status']
+        return resp["result"]["status"]
 
     async def _get_app_token(self, base_url, app_desc, timeout=10):
         """
@@ -250,28 +279,29 @@ class Freepybox:
         Returns (app_token, track_id)
         """
         # Get authentification token
-        url = urljoin(base_url, 'login/authorize/')
+        url = urljoin(base_url, "login/authorize/")
         data = json.dumps(app_desc)
         r = await self._session.post(url, data=data, timeout=timeout)
         resp = await r.json()
 
         # raise exception if resp.success != True
-        if not resp.get('success'):
-            raise AuthorizationError('Authorization failed (APIResponse: {})'
-                                     .format(json.dumps(resp)))
+        if not resp.get("success"):
+            raise AuthorizationError(
+                "Authorization failed (APIResponse: {})".format(json.dumps(resp))
+            )
 
-        app_token = resp['result']['app_token']
-        track_id = resp['result']['track_id']
+        app_token = resp["result"]["app_token"]
+        track_id = resp["result"]["track_id"]
 
-        return(app_token, track_id)
+        return app_token, track_id
 
     def _writefile_app_token(self, app_token, track_id, app_desc, file):
         """
         Store the application token in g_app_auth_file file
         """
-        d = {**app_desc, 'app_token': app_token, 'track_id': track_id}
+        d = {**app_desc, "app_token": app_token, "track_id": track_id}
 
-        with open(file, 'w') as f:
+        with open(file, "w") as f:
             json.dump(d, f)
 
     def _readfile_app_token(self, file):
@@ -280,26 +310,32 @@ class Freepybox:
         Returns (app_token, track_id, app_desc)
         """
         try:
-            with open(file, 'r') as f:
+            with open(file, "r") as f:
                 d = json.load(f)
-                app_token = d['app_token']
-                track_id = d['track_id']
-                app_desc = {k: d[k] for k in ('app_id', 'app_name', 'app_version', 'device_name') if k in d}
-                return (app_token, track_id, app_desc)
+                app_token = d["app_token"]
+                track_id = d["track_id"]
+                app_desc = {
+                    k: d[k]
+                    for k in ("app_id", "app_name", "app_version", "device_name")
+                    if k in d
+                }
+                return app_token, track_id, app_desc
 
         except FileNotFoundError:
-            return (None, None, None)
+            return None, None, None
 
     def _get_base_url(self, host, port, freebox_api_version):
         """
         Returns base url for HTTPS requests
         :return:
         """
-        abu = self.fbx_desc['api_base_url']
-        return f'https://{host}:{port}{abu}{freebox_api_version}/'
+        abu = self.fbx_desc["api_base_url"]
+        return f"https://{host}:{port}{abu}{freebox_api_version}/"
 
     def _is_app_desc_valid(self, app_desc):
         """
         Check validity of the application descriptor
         """
-        return all(k in app_desc for k in ('app_id', 'app_name', 'app_version', 'device_name'))
+        return all(
+            k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
+        )
