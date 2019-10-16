@@ -54,6 +54,9 @@ class Freepybox:
     """
     This python library is implementing the freebox OS API.
     It handles the authentication process and provides a raw access to the freebox API in an asynchronous manner.
+
+    api_version : "auto", "server" or "v(1-7)"
+        , Default to "auto"
     """
 
     def __init__(
@@ -71,17 +74,25 @@ class Freepybox:
         """
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
+
+        host : `str`
+            , Default to "auto"
+        port : `str`
+            , Default to "auto"
         """
         if not self._is_app_desc_valid(self.app_desc):
             raise InvalidTokenError("Invalid application descriptor")
 
-        # Detect host, port and api_version
-        if host != "auto" and port == "auto":
-            # Fallback to http
-            port = 80
+        # Detect host, port and API version
         default_host = host if host != "auto" else "mafreebox.freebox.fr"
-        default_port = port if port != "auto" else 443
-        s = "s" if default_port != 80 else ""
+        default_port = (
+            port
+            if port != "auto"
+            else 80
+            if host != "auto" and port == "auto"
+            else 443
+        )
+        s = "" if default_port == 80 else "s"
 
         # Checking host and port
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -90,8 +101,7 @@ class Freepybox:
             raise HttpRequestError(
                 f"Port {default_port} is closed, cannot detect freebox"
             )
-        else:
-            sock.close()
+        sock.close()
 
         # Session setup
         cert_path = os.path.join(os.path.dirname(__file__), "freebox_certificates.pem")
@@ -107,12 +117,12 @@ class Freepybox:
         # Setting host and port
         host = (
             self.fbx_desc["api_domain"]
-            if host == "auto" or port == 80
+            if host == "auto" or default_port == 80
             else default_host
         )
         port = self.fbx_desc["https_port"] if port in ["auto", 80] else default_port
 
-        # Check auto and server api version
+        # Check auto and server API version
         server_version = self.fbx_desc["api_version"].split(".")[0]
         short_api_version_target = self.api_version_target[1:]
         self.api_version = (
