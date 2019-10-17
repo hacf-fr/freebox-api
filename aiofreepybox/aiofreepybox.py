@@ -89,7 +89,7 @@ class Freepybox:
             port
             if port != "auto"
             else 80
-            if host != "auto" and port == "auto"
+            if host != "auto"
             else 443
         )
         s = "" if default_port == 80 else "s"
