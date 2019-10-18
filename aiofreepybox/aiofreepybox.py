@@ -67,6 +67,7 @@ class Freepybox:
         self.api_version_target = "v6"
         self.app_desc = app_desc
         self.fbx_desc = {}
+        self.fbx_url = ""
         self.timeout = timeout
         self.token_file = token_file
 
@@ -121,41 +122,12 @@ class Freepybox:
             else default_host
         )
         port = self.fbx_desc["https_port"] if port in ["auto", 80] else default_port
+        self.fbx_url = self._get_base_url(host, port)
 
-        # Check auto and server API version
-        server_version = self.fbx_desc["api_version"].split(".")[0]
-        short_api_version_target = self.api_version_target[1:]
-        self.api_version = (
-            self.api_version_target
-            if self.api_version == "auto"
-            else f"v{server_version}"
-            if self.api_version == "server"
-            else self.api_version
-        )
-
-        # Check user api version
-        short_api_version = self.api_version[1:]
-        if (
-            short_api_version_target < server_version
-            and short_api_version == server_version
-        ):
-            logger.warning(
-                f"Using new API version {self.api_version}, results may vary "
-            )
-        elif (
-            short_api_version < short_api_version_target and int(short_api_version) > 0
-        ):
-            logger.warning(
-                f"Using deprecated API version {self.api_version}, results may vary "
-            )
-        elif short_api_version > server_version:
-            logger.warning(
-                f"Freebox server does not support this API version ({self.api_version}), downgrading to {self.api_version_target}."
-            )
-            self.api_version = self.api_version_target
+        self._check_api_version()
 
         # Get API access
-        self._access = await self._get_freebox_access(
+        self._access = await self._get_app_access(
             host, port, self.api_version, self.token_file, self.app_desc, self.timeout
         )
 
@@ -210,7 +182,40 @@ class Freepybox:
         else:
             return None
 
-    async def _get_freebox_access(
+    def _check_api_version(self):
+        # Check auto and server API version
+        server_version = self.fbx_desc["api_version"].split(".")[0]
+        short_api_version_target = self.api_version_target[1:]
+        self.api_version = (
+            self.api_version_target
+            if self.api_version == "auto"
+            else f"v{server_version}"
+            if self.api_version == "server"
+            else self.api_version
+        )
+
+        # Check user api version
+        short_api_version = self.api_version[1:]
+        if (
+            short_api_version_target < server_version
+            and short_api_version == server_version
+        ):
+            logger.warning(
+                f"Using new API version {self.api_version}, results may vary "
+            )
+        elif (
+            short_api_version < short_api_version_target and int(short_api_version) > 0
+        ):
+            logger.warning(
+                f"Using deprecated API version {self.api_version}, results may vary "
+            )
+        elif short_api_version > server_version:
+            logger.warning(
+                f"Freebox server does not support this API version ({self.api_version}), downgrading to {self.api_version_target}."
+            )
+            self.api_version = self.api_version_target
+
+    async def _get_app_access(
         self, host, port, api_version, token_file, app_desc, timeout=10
     ):
         """
@@ -268,21 +273,6 @@ class Freepybox:
 
         return fbx_access
 
-    async def _get_authorization_status(self, base_url, track_id, timeout):
-        """
-        Get authorization status of the application token
-        Returns:
-            unknown 	the app_token is invalid or has been revoked
-            pending 	the user has not confirmed the authorization request yet
-            timeout 	the user did not confirmed the authorization within the given time
-            granted 	the app_token is valid and can be used to open a session
-            denied 	    the user denied the authorization request
-        """
-        url = urljoin(base_url, f"login/authorize/{track_id}")
-        r = await self._session.get(url, timeout=timeout)
-        resp = await r.json()
-        return resp["result"]["status"]
-
     async def _get_app_token(self, base_url, app_desc, timeout=10):
         """
         Get the application token from the freebox
@@ -305,14 +295,43 @@ class Freepybox:
 
         return app_token, track_id
 
-    def _writefile_app_token(self, app_token, track_id, app_desc, file):
+    async def _get_authorization_status(self, base_url, track_id, timeout):
         """
-        Store the application token in g_app_auth_file file
+        Get authorization status of the application token
+        Returns:
+            unknown 	the app_token is invalid or has been revoked
+            pending 	the user has not confirmed the authorization request yet
+            timeout 	the user did not confirmed the authorization within the given time
+            granted 	the app_token is valid and can be used to open a session
+            denied 	    the user denied the authorization request
         """
-        d = {**app_desc, "app_token": app_token, "track_id": track_id}
+        url = urljoin(base_url, f"login/authorize/{track_id}")
+        r = await self._session.get(url, timeout=timeout)
+        resp = await r.json()
+        return resp["result"]["status"]
 
-        with open(file, "w") as f:
-            json.dump(d, f)
+    def _get_base_url(self, host, port, freebox_api_version=None):
+        """
+        Returns base url for HTTPS requests
+
+        host : `str`
+        port : `str`
+        freebox_api_version : `str`
+            , Default to `None`
+        """
+        if freebox_api_version is None:
+            return f"https://{host}:{port}"
+        else:
+            abu = self.fbx_desc["api_base_url"]
+            return f"https://{host}:{port}{abu}{freebox_api_version}/"
+
+    def _is_app_desc_valid(self, app_desc):
+        """
+        Check validity of the application descriptor
+        """
+        return all(
+            k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
+        )
 
     def _readfile_app_token(self, file):
         """
@@ -334,18 +353,11 @@ class Freepybox:
         except FileNotFoundError:
             return None, None, None
 
-    def _get_base_url(self, host, port, freebox_api_version):
+    def _writefile_app_token(self, app_token, track_id, app_desc, file):
         """
-        Returns base url for HTTPS requests
-        :return:
+        Store the application token in g_app_auth_file file
         """
-        abu = self.fbx_desc["api_base_url"]
-        return f"https://{host}:{port}{abu}{freebox_api_version}/"
+        d = {**app_desc, "app_token": app_token, "track_id": track_id}
 
-    def _is_app_desc_valid(self, app_desc):
-        """
-        Check validity of the application descriptor
-        """
-        return all(
-            k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
-        )
+        with open(file, "w") as f:
+            json.dump(d, f)
