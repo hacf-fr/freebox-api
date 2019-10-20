@@ -2,75 +2,53 @@ import base64
 
 
 class Downloads:
+    """
+    Downloads
+    """
 
     def __init__(self, access):
         self._access = access
 
     download_advanced_schema = {
-        'download_url_list': [''],
-        'username': '',
-        'password': '',
-        'recursive': False,
-        'download_dir': ''
+        "download_url_list": [""],
+        "username": "",
+        "password": "",
+        "recursive": False,
+        "download_dir": "",
     }
 
-    download_url_schema = {
-        'download_url': ''
-    }
+    download_url_schema = {"download_url": ""}
 
-    download_blacklist_data_schema = {
-        'host': '',
-        'expire': 0
-    }
+    download_blacklist_data_schema = {"host": "", "expire": 0}
 
-    rss_feed_data_schema = {
-        'url': ''
-    }
+    rss_feed_data_schema = {"url": ""}
 
-    new_download_tracker_data_schema = {
-        'announce': ''
-    }
+    new_download_tracker_data_schema = {"announce": ""}
 
-    download_file_priority = [
-        'no_dl',
-        'low',
-        'normal',
-        'high'
-    ]
+    download_file_priority = ["no_dl", "low", "normal", "high"]
 
-    download_file_status = [
-        'queued',
-        'error',
-        'done',
-        'downloading'
-    ]
+    download_file_status = ["queued", "error", "done", "downloading"]
 
-    download_ratio_schema = {
-        'ratio': 0
-    }
+    download_ratio_schema = {"ratio": 0}
 
     download_state = [
-        'stopped',
-        'queued',
-        'starting',
-        'downloading',
-        'stopping',
-        'error',
-        'done',
-        'checking',
-        'repairing',
-        'extracting',
-        'seeding',
-        'retry'
+        "stopped",
+        "queued",
+        "starting",
+        "downloading",
+        "stopping",
+        "error",
+        "done",
+        "checking",
+        "repairing",
+        "extracting",
+        "seeding",
+        "retry",
     ]
 
-    download_state_schema = {
-        'status': download_state[0]
-    }
+    download_state_schema = {"status": download_state[0]}
 
-    mark_item_as_read_schema = {
-        'isRead': True
-    }
+    mark_item_as_read_schema = {"isRead": True}
 
     async def add_download_advanced(self, download_advanced):
         """
@@ -78,7 +56,7 @@ class Downloads:
 
         download_advanced : `dict`
         """
-        await self._access.post('downloads/add/', download_advanced)
+        await self._access.post("downloads/add/", download_advanced)
 
     async def add_download_from_file(self, download_file):
         """
@@ -86,7 +64,7 @@ class Downloads:
 
         download_file : `dict`
         """
-        await self._access.post('downloads/add/', download_file)
+        await self._access.post("downloads/add/", download_file)
 
     async def add_download_from_url(self, download_url):
         """
@@ -94,7 +72,7 @@ class Downloads:
 
         download_url : `dict`
         """
-        await self._access.post('downloads/add/', download_url)
+        await self._access.post("downloads/add/", download_url)
 
     async def create_download_blacklist_entry(self, download_blacklist_data):
         """
@@ -102,7 +80,7 @@ class Downloads:
 
         download_blacklist_data : `dict`
         """
-        await self._access.post('downloads/blacklist/', download_blacklist_data)
+        await self._access.post("downloads/blacklist/", download_blacklist_data)
 
     async def create_download_feed(self, rss_feed_data=None):
         """
@@ -112,7 +90,7 @@ class Downloads:
         """
         if rss_feed_data is None:
             rss_feed_data = self.rss_feed_data_schema
-        return await self._access.post('downloads/feeds/', rss_feed_data)
+        return await self._access.post("downloads/feeds/", rss_feed_data)
 
     async def create_download_tracker(self, download_id, new_download_tracker_data):
         """
@@ -121,7 +99,9 @@ class Downloads:
         download_id : `int`
         new_download_tracker_data : `dict`
         """
-        await self._access.post(f'downloads/{download_id}/trackers/', new_download_tracker_data)
+        await self._access.post(
+            f"downloads/{download_id}/trackers/", new_download_tracker_data
+        )
 
     async def delete_download(self, download_id):
         """
@@ -129,7 +109,7 @@ class Downloads:
 
         download_id : `int`
         """
-        await self._access.delete(f'downloads/{download_id}')
+        await self._access.delete(f"downloads/{download_id}")
 
     async def delete_download_blacklist_entry(self, host):
         """
@@ -137,7 +117,7 @@ class Downloads:
 
         host : `str`
         """
-        await self._access.delete(f'downloads/blacklist/{host}')
+        await self._access.delete(f"downloads/blacklist/{host}")
 
     async def delete_download_erase_files(self, download_id):
         """
@@ -145,7 +125,7 @@ class Downloads:
 
         download_id : `int`
         """
-        await self._access.delete(f'downloads/{download_id}/erase/')
+        await self._access.delete(f"downloads/{download_id}/erase/")
 
     async def delete_download_feed(self, feed_id):
         """
@@ -153,7 +133,7 @@ class Downloads:
 
         feed_id : `int`
         """
-        await self._access.delete(f'downloads/feeds/{feed_id}/')
+        await self._access.delete(f"downloads/feeds/{feed_id}/")
 
     async def download_feed_item(self, feed_id, item_id):
         """
@@ -162,7 +142,7 @@ class Downloads:
         feed_id : `int`
         item_id : `int`
         """
-        await self._access.post(f'downloads/feeds/{feed_id}/items/{item_id}/download/')
+        await self._access.post(f"downloads/feeds/{feed_id}/items/{item_id}/download/")
 
     async def download_file(self, file_path):
         """
@@ -170,8 +150,8 @@ class Downloads:
 
         file_path : `str`
         """
-        path_b64 = base64.b64encode(file_path.encode('utf-8')).decode('utf-8')
-        return await self._access.get(f'dl/{path_b64}')
+        path_b64 = base64.b64encode(file_path.encode("utf-8")).decode("utf-8")
+        return await self._access.get(f"dl/{path_b64}")
 
     async def edit_download_file(self, download_id, file_id, download_file_data):
         """
@@ -181,7 +161,9 @@ class Downloads:
         file_id : `int`
         download_file_data : `dict`
         """
-        return await self._access.put(f'downloads/{download_id}/files/{file_id}', download_file_data)
+        return await self._access.put(
+            f"downloads/{download_id}/files/{file_id}", download_file_data
+        )
 
     async def edit_download_ratio(self, download_id, download_ratio):
         """
@@ -190,7 +172,7 @@ class Downloads:
         download_id : `int`
         download_ratio : `dict`
         """
-        return await self._access.put(f'downloads/{download_id}', download_ratio)
+        return await self._access.put(f"downloads/{download_id}", download_ratio)
 
     async def edit_download_state(self, download_id, download_state_data):
         """
@@ -199,9 +181,11 @@ class Downloads:
         download_id : `int`
         download_state_data : `dict`
         """
-        return await self._access.put(f'downloads/{download_id}', download_state_data)
+        return await self._access.put(f"downloads/{download_id}", download_state_data)
 
-    async def edit_download_tracker(self, download_id, tracker_url, download_tracker_data):
+    async def edit_download_tracker(
+        self, download_id, tracker_url, download_tracker_data
+    ):
         """
         Edit download tracker
 
@@ -209,7 +193,9 @@ class Downloads:
         tracker_url : `str`
         download_tracker_data : `dict`
         """
-        await self._access.put(f'downloads/{download_id}/trackers/{tracker_url}', download_tracker_data)
+        await self._access.put(
+            f"downloads/{download_id}/trackers/{tracker_url}", download_tracker_data
+        )
 
     async def empty_download_blacklist(self, download_id):
         """
@@ -217,7 +203,7 @@ class Downloads:
 
         download_id : `int`
         """
-        await self._access.delete(f'downloads/{download_id}/blacklist/empty/')
+        await self._access.delete(f"downloads/{download_id}/blacklist/empty/")
 
     async def fetch_download_feed(self, feed_id):
         """
@@ -225,7 +211,7 @@ class Downloads:
 
         feed_id : `int`
         """
-        await self._access.post(f'downloads/feeds/{feed_id}/fetch/')
+        await self._access.post(f"downloads/feeds/{feed_id}/fetch/")
 
     async def get_download(self, download_id):
         """
@@ -233,7 +219,7 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get(f'downloads/{download_id}')
+        return await self._access.get(f"downloads/{download_id}")
 
     async def get_download_blacklist(self, download_id):
         """
@@ -241,7 +227,7 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get(f'downloads/{download_id}/blacklist/')
+        return await self._access.get(f"downloads/{download_id}/blacklist/")
 
     async def get_download_feed_items(self, feed_id):
         """
@@ -249,7 +235,7 @@ class Downloads:
 
         feed_id : `int`
         """
-        return await self._access.get(f'downloads/feeds/{feed_id}/items/')
+        return await self._access.get(f"downloads/feeds/{feed_id}/items/")
 
     async def get_download_feeds(self, feed_id):
         """
@@ -257,7 +243,7 @@ class Downloads:
 
         feed_id : `int`
         """
-        return await self._access.get('downloads/feeds/')
+        return await self._access.get("downloads/feeds/")
 
     async def get_download_files(self, download_id):
         """
@@ -265,7 +251,7 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get(f'downloads/{download_id}/files/')
+        return await self._access.get(f"downloads/{download_id}/files/")
 
     async def get_download_log(self, download_id):
         """
@@ -273,7 +259,7 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get(f'downloads/{download_id}/log/')
+        return await self._access.get(f"downloads/{download_id}/log/")
 
     async def get_download_peers(self, download_id):
         """
@@ -281,7 +267,7 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get(f'downloads/{download_id}/peers/')
+        return await self._access.get(f"downloads/{download_id}/peers/")
 
     async def get_download_trackers(self, download_id):
         """
@@ -289,13 +275,13 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get(f'downloads/{download_id}/trackers/')
+        return await self._access.get(f"downloads/{download_id}/trackers/")
 
     async def get_downloads(self):
         """
         Get downloads
         """
-        return await self._access.get('downloads/')
+        return await self._access.get("downloads/")
 
     async def get_downloads_configuration(self, download_id):
         """
@@ -303,7 +289,7 @@ class Downloads:
 
         download_id : `int`
         """
-        return await self._access.get('downloads/config/')
+        return await self._access.get("downloads/config/")
 
     async def mark_download_feed_as_read(self, feed_id):
         """
@@ -311,9 +297,11 @@ class Downloads:
 
         feed_id : `int`
         """
-        await self._access.post(f'downloads/feeds/{feed_id}/mark_all_as_read/')
+        await self._access.post(f"downloads/feeds/{feed_id}/mark_all_as_read/")
 
-    async def mark_download_item_as_read(self, feed_id, item_id, mark_item_as_read=None):
+    async def mark_download_item_as_read(
+        self, feed_id, item_id, mark_item_as_read=None
+    ):
         """
         Mark download feed item as read
 
@@ -323,7 +311,9 @@ class Downloads:
         """
         if mark_item_as_read is None:
             mark_item_as_read = self.mark_item_as_read_schema
-        await self._access.post(f'downloads/feeds/{feed_id}/items/{item_id}', mark_item_as_read)
+        await self._access.post(
+            f"downloads/feeds/{feed_id}/items/{item_id}", mark_item_as_read
+        )
 
     async def remove_download_tracker(self, download_id, tracker_url, download_tracker):
         """
@@ -333,7 +323,9 @@ class Downloads:
         tracker_url : `str`
         download_tracker : `dict`
         """
-        await self._access.delete(f'downloads/{download_id}/trackers/{tracker_url}', download_tracker)
+        await self._access.delete(
+            f"downloads/{download_id}/trackers/{tracker_url}", download_tracker
+        )
 
     async def set_downloads_configuration(self, downloads_configuration):
         """
@@ -341,4 +333,5 @@ class Downloads:
 
         downloads_configuration : `dict`
         """
-        return await self._access.put('downloads/config/', downloads_configuration)
+        return await self._access.put("downloads/config/", downloads_configuration)
+
