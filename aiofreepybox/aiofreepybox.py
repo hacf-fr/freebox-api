@@ -1,14 +1,12 @@
+import aiohttp
 import asyncio
 import ipaddress
-import os
 import json
 import logging
+import os
 import socket
 import ssl
-import time
 from urllib.parse import urljoin
-
-import aiohttp
 
 import aiofreepybox
 from aiofreepybox.exceptions import *
