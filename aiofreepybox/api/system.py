@@ -1,39 +1,42 @@
 class System:
+    """
+    System
+    """
 
     def __init__(self, access):
         self._access = access
 
     expansion_types = [
-        'unknown',
-        'dsl_lte',
-        'dsl_lte_external_antennas',
-        'ftth_p2p',
-        'ftth_pon',
-        'security'
+        "unknown",
+        "dsl_lte",
+        "dsl_lte_external_antennas",
+        "ftth_p2p",
+        "ftth_pon",
+        "security",
     ]
 
     expansions_type = {
-        'unknown': 'Inconnu',
-        'dsl_lte': 'xDSL + 4G',
-        'dsl_lte_external_antennas': 'xDSL + 4G avec antennes externes',
-        'ftth_p2p': 'FTTH P2P',
-        'ftth_pon': 'FTTH PON',
-        'security': 'Sécurité / Alarme'
+        "unknown": "Inconnu",
+        "dsl_lte": "xDSL + 4G",
+        "dsl_lte_external_antennas": "xDSL + 4G avec antennes externes",
+        "ftth_p2p": "FTTH P2P",
+        "ftth_pon": "FTTH PON",
+        "security": "Sécurité / Alarme",
     }
 
     images_fbx_gw_back = [
-        'resources/images/fbx/gw_back_v6.png',
-        'resources/images/fbx/gw_back_mini4k.png',
-        'resources/images/fbx/gw_back_onebox.png',
-        'resources/images/fbx/gw_back_v7.png',
-        'resources/images/fbx/gw_back_v7_empty.png'
+        "resources/images/fbx/gw_back_v6.png",
+        "resources/images/fbx/gw_back_mini4k.png",
+        "resources/images/fbx/gw_back_onebox.png",
+        "resources/images/fbx/gw_back_v7.png",
+        "resources/images/fbx/gw_back_v7_empty.png",
     ]
 
     async def get_config(self):
-        '''
+        """
         Get system configuration:
-        '''
-        return await self._access.get('system/')
+        """
+        return await self._access.get("system/")
 
     def get_img_fbx_gw_back(self, img_id):
         """
@@ -41,7 +44,7 @@ class System:
 
         img_id : `int`
         """
-        return f'{self._access.host_url}{self.images_fbx_gw_back[img_id]}'
+        return f"{self._access.host_url}{self.images_fbx_gw_back[img_id]}"
 
     def get_img_fbx_gw_back_expansion(self, img_expansion_types, slot_index):
         """
@@ -50,7 +53,7 @@ class System:
         img_expansion_types : `expansion_types`[index]
         slot_index : 0 | 1
         """
-        return f'{self._access.host_url}resources/images/fbx/gw_back_v7_{img_expansion_types}_{slot_index}.png'
+        return f"{self._access.host_url}resources/images/fbx/gw_back_v7_{img_expansion_types}_{slot_index}.png"
 
     '''     Disabled: requires password login
 
@@ -62,10 +65,10 @@ class System:
     '''
 
     async def reboot(self):
-        '''
+        """
         Reboot freebox
-        '''
-        await self._access.post('system/reboot')
+        """
+        await self._access.post("system/reboot")
 
     '''     Disabled: requires password login
 
