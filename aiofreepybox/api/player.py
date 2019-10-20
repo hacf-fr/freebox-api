@@ -1,4 +1,8 @@
 class Player:
+    """
+    Player
+    """
+
     def __init__(self, access, player_api_version=None):
         self._access = access
         self._player_api_version_target = (
