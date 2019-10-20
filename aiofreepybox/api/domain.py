@@ -1,20 +1,16 @@
 class Domain:
+    """
+    Domain
+    """
 
     def __init__(self, access):
         self._access = access
 
-    request_cert_schema = {
-        'key_type': 'rsa'
-    }
+    request_cert_schema = {"key_type": "rsa"}
 
-    domain_data_schema = {
-        'id': ''
-    }
+    domain_data_schema = {"id": ""}
 
-    reserve_data_schema = {
-        'prefix': '',
-        'domain': ''
-    }
+    reserve_data_schema = {"prefix": "", "domain": ""}
 
     async def add_domain(self, domain_data):
         """
@@ -22,7 +18,7 @@ class Domain:
 
         domain_data : `dict`
         """
-        return await self._access.post(f'domain/owned/', domain_data)
+        return await self._access.post(f"domain/owned/", domain_data)
 
     async def delete_domain(self, domain_id):
         """
@@ -30,13 +26,13 @@ class Domain:
 
         domain_id : `int`
         """
-        await self._access.delete(f'domain/owned/{domain_id}')
+        await self._access.delete(f"domain/owned/{domain_id}")
 
     async def get_domains_configuration(self):
         """
         Get domains configuration
         """
-        return await self._access.get('domain/config/')
+        return await self._access.get("domain/config/")
 
     async def get_domain(self, domain_id):
         """
@@ -44,13 +40,13 @@ class Domain:
 
         domain_id : `int`
         """
-        return await self._access.get(f'domain/owned/{domain_id}')
+        return await self._access.get(f"domain/owned/{domain_id}")
 
     async def get_domains(self):
         """
         Get domains
         """
-        return await self._access.get('domain/owned/')
+        return await self._access.get("domain/owned/")
 
     async def get_domain_availability(self, domain_name):
         """
@@ -58,7 +54,7 @@ class Domain:
 
         domain_name : `str`
         """
-        return await self._access.get(f'domain/availability/{domain_name}')
+        return await self._access.get(f"domain/availability/{domain_name}")
 
     async def import_certificate(self, domain_id, cert_data):
         """
@@ -67,7 +63,9 @@ class Domain:
         domain_id : `int`
         cert_data : `str`
         """
-        return await self._access.post(f'domain/owned/{domain_id}/import_cert', cert_data)
+        return await self._access.post(
+            f"domain/owned/{domain_id}/import_cert", cert_data
+        )
 
     async def request_certificate(self, domain_id, request_cert_data=None):
         """
@@ -78,7 +76,9 @@ class Domain:
         """
         if request_cert_data is None:
             request_cert_data = self.request_cert_schema
-        return await self._access.post(f'domain/owned/{domain_id}/request_cert', request_cert_data)
+        return await self._access.post(
+            f"domain/owned/{domain_id}/request_cert", request_cert_data
+        )
 
     async def reserve_domain(self, reserve_data):
         """
@@ -86,4 +86,4 @@ class Domain:
 
         reserve_data : `dict`
         """
-        return await self._access.post('domain/reserve/', reserve_data)
+        return await self._access.post("domain/reserve/", reserve_data)
