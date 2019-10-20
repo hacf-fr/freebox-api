@@ -33,19 +33,19 @@ from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
 # Token file default location
-token_filename = "app_auth"
-token_dir = os.path.dirname(os.path.abspath(__file__))
-token_file = os.path.join(token_dir, token_filename)
+TOKEN_FILENAME = "app_auth"
+TOKEN_DIR = os.path.dirname(os.path.abspath(__file__))
+TOKEN_FILE = os.path.join(TOKEN_DIR, TOKEN_FILENAME)
 
 # Default application descriptor
-app_desc = {
+APP_DESC = {
     "app_id": "aiofpbx",
     "app_name": "aiofreepybox",
     "app_version": aiofreepybox.__version__,
-    "device_name": socket.gethostname()
+    "device_name": socket.gethostname(),
 }
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class Freepybox:
@@ -58,7 +58,7 @@ class Freepybox:
     """
 
     def __init__(
-        self, app_desc=app_desc, token_file=token_file, api_version="auto", timeout=10
+        self, app_desc=APP_DESC, token_file=TOKEN_FILE, api_version="auto", timeout=10
     ):
         self._access = None
         self.api_version = api_version
@@ -84,13 +84,7 @@ class Freepybox:
 
         # Detect host, port and API version
         default_host = host if host != "auto" else "mafreebox.freebox.fr"
-        default_port = (
-            port
-            if port != "auto"
-            else 80
-            if host != "auto"
-            else 443
-        )
+        default_port = port if port != "auto" else 80 if host != "auto" else 443
         s = "" if default_port == 80 else "s"
 
         # Checking host and port
@@ -198,17 +192,17 @@ class Freepybox:
             short_api_version_target < server_version
             and short_api_version == server_version
         ):
-            logger.warning(
+            _LOGGER.warning(
                 f"Using new API version {self.api_version}, results may vary "
             )
         elif (
             short_api_version < short_api_version_target and int(short_api_version) > 0
         ):
-            logger.warning(
+            _LOGGER.warning(
                 f"Using deprecated API version {self.api_version}, results may vary "
             )
         elif short_api_version > server_version:
-            logger.warning(
+            _LOGGER.warning(
                 f"Freebox server does not support this API version ({self.api_version}), downgrading to {self.api_version_target}."
             )
             self.api_version = self.api_version_target
@@ -223,12 +217,12 @@ class Freepybox:
         base_url = self._get_base_url(host, port, api_version)
 
         # Read stored application token
-        logger.info("Read application authorization file")
+        _LOGGER.info("Read application authorization file")
         app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
 
         # If no valid token is stored then request a token to freebox api - Only for LAN connection
         if app_token is None or file_app_desc != app_desc:
-            logger.info("No valid authorization file found")
+            _LOGGER.info("No valid authorization file found")
 
             # Get application token from the freebox
             app_token, track_id = await self._get_app_token(base_url, app_desc, timeout)
@@ -258,17 +252,16 @@ class Freepybox:
                 elif status == "timeout":
                     raise AuthorizationError("Authorization timed out")
 
-            logger.info("Application authorization granted")
+            _LOGGER.info("Application authorization granted")
 
             # Store application token in file
             self._writefile_app_token(app_token, track_id, app_desc, token_file)
-            logger.info(f"Application token file was generated: {token_file}")
+            _LOGGER.info(f"Application token file was generated: {token_file}")
 
-        # Create freebox http access module
+        # Create and return freebox http access module
         fbx_access = Access(
             self._session, base_url, app_token, app_desc["app_id"], timeout
         )
-
         return fbx_access
 
     async def _get_app_token(self, base_url, app_desc, timeout=10):
