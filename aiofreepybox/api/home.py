@@ -1,62 +1,45 @@
-# Home structure : adapter > node > endpoint
 class Home:
+    """
+    Home
+
+    Freebox home data structure : adapter > node > endpoint
+    """
 
     def __init__(self, access):
         self._access = access
 
-    home_endpoint_value_schema = {
-        'value': None
-    }
+    home_endpoint_value_schema = {"value": None}
 
     create_home_node_rule_payload_schema = {
-        'icon_url': '',
-        'id': 0,
-        'label': '',
-        'name': '',
-        'role': 0,
-        'role_label': '',
-        'type': ''
+        "icon_url": "",
+        "id": 0,
+        "label": "",
+        "name": "",
+        "role": 0,
+        "role_label": "",
+        "type": "",
     }
 
-    node_rule_role_schema = {
-        'node': [0],
-        'role': 0
-    }
+    node_rule_role_schema = {"node": [0], "role": 0}
 
-    node_rule_configuration_data_schema = {
-        'roles': [node_rule_role_schema]
-    }
+    node_rule_configuration_data_schema = {"roles": [node_rule_role_schema]}
 
     sms_number_data_schema = {
-        'description': 'Mon numero',
-        'phone_number': '',
-        'sms_enabled': True,
-        'voicemail_enabled': True
+        "description": "Mon numero",
+        "phone_number": "",
+        "sms_enabled": True,
+        "voicemail_enabled": True,
     }
 
-    sms_validation_data_schema = {
-        'application_hash': ''
-    }
+    sms_validation_data_schema = {"application_hash": ""}
 
-    sms_number_validation_data_schema = {
-        'validation_code': ''
-    }
+    sms_number_validation_data_schema = {"validation_code": ""}
 
-    next_pairing_step_payload_schema = {
-        'session': 0,
-        'pageid': 0,
-        'fields': [None]
-    }
+    next_pairing_step_payload_schema = {"session": 0, "pageid": 0, "fields": [None]}
 
-    start_pairing_step_payload_schema = {
-        'nfc': True,
-        'qrcode': False,
-        'type': ''
-    }
+    start_pairing_step_payload_schema = {"nfc": True, "qrcode": False, "type": ""}
 
-    stop_pairing_step_payload_schema = {
-        'session': 0
-    }
+    stop_pairing_step_payload_schema = {"session": 0}
 
     async def del_home_adapter(self, home_adapter_id):
         """
@@ -64,7 +47,7 @@ class Home:
 
         home_adapter_id : `int`
         """
-        return await self._access.delete(f'home/adapters/{home_adapter_id}')
+        return await self._access.delete(f"home/adapters/{home_adapter_id}")
 
     async def get_home_adapter(self, home_adapter_id):
         """
@@ -72,25 +55,25 @@ class Home:
 
         home_adapter_id : `int`
         """
-        return await self._access.get(f'home/adapters/{home_adapter_id}')
+        return await self._access.get(f"home/adapters/{home_adapter_id}")
 
     async def get_home_adapters(self):
         """
         Retrieve the list of registered home adapters
         """
-        return await self._access.get('home/adapters')
+        return await self._access.get("home/adapters")
 
     async def get_camera(self):
         """
         Get camera info
         """
-        return await self._access.get('camera')
+        return await self._access.get("camera")
 
     async def get_camera_configuration(self):
         """
         Get camera configuration
         """
-        return await self._access.get('camera/config')
+        return await self._access.get("camera/config")
 
     async def set_camera_configuration(self, camera_configuration):
         """
@@ -98,7 +81,7 @@ class Home:
 
         camera_configuration : `dict`
         """
-        await self._access.put('camera/config', camera_configuration)
+        await self._access.put("camera/config", camera_configuration)
 
     async def get_camera_records(self, camera_id):
         """
@@ -106,7 +89,7 @@ class Home:
 
         camera_id : `int`
         """
-        return await self._access.get(f'camera/{camera_id}/records')
+        return await self._access.get(f"camera/{camera_id}/records")
 
     async def get_camera_snapshot(self, camera_index=0, size=4, quality=5):
         """
@@ -118,7 +101,11 @@ class Home:
             , default is 5
         """
         fbx_cameras = await self.get_camera()
-        return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', f'snapshot.cgi?size={size}&quality={quality}')[1:])
+        return await self._access.get(
+            fbx_cameras[camera_index]["stream_url"].replace(
+                "stream.m3u8", f"snapshot.cgi?size={size}&quality={quality}"
+            )[1:]
+        )
 
     async def get_camera_stream_m3u8(self, camera_index=0, channel=2):
         """
@@ -128,7 +115,11 @@ class Home:
         channel : 1 is SD, 2 is HD
         """
         fbx_cameras = await self.get_camera()
-        return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', f'stream.m3u8?channel={channel}')[1:])
+        return await self._access.get(
+            fbx_cameras[camera_index]["stream_url"].replace(
+                "stream.m3u8", f"stream.m3u8?channel={channel}"
+            )[1:]
+        )
 
     async def get_camera_ts(self, ts_name, camera_index=0):
         """
@@ -138,7 +129,11 @@ class Home:
         camera_index : `int`
         """
         fbx_cameras = await self.get_camera()
-        return await self._access.get(fbx_cameras[camera_index]['stream_url'].replace('stream.m3u8', f'{ts_name}')[1:])
+        return await self._access.get(
+            fbx_cameras[camera_index]["stream_url"].replace(
+                "stream.m3u8", f"{ts_name}"
+            )[1:]
+        )
 
     async def get_home_endpoint_value(self, node_id, endpoint_id):
         """
@@ -147,7 +142,7 @@ class Home:
         node_id : `int`
         endpoint_id : `int`
         """
-        return await self._access.get(f'home/endpoints/{node_id}/{endpoint_id}')
+        return await self._access.get(f"home/endpoints/{node_id}/{endpoint_id}")
 
     async def get_home_endpoint_values(self, endpoint_list):
         """
@@ -155,7 +150,7 @@ class Home:
 
         endpoint_list : `[endpoint_id]`
         """
-        return await self._access.post('home/endpoints/get', endpoint_list)
+        return await self._access.post("home/endpoints/get", endpoint_list)
 
     async def set_home_endpoint_value(self, node_id, endpoint_id, value):
         """
@@ -166,8 +161,10 @@ class Home:
         value : `str`
         """
         home_endpoint_value_data = home_endpoint_value_schema
-        home_endpoint_value_data['value'] = value
-        return await self._access.put(f'home/endpoints/{node_id}/{endpoint_id}', home_endpoint_value_data)
+        home_endpoint_value_data["value"] = value
+        return await self._access.put(
+            f"home/endpoints/{node_id}/{endpoint_id}", home_endpoint_value_data
+        )
 
     async def del_home_link(self, link_id):
         """
@@ -175,7 +172,7 @@ class Home:
 
         link_id : `int`
         """
-        return await self._access.delete(f'home/links/{link_id}')
+        return await self._access.delete(f"home/links/{link_id}")
 
     async def get_home_link(self, link_id):
         """
@@ -183,13 +180,13 @@ class Home:
 
         link_id : `int`
         """
-        return await self._access.get(f'home/links/{link_id}')
+        return await self._access.get(f"home/links/{link_id}")
 
     async def get_home_links(self):
         """
         Get home links
         """
-        return await self._access.get('home/links')
+        return await self._access.get("home/links")
 
     async def del_home_node(self, node_id):
         """
@@ -197,7 +194,7 @@ class Home:
 
         node_id : `int`
         """
-        return await self._access.delete(f'home/nodes/{node_id}')
+        return await self._access.delete(f"home/nodes/{node_id}")
 
     async def get_home_node(self, node_id):
         """
@@ -205,7 +202,7 @@ class Home:
 
         node_id : `int`
         """
-        return await self._access.get(f'home/nodes/{node_id}')
+        return await self._access.get(f"home/nodes/{node_id}")
 
     async def edit_home_node(self, node_id, node_data):
         """
@@ -214,13 +211,13 @@ class Home:
         node_id : `int`
         node_data : `dict`
         """
-        return await self._access.put(f'home/nodes/{node_id}', node_data)
+        return await self._access.put(f"home/nodes/{node_id}", node_data)
 
     async def get_home_nodes(self):
         """
         Get home nodes
         """
-        return await self._access.get('home/nodes')
+        return await self._access.get("home/nodes")
 
     async def create_home_node_rule(self, template_name, create_home_node_rule_payload):
         """
@@ -229,7 +226,9 @@ class Home:
         template_name : `str`
         create_home_node_rule_payload : `dict`
         """
-        return await self._access.post(f'home/rules/{template_name}', create_home_node_rule_payload)
+        return await self._access.post(
+            f"home/rules/{template_name}", create_home_node_rule_payload
+        )
 
     async def get_home_node_existing_rule_config(self, node_id, rule_node_id, role_id):
         """
@@ -239,7 +238,9 @@ class Home:
         rule_node_id : `int`
         role_id : `int`
         """
-        return await self._access.get(f'home/nodes/{node_id}/rules/node/{rule_node_id}/{role_id}')
+        return await self._access.get(
+            f"home/nodes/{node_id}/rules/node/{rule_node_id}/{role_id}"
+        )
 
     async def get_home_node_template_rule_config(self, node_id, template_name, role_id):
         """
@@ -249,16 +250,22 @@ class Home:
         template_name : `str`
         role_id : `int`
         """
-        return await self._access.get(f'home/nodes/{node_id}/rules/template/{template_name}/{role_id}')
+        return await self._access.get(
+            f"home/nodes/{node_id}/rules/template/{template_name}/{role_id}"
+        )
 
-    async def set_home_node_rule_config(self, rule_node_id, node_rule_configuration_data):
+    async def set_home_node_rule_config(
+        self, rule_node_id, node_rule_configuration_data
+    ):
         """
         Set node rule configuration data
 
         rule_node_id : `int`
         node_rule_configuration_data : `dict`
         """
-        return await self._access.put(f'home/rules/{rule_node_id}', node_rule_configuration_data)
+        return await self._access.put(
+            f"home/rules/{rule_node_id}", node_rule_configuration_data
+        )
 
     async def get_home_node_new_rules(self, node_id):
         """
@@ -266,13 +273,13 @@ class Home:
 
         node_id : `int`
         """
-        return await self._access.get(f'home/nodes/{node_id}/rules')
+        return await self._access.get(f"home/nodes/{node_id}/rules")
 
     async def get_secmod(self):
         """
         Get security module
         """
-        return await self._access.get('home/secmod')
+        return await self._access.get("home/secmod")
 
     async def create_sms_number(self, sms_number_data):
         """
@@ -280,7 +287,7 @@ class Home:
 
         sms_number_data : `dict`
         """
-        return await self._access.post('home/sms/numbers', sms_number_data)
+        return await self._access.post("home/sms/numbers", sms_number_data)
 
     async def edit_sms_number(self, sms_number_id, sms_number_data):
         """
@@ -289,13 +296,15 @@ class Home:
         sms_number_id : `int`
         sms_number_data : `dict`
         """
-        return await self._access.put(f'home/sms/numbers/{sms_number_id}', sms_number_data)
+        return await self._access.put(
+            f"home/sms/numbers/{sms_number_id}", sms_number_data
+        )
 
     async def get_sms_numbers(self):
         """
         Get sms numbers
         """
-        return await self._access.get('home/sms/numbers')
+        return await self._access.get("home/sms/numbers")
 
     async def send_sms_number_validation(self, sms_number_id, sms_validation_data):
         """
@@ -304,7 +313,9 @@ class Home:
         sms_number_id : `int`
         sms_validation_data : `dict`
         """
-        return await self._access.post(f'home/sms/numbers/{sms_number_id}/send_validation_sms', sms_validation_data)
+        return await self._access.post(
+            f"home/sms/numbers/{sms_number_id}/send_validation_sms", sms_validation_data
+        )
 
     async def validate_sms_number(self, sms_number_id, sms_number_validation_data):
         """
@@ -313,7 +324,9 @@ class Home:
         sms_number_id : `int`
         sms_number_validation_data : `dict`
         """
-        return await self._access.post(f'home/sms/numbers/{sms_number_id}/validate', sms_number_validation_data)
+        return await self._access.post(
+            f"home/sms/numbers/{sms_number_id}/validate", sms_number_validation_data
+        )
 
     async def get_home_tile(self, tile_id):
         """
@@ -321,13 +334,13 @@ class Home:
 
         tile_id : `int`
         """
-        return await self._access.get(f'home/tileset/{tile_id}')
+        return await self._access.get(f"home/tileset/{tile_id}")
 
     async def get_home_tilesets(self):
         """
         Get the list of home tileset
         """
-        return await self._access.get('home/tileset/all')
+        return await self._access.get("home/tileset/all")
 
     async def get_home_pairing_state(self, home_adapter_id):
         """
@@ -335,7 +348,7 @@ class Home:
 
         home_adapter_id : `int`
         """
-        return await self._access.get(f'home/pairing/{home_adapter_id}')
+        return await self._access.get(f"home/pairing/{home_adapter_id}")
 
     async def next_home_pairing_step(self, home_adapter_id, next_pairing_step_payload):
         """
@@ -344,16 +357,22 @@ class Home:
         home_adapter_id : `int`
         next_pairing_step_payload : `dict`
         """
-        return await self._access.post(f'home/pairing/{home_adapter_id}', next_pairing_step_payload)
+        return await self._access.post(
+            f"home/pairing/{home_adapter_id}", next_pairing_step_payload
+        )
 
-    async def start_home_pairing_step(self, home_adapter_id, start_pairing_step_payload):
+    async def start_home_pairing_step(
+        self, home_adapter_id, start_pairing_step_payload
+    ):
         """
         Start home pairing step
 
         home_adapter_id : `int`
         start_pairing_step_payload : `dict`
         """
-        return await self._access.post(f'home/pairing/{home_adapter_id}', start_pairing_step_payload)
+        return await self._access.post(
+            f"home/pairing/{home_adapter_id}", start_pairing_step_payload
+        )
 
     async def stop_home_pairing_step(self, home_adapter_id, stop_pairing_step_payload):
         """
@@ -362,4 +381,7 @@ class Home:
         home_adapter_id : `int`
         stop_pairing_step_payload : `dict`
         """
-        return await self._access.post(f'home/pairing/{home_adapter_id}', stop_pairing_step_payload)
+        return await self._access.post(
+            f"home/pairing/{home_adapter_id}", stop_pairing_step_payload
+        )
+

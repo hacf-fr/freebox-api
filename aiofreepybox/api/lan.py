@@ -1,4 +1,7 @@
 class Lan:
+    """
+    Lan
+    """
 
     def __init__(self, access):
         self._access = access

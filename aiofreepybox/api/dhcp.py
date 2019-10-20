@@ -4,6 +4,9 @@ logger = logging.getLogger(__name__)
 
 
 class Dhcp:
+    """
+    Dhcp
+    """
 
     def __init__(self, access):
         self._access = access

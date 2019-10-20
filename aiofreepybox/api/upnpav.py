@@ -1,4 +1,7 @@
 class Upnpav:
+    """
+    Upnpav
+    """
 
     def __init__(self, access):
         self._access = access
@@ -7,7 +10,7 @@ class Upnpav:
         """
         Get upnpav configuration
         """
-        return await self._access.get('upnpav/config/')
+        return await self._access.get("upnpav/config/")
 
     async def set_configuration(self, configuration):
         """
@@ -15,4 +18,4 @@ class Upnpav:
 
         configuration : `dict`
         """
-        return await self._access.put('upnpav/config/', configuration)
+        return await self._access.put("upnpav/config/", configuration)

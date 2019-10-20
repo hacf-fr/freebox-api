@@ -1,4 +1,7 @@
 class Freeplug:
+    """
+    Freeplug
+    """
 
     def __init__(self, access):
         self._access = access
