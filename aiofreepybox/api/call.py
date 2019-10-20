@@ -1,6 +1,6 @@
 import logging
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class Call:
@@ -32,7 +32,7 @@ class Call:
         """
         Returns the collection of all call entries
         """
-        logger.warning(
+        _LOGGER.warning(
             "Using deprecated get_call_list, please use get_call_log instead"
         )
         return await self.get_call_log()
