@@ -6,7 +6,7 @@ class Sharelink:
     def __init__(self, access):
         self._access = access
 
-    share_link_data_schema = {"path": "", "expire": 0}
+    share_link_data_schema = {"path": "", "expire": 0, "fullurl": ""}
 
     async def create_share_link(self, share_link_data=None):
         """
