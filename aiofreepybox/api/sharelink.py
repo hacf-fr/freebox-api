@@ -9,8 +9,6 @@ class Sharelink:
     def __init__(self, access):
         self._access = access
 
-    share_link_data_schema = {"path": "", "expire": 0, "fullurl": ""}
-
     async def create_share_link(self, path, expire):
         """
         Create share link
@@ -19,7 +17,7 @@ class Sharelink:
         expire : `int`
         """
 
-        share_link_data = self.share_link_data_schema
+        share_link_data = dict
         share_link_data["path"] = base64.b64encode(path.encode("utf-8")).decode("utf-8")
         share_link_data["expire"] = expire
         return await self._access.post("share_link/", share_link_data)
@@ -43,3 +41,14 @@ class Sharelink:
         Get share links
         """
         return await self._access.get("share_link/")
+
+    async def update_share_link(self, share_link_data):
+        """
+        Update share link
+        All ShareLink attributes are read-only, but this can be used to create
+        or renew a sharelink with a `dict`.
+        (ex: if it is based on a previously expired sharelink)
+
+        share_link_data : `dict`
+        """
+        return await self._access.post("share_link/", share_link_data)
