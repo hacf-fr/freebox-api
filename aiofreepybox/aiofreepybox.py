@@ -9,7 +9,13 @@ import ssl
 from urllib.parse import urljoin
 
 import aiofreepybox
-from aiofreepybox.exceptions import *
+from aiofreepybox.exceptions import (
+    AuthorizationError,
+    HttpRequestError,
+    InsufficientPermissionsError,
+    InvalidTokenError,
+    NotOpenError,
+)
 from aiofreepybox.access import Access
 from aiofreepybox.api.tv import Tv
 from aiofreepybox.api.system import System
@@ -143,6 +149,11 @@ class Freepybox:
     async def discover(self, default_host=None, default_port=None):
         """
         Discover a freebox on the network
+
+        default_host : `str`
+            , Default to None
+        default_port : `str`
+            , Default to None
         """
 
         # Setup host and port
@@ -209,10 +220,16 @@ class Freepybox:
                 return None
 
         # Found freebox
-        r = await self._session.get(
-            f"http{s}://{default_host}:{default_port}/api_version", timeout=self.timeout
-        )
-        self.fbx_desc = await r.json()
+        try:
+            r = await self._session.get(
+                f"http{s}://{default_host}:{default_port}/api_version",
+                timeout=self.timeout,
+            )
+            self.fbx_desc = await r.json()
+        except aiohttp.client_exceptions.ClientResponseError:
+            raise HttpRequestError(
+                f"A network error occurred while reading from the freebox at {default_host}:{default_port}"
+            )
         return self.fbx_desc
 
     async def get_permissions(self):
@@ -249,7 +266,7 @@ class Freepybox:
                 await self._session.close()
                 await asyncio.sleep(0.250)
             unknown = "?"
-            raise HttpRequestError(
+            raise NotOpenError(
                 f"Cannot detect freebox at {target_host if target_host is not None else unknown}:{target_port if target_port is not None else unknown}, please check your configuration."
             )
 
@@ -316,7 +333,14 @@ class Freepybox:
         self, host, port, api_version, token_file, app_desc, timeout=_DEFAULT_TIMEOUT
     ):
         """
-        Returns an access object used for HTTP requests.
+        Returns an access object used for HTTP(S) requests.
+
+        host : `str`
+        port : `str`
+        api_version : `str`
+        token_file : `str`
+        app_desc : `dict`
+        timeout : `int`
         """
 
         base_url = self._get_base_url(host, port, api_version)
@@ -371,10 +395,15 @@ class Freepybox:
         )
         return fbx_access
 
-    async def _get_app_token(self, base_url, app_desc, timeout=10):
+    async def _get_app_token(self, base_url, app_desc, timeout=_DEFAULT_TIMEOUT):
         """
         Get the application token from the freebox
-        Returns (app_token, track_id)
+
+        base_url : `str`
+        app_desc : `dict`
+        timeout : `int`
+
+        Returns app_token, track_id
         """
 
         # Get authentification token
@@ -394,9 +423,16 @@ class Freepybox:
 
         return app_token, track_id
 
-    async def _get_authorization_status(self, base_url, track_id, timeout):
+    async def _get_authorization_status(
+        self, base_url, track_id, timeout=_DEFAULT_TIMEOUT
+    ):
         """
         Get authorization status of the application token
+
+        base_url : `str`
+        track_id : `str`
+        timeout : `int`
+
         Returns:
             unknown 	the app_token is invalid or has been revoked
             pending 	the user has not confirmed the authorization request yet
@@ -430,22 +466,34 @@ class Freepybox:
     def _is_app_desc_valid(self, app_desc):
         """
         Check validity of the application descriptor
+
+        app_desc : `dict`
         """
 
         return all(
             k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
         )
 
-    def _is_ipv4(self, string):
+    def _is_ipv4(self, ip_address):
+        """
+        Check ip version for v4
+
+        ip_address : `str`
+        """
         try:
-            ipaddress.IPv4Network(string)
+            ipaddress.IPv4Network(ip_address)
             return True
         except ValueError:
             return False
 
-    def _is_ipv6(self, string):
+    def _is_ipv6(self, ip_address):
+        """
+        Check ip version for v6
+
+        ip_address : `str`
+        """
         try:
-            ipaddress.IPv6Network(string)
+            ipaddress.IPv6Network(ip_address)
             return True
         except ValueError:
             return False
@@ -453,7 +501,10 @@ class Freepybox:
     def _readfile_app_token(self, file):
         """
         Read the application token in the authentication file.
-        Returns (app_token, track_id, app_desc)
+
+        file : `str`
+
+        Returns app_token, track_id, app_desc
         """
 
         try:
@@ -473,7 +524,12 @@ class Freepybox:
 
     def _writefile_app_token(self, app_token, track_id, app_desc, file):
         """
-        Store the application token in g_app_auth_file file
+        Store the application token in a TOKEN_FILE file
+
+        app_token : `str`
+        track_id : `str`
+        app_desc : `dict`
+        file : `str`
         """
 
         d = {**app_desc, "app_token": app_token, "track_id": track_id}
