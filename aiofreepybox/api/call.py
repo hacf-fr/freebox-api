@@ -21,9 +21,21 @@ class Call:
         """
         await self._access.delete(f"call/log/{log_id}")
 
-    async def get_call_log(self):
+    async def delete_calls_log(self):
         """
-        Get call logs
+        Delete calls log
+        """
+        await self._access.delete(f"call/log/delete_all/")
+
+    async def get_call_log(self, log_id):
+        """
+        Get call log
+        """
+        return await self._access.get(f"call/log/{log_id}")
+
+    async def get_calls_log(self):
+        """
+        Get calls logs
         """
         return await self._access.get("call/log/")
 
@@ -35,15 +47,19 @@ class Call:
         _LOGGER.warning(
             "Using deprecated get_call_list, please use get_call_log instead"
         )
-        return await self.get_call_log()
+        return await self.get_calls_log()
 
-    async def mark_call_log_as_read(self, log_id, mark_call_log_as_new=False):
+    async def mark_calls_log_as_read(self):
         """
-        Mark call log as read
+        Mark calls log as read
+        """
+        return await self._access.get(f"call/log/mark_all_as_read")
 
-        log_id : `int`
-        mark_call_log_as_new : `bool`
+    async def update_call_log(self, call_entry):
         """
-        mark_call_log_as_read_data = self.mark_call_log_as_read_data_schema
-        mark_call_log_as_read_data["new"] = mark_call_log_as_new
-        return await self._access.put(f"call/log/{log_id}", mark_call_log_as_read_data)
+        Update call log
+        Used to mark call log as read
+
+        call_entry : `dict`
+        """
+        return await self._access.put(f"call/log/{log_id}", call_entry)
