@@ -18,7 +18,7 @@ class Airmedia:
         "position": 0,
     }
 
-    airmedia_configuration_schema = {"enabled": True}
+    airmedia_configuration_schema = {"enabled": True, "password": ""}
 
     async def get_airmedia_configuration(self):
         """
