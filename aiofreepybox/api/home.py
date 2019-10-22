@@ -1,3 +1,9 @@
+_DEFAULT_CAMERA_INDEX = 0
+_DEFAULT_CHANNEL = 2
+_DEFAULT_SIZE = 4
+_DEFAULT_QUALITY = 5
+
+
 class Home:
     """
     Home
@@ -7,8 +13,6 @@ class Home:
 
     def __init__(self, access):
         self._access = access
-
-    home_endpoint_value_schema = {"value": None}
 
     create_home_node_rule_payload_schema = {
         "icon_url": "",
@@ -91,15 +95,18 @@ class Home:
         """
         return await self._access.get(f"camera/{camera_id}/records")
 
-    async def get_camera_snapshot(self, camera_index=0, size=4, quality=5):
+    async def get_camera_snapshot(self, camera_index=_DEFAULT_CAMERA_INDEX, size=_DEFAULT_SIZE, quality=_DEFAULT_QUALITY):
         """
         Get camera snapshot
 
         camera_index : `int`
+            , Default to _DEFAULT_CAMERA_INDEX
         size : 2 = 320x240, 3 = 640x480, 4 = 1280x720
+            , Default to _DEFAULT_SIZE
         quality : quality index
-            , default is 5
+            , Default to _DEFAULT_QUALITY
         """
+
         fbx_cameras = await self.get_camera()
         return await self._access.get(
             fbx_cameras[camera_index]["stream_url"].replace(
@@ -107,13 +114,16 @@ class Home:
             )[1:]
         )
 
-    async def get_camera_stream_m3u8(self, camera_index=0, channel=2):
+    async def get_camera_stream_m3u8(self, camera_index=_DEFAULT_CAMERA_INDEX, channel=_DEFAULT_CHANNEL):
         """
         Get camera stream
 
         camera_index : `int`
+            , Default to _DEFAULT_CAMERA_INDEX
         channel : 1 is SD, 2 is HD
+            , Default to _DEFAULT_CHANNEL
         """
+
         fbx_cameras = await self.get_camera()
         return await self._access.get(
             fbx_cameras[camera_index]["stream_url"].replace(
@@ -121,13 +131,15 @@ class Home:
             )[1:]
         )
 
-    async def get_camera_ts(self, ts_name, camera_index=0):
+    async def get_camera_ts(self, ts_name, camera_index=_DEFAULT_CAMERA_INDEX):
         """
         Get camera stream
 
         ts_name : `str`
         camera_index : `int`
+            , Default to _DEFAULT_CAMERA_INDEX
         """
+
         fbx_cameras = await self.get_camera()
         return await self._access.get(
             fbx_cameras[camera_index]["stream_url"].replace(
@@ -158,10 +170,14 @@ class Home:
 
         node_id : `int`
         endpoint_id : `int`
-        value : `str`
+        value : `str` or `dict`
         """
-        home_endpoint_value_data = home_endpoint_value_schema
-        home_endpoint_value_data["value"] = value
+
+        home_endpoint_value_data = dict
+        if type(value) == type({}):
+            home_endpoint_value_data = value
+        else:
+            home_endpoint_value_data["value"] = value
         return await self._access.put(
             f"home/endpoints/{node_id}/{endpoint_id}", home_endpoint_value_data
         )
