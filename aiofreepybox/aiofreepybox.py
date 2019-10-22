@@ -148,6 +148,11 @@ class Freepybox:
         # Setup host and port
         if default_host is None:
             default_host = _DEFAULT_HOST
+        elif self._is_ipv4(default_host) and default_port is None:
+            default_port = _DEFAULT_HTTP_PORT
+        elif self._is_ipv6(default_host):
+            _LOGGER.error(f"IPv6 is not supported")
+            return None
 
         default_port = (
             _DEFAULT_HTTPS_PORT
@@ -184,14 +189,21 @@ class Freepybox:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             result = sock.connect_ex((default_host, int(default_port)))
             if result != 0:
-                return None
+                if default_port != _DEFAULT_HTTP_PORT:
+                    return await self.discover(default_host, _DEFAULT_HTTP_PORT)
+                else:
+                    return None
             sock.close()
 
             try:
-                cert_path = os.path.join(os.path.dirname(__file__), _DEFAULT_CERT)
-                ssl_ctx = ssl.create_default_context()
-                ssl_ctx.load_verify_locations(cafile=cert_path)
-                conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
+                if s == "s":
+                    cert_path = os.path.join(os.path.dirname(__file__), _DEFAULT_CERT)
+                    ssl_ctx = ssl.create_default_context()
+                    ssl_ctx.load_verify_locations(cafile=cert_path)
+                    conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
+                else:
+                    conn = aiohttp.TCPConnector()
+
                 self._session = aiohttp.ClientSession(connector=conn)
             except aiohttp.client_exceptions.ClientConnectorError or aiohttp.client_exceptions.ClientConnectorCertificateError or ssl.SSLCertVerificationError:
                 return None
@@ -236,8 +248,9 @@ class Freepybox:
             if self._session is not None:
                 await self._session.close()
                 await asyncio.sleep(0.250)
+            unknown = "?"
             raise HttpRequestError(
-                f"Cannot detect freebox on the network, please check your configuration."
+                f"Cannot detect freebox at {target_host if target_host is not None else unknown}:{target_port if target_port is not None else unknown}, please check your configuration."
             )
 
         # Setting host and port
@@ -422,6 +435,20 @@ class Freepybox:
         return all(
             k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
         )
+
+    def _is_ipv4(self, string):
+        try:
+            ipaddress.IPv4Network(string)
+            return True
+        except ValueError:
+            return False
+
+    def _is_ipv6(self, string):
+        try:
+            ipaddress.IPv6Network(string)
+            return True
+        except ValueError:
+            return False
 
     def _readfile_app_token(self, file):
         """
