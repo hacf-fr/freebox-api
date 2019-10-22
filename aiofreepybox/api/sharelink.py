@@ -1,3 +1,6 @@
+import base64
+
+
 class Sharelink:
     """
     Sharelink
@@ -8,14 +11,17 @@ class Sharelink:
 
     share_link_data_schema = {"path": "", "expire": 0, "fullurl": ""}
 
-    async def create_share_link(self, share_link_data=None):
+    async def create_share_link(self, path, expire):
         """
         Create share link
 
-        share_link_data : `dict`
+        path : `str`
+        expire : `int`
         """
-        if share_link_data is None:
-            share_link_data = self.share_link_data_schema
+
+        share_link_data = self.share_link_data_schema
+        share_link_data["path"] = base64.b64encode(path.encode("utf-8")).decode("utf-8")
+        share_link_data["expire"] = expire
         return await self._access.post("share_link/", share_link_data)
 
     async def delete_share_link(self, token):
@@ -25,6 +31,12 @@ class Sharelink:
         token : `str`
         """
         await self._access.delete(f"share_link/{token}")
+
+    async def get_share_link(self, token):
+        """
+        Get a share link
+        """
+        return await self._access.get(f"share_link/{token}")
 
     async def get_share_links(self):
         """
