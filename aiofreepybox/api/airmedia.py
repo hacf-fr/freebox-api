@@ -18,8 +18,6 @@ class Airmedia:
         "position": 0,
     }
 
-    airmedia_configuration_schema = {"enabled": True, "password": ""}
-
     async def get_airmedia_configuration(self):
         """
         Get airmedia configuration
@@ -41,12 +39,21 @@ class Airmedia:
         """
         await self._access.post("airmedia/receivers/{receiver_name}/", airmedia_data)
 
-    async def update_airmedia_configuration(self, airmedia_enabled):
+    async def update_airmedia_configuration(
+        self, airmedia_enabled=None, airmedia_password=None
+    ):
         """
         Update airmedia configuration
 
         airmedia_enabled : `bool`
+        airmedia_password : `str`
         """
-        airmedia_configuration_data = self.airmedia_configuration_schema
-        airmedia_configuration_data["enabled"] = airmedia_enabled
+
+        if airmedia_enabled is None and airmedia_password is None:
+            return await self.get_airmedia_configuration()
+        airmedia_configuration_data = dict
+        if airmedia_enabled is not None:
+            airmedia_configuration_data["enabled"] = airmedia_enabled
+        if airmedia_password is not None:
+            airmedia_configuration_data["password"] = airmedia_password
         return await self._access.put("airmedia/config/", airmedia_configuration_data)
