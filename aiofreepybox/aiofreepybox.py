@@ -151,7 +151,7 @@ class Freepybox:
         elif self._is_ipv4(default_host) and default_port is None:
             default_port = _DEFAULT_HTTP_PORT
         elif self._is_ipv6(default_host):
-            _LOGGER.error(f"IPv6 is not supported")
+            _LOGGER.error(f"{default_host} : IPv6 is not supported")
             return None
 
         default_port = (
