@@ -6,8 +6,6 @@ class Connection:
     def __init__(self, access):
         self._access = access
 
-    lte_configuration_data_schema = {"enabled": True}
-
     async def get_config(self):
         """
         Get connection configuration
@@ -58,12 +56,23 @@ class Connection:
         """
         await self._access.put("connection/config/", connection_configuration)
 
-    async def set_lte_config(self, lte_configuration_data=None):
+    async def set_lte_config(self, enabled=None):
+        """
+        set lte connection configuration
+
+        enabled : `bool`
+        """
+        lte_configuration_data = dict
+        if enabled is None:
+            return self.get_lte_config()
+        else:
+            lte_configuration_data["enabled"] = enabled
+        await self._access.put("connection/lte/config/", lte_configuration_data)
+
+    async def update_lte_config(self, lte_configuration_data):
         """
         Update lte connection configuration
 
         lte_configuration_data : `dict`
         """
-        if lte_configuration_data is None:
-            lte_configuration_data = self.lte_configuration_data_schema
         await self._access.put("connection/lte/config/", lte_configuration_data)

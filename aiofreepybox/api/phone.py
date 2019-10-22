@@ -6,8 +6,6 @@ class Phone:
     def __init__(self, access):
         self._access = access
 
-    dect_configuration_schema = {"dect_enabled": True, "dect_registration": True}
-
     async def get_dect_vendors(self):
         """
         Get dect vendors
@@ -26,14 +24,31 @@ class Phone:
         """
         return await self._access.get("phone/config/")
 
-    async def start_dect_configuration(self, dect_configuration=None):
+    async def set_phone_config(self, phone_entry):
+        """
+        Set phone config
+
+        phone_entry : `dict`
+        """
+        return await self._access.put("phone/config/", phone_entry)
+
+    async def start_dect_configuration(self, dect_enabled=None, dect_registration=None):
         """
         Start dect configuration
+        To start dect configuration dect_enabled and dect_registration must be True ,
+        but it can also be used to enable/disable dect with dect_enabled True/False
 
-        dect_configuration : `dict`
+        dect_enabled : `bool`
+        dect_registration : `bool`
         """
-        if dect_configuration is None:
-            dect_configuration = self.dect_configuration_schema
+
+        dect_configuration = dict
+        if dect_enabled is None and dect_registration is None:
+            return await get_phone_config()
+        elif dect_enabled is not None:
+            dect_configuration["dect_enabled"] = dect_enabled
+        if dect_registration is not None:
+            dect_configuration["dect_registration"] = dect_registration
         return await self._access.put("phone/config/", dect_configuration)
 
     async def start_dect_page(self):
