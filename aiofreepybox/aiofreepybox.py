@@ -62,8 +62,14 @@ class Freepybox:
     This python library is implementing the freebox OS API.
     It handles the authentication process and provides a raw access to the freebox API in an asynchronous manner.
 
-    api_version : "auto", "server" or "v(1-7)"
-        , Default to "auto"
+    app_desc : `dict`
+        , Default to APP_DESC
+    token_file : `str`
+        , Default to TOKEN_FILE
+    api_version : `str`, "server" or "v(1-7)"
+        , Default to _DEFAULT_API_VERSION
+    timeout : `int`
+        , Default to _DEFAULT_TIMEOUT
     """
 
     def __init__(self, app_desc=None, token_file=None, api_version=None, timeout=None):
