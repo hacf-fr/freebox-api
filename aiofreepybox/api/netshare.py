@@ -37,6 +37,28 @@ class Netshare:
         "workgroup": "workgroup",
     }
 
+    async def afp_switch(self, enabled=None):
+        """
+        Afp server switch
+
+        enabled : `bool` , optional
+            , Default to None
+
+        Returns `None` or enabled : `bool`
+        """
+
+        if enabled is not None:
+            afp_config = dict
+            afp_config["enabled"] = enabled
+            config = await self.set_afp_configuration(afp_config)
+        else:
+            config = await self.get_afp_configuration()
+
+        if config["enabled"] is enabled or enabled is None:
+            return config["enabled"]
+        else:
+            return None
+
     async def get_afp_configuration(self):
         """
         Get afp configuration
@@ -48,6 +70,50 @@ class Netshare:
         Get samba configuration
         """
         return await self._access.get("netshare/samba/")
+
+    async def samba_file_share_switch(self, enabled=None):
+        """
+        Samba file share switch
+
+        enabled : `bool` , optional
+            , Default to None
+
+        Returns `None` or enabled : `bool`
+        """
+
+        if enabled is not None:
+            samba_config = dict
+            samba_config["file_share_enabled"] = enabled
+            config = await self.set_samba_configuration(samba_config)
+        else:
+            config = await self.get_samba_configuration()
+
+        if config["file_share_enabled"] is enabled or enabled is None:
+            return config["file_share_enabled"]
+        else:
+            return None
+
+    async def samba_print_share_switch(self, enabled=None):
+        """
+        Samba print share switch
+
+        enabled : `bool` , optional
+            , Default to None
+
+        Returns `None` or enabled : `bool`
+        """
+
+        if enabled is not None:
+            samba_config = dict
+            samba_config["print_share_enabled"] = enabled
+            config = await self.set_samba_configuration(samba_config)
+        else:
+            config = await self.get_samba_configuration()
+
+        if config["print_share_enabled"] is enabled or enabled is None:
+            return config["print_share_enabled"]
+        else:
+            return None
 
     async def set_afp_configuration(self, afp_configuration):
         """
