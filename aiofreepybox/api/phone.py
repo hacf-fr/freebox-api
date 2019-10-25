@@ -6,6 +6,28 @@ class Phone:
     def __init__(self, access):
         self._access = access
 
+    async def dect_switch(self, enabled=None):
+        """
+        Dect switch
+
+        enabled : `bool` , optional
+            , Default to None
+
+        Returns `None` or enabled : `bool`
+        """
+
+        if enabled is not None:
+            dect_config = dict
+            dect_config["dect_enabled"] = enabled
+            config = await self.set_phone_config(dect_config)
+        else:
+            config = await self.get_phone_config()
+
+        if config["dect_enabled"] is enabled or enabled is None:
+            return config["dect_enabled"]
+        else:
+            return None
+
     async def get_dect_vendors(self):
         """
         Get dect vendors
@@ -49,7 +71,7 @@ class Phone:
             dect_configuration["dect_enabled"] = dect_enabled
         if dect_registration is not None:
             dect_configuration["dect_registration"] = dect_registration
-        return await self._access.put("phone/config/", dect_configuration)
+        return await self.set_phone_config(dect_configuration)
 
     async def start_dect_page(self):
         """
