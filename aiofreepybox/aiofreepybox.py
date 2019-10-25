@@ -59,6 +59,7 @@ _DEFAULT_HTTP_PORT = "80"
 _DEFAULT_HTTPS_PORT = "443"
 _DEFAULT_SSL = True
 _DEFAULT_TIMEOUT = 10
+_DEFAULT_UKNOWN = "?"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -156,6 +157,16 @@ class Freepybox:
             , Default to None
         """
 
+        async def _close_to_return(self):
+            """Close session"""
+
+            if self.fbx_desc is not None:
+                self.fbx_desc = None
+            if self._session is not None and not self._session.closed():
+                await self._session.close()
+                await asyncio.sleep(0.250)
+            return None
+
         # Setup host and port
         if default_host is None:
             default_host = _DEFAULT_HOST
@@ -163,7 +174,7 @@ class Freepybox:
             default_port = _DEFAULT_HTTP_PORT
         elif self._is_ipv6(default_host):
             _LOGGER.error(f"{default_host} : IPv6 is not supported")
-            return None
+            return await _close_to_return()
 
         default_port = (
             _DEFAULT_HTTPS_PORT
@@ -182,15 +193,13 @@ class Freepybox:
         ):
             conns = list(self._session._connector._conns.keys())[0]
             if default_host != conns.host or default_port != conns.port:
-                self.fbx_desc = None
-                await self._session.close()
-                await asyncio.sleep(0.250)
+                await _close_to_return()
                 return await self.discover(default_host, default_port)
             else:
                 return self.fbx_desc
 
-        # Try to connect
-        if (
+        # Connect if session is closed
+        elif (
             self._session is None
             or not isinstance(self._session, aiohttp.ClientSession)
             or self._session.closed
@@ -199,13 +208,14 @@ class Freepybox:
             # Checking host and port
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             result = sock.connect_ex((default_host, int(default_port)))
+            sock.close()
             if result != 0:
                 if default_port != _DEFAULT_HTTP_PORT:
                     return await self.discover(default_host, _DEFAULT_HTTP_PORT)
                 else:
-                    return None
-            sock.close()
+                    return await _close_to_return()
 
+            # Connect
             try:
                 if s == "s":
                     cert_path = os.path.join(os.path.dirname(__file__), _DEFAULT_CERT)
@@ -214,10 +224,10 @@ class Freepybox:
                     conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
                 else:
                     conn = aiohttp.TCPConnector()
-
                 self._session = aiohttp.ClientSession(connector=conn)
+
             except aiohttp.client_exceptions.ClientConnectorError or aiohttp.client_exceptions.ClientConnectorCertificateError or ssl.SSLCertVerificationError:
-                return None
+                return await _close_to_return()
 
         # Found freebox
         try:
@@ -226,10 +236,13 @@ class Freepybox:
                 timeout=self.timeout,
             )
             self.fbx_desc = await r.json()
+
         except aiohttp.client_exceptions.ClientResponseError:
+            await _close_to_return()
             raise HttpRequestError(
                 f"A network error occurred while reading from the freebox at {default_host}:{default_port}"
             )
+
         return self.fbx_desc
 
     async def get_permissions(self):
@@ -262,10 +275,7 @@ class Freepybox:
 
         # Discover
         if await self.discover(target_host, target_port) is None:
-            if self._session is not None:
-                await self._session.close()
-                await asyncio.sleep(0.250)
-            unknown = "?"
+            unknown = _DEFAULT_UNKNOWN
             raise NotOpenError(
                 f"Cannot detect freebox at {target_host if target_host is not None else unknown}:{target_port if target_port is not None else unknown}, please check your configuration."
             )
