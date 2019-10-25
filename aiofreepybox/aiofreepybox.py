@@ -59,7 +59,7 @@ _DEFAULT_HTTP_PORT = "80"
 _DEFAULT_HTTPS_PORT = "443"
 _DEFAULT_SSL = True
 _DEFAULT_TIMEOUT = 10
-_DEFAULT_UKNOWN = "?"
+_DEFAULT_UNKNOWN = "?"
 
 _LOGGER = logging.getLogger(__name__)
 
