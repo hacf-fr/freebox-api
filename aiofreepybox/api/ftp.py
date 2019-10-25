@@ -28,3 +28,25 @@ class Ftp:
         Set ftp configuration
         """
         return await self._access.put("ftp/config/", ftp_configuration)
+
+    async def switch(self, enabled=None):
+        """
+        Ftp server switch
+
+        enabled : `bool` , optional
+            , Default to None
+
+        Returns `None` or enabled : `bool`
+        """
+
+        if enabled is not None:
+            ftp_config = dict
+            ftp_config["enabled"] = enabled
+            config = await self.set_ftp_configuration(ftp_config)
+        else:
+            config = await self.get_ftp_configuration()
+
+        if config["enabled"] is enabled or enabled is None:
+            return config["enabled"]
+        else:
+            return None
