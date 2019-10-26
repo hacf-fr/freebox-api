@@ -123,7 +123,7 @@ if isinstance(player_url_data, str):
             , Default to `None`
         """
 
-        player_volume_data = dict
+        player_volume_data = {}
         if mute is None and volume is None:
             return
         if mute is not None:
