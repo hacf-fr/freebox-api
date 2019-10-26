@@ -77,28 +77,28 @@ class Player:
         """
         return await self._access.get("player")
 
-    async def open_player_url(self, player_id, player_url_data=None):
+    async def open_player_url(self, player_id, player_url_data):
         """
         Open player url
 
         player_id : `int`
-        player_url_data : `str` or `dict`
-            , Default to `None`
+        player_url_data : `dict`
         """
-
-        if player_url_data is None:
-            return
-        player_url_data_schema = dict
-        if type(player_url_data) == type({}):
-            player_url_data_schema = player_url_data
-        else:
-if isinstance(player_url_data, str):
-    player_url_data = { "url": player_url_data }        
-
         await self._access.post(
             f"player/{player_id}/api/{self._player_api_version}/control/open",
-            player_url_data_schema,
+            player_url_data,
         )
+
+    async def set_player_url(self, player_id, player_url):
+        """
+        Set player url
+
+        player_id : `int`
+        player_url : `str`
+        """
+
+        player_url_data = {"url": player_url_data}
+        await self.open_player_url(player_id, player_url_data)
 
     async def send_media_control(self, player_id, media_control_data):
         """
@@ -133,7 +133,7 @@ if isinstance(player_url_data, str):
 
         await self._access.put(
             f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            await self.update_player_volume(player_id, player_volume_data)
+            await self.update_player_volume(player_id, player_volume_data),
         )
 
     async def update_player_volume(self, player_id, player_volume_data):
