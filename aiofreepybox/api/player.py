@@ -92,7 +92,8 @@ class Player:
         if type(player_url_data) == type({}):
             player_url_data_schema = player_url_data
         else:
-            player_url_data_schema["url"] = player_url_data
+if isinstance(player_url_data, str):
+    player_url_data = { "url": player_url_data }        
 
         await self._access.post(
             f"player/{player_id}/api/{self._player_api_version}/control/open",
