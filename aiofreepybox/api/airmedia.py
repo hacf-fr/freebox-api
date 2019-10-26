@@ -50,7 +50,7 @@ class Airmedia:
         """
 
         if airmedia_enabled is None and airmedia_password is None:
-            return await self.get_airmedia_configuration()
+            return
         airmedia_configuration_data = dict
         if airmedia_enabled is not None:
             airmedia_configuration_data["enabled"] = airmedia_enabled
