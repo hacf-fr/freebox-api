@@ -22,7 +22,7 @@ class Lcd:
         brightness : `int`
         orientation_forced : `bool`
         """
-        lcd_config = dict
+        lcd_config = {}
         if orientation is None and brightness is None and orientation_forced is None:
             return await self.get_configuration()
         elif orientation is not None:

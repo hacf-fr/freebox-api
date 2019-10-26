@@ -48,7 +48,7 @@ class Netshare:
         """
 
         if enabled is not None:
-            afp_config = dict
+            afp_config = {}
             afp_config["enabled"] = enabled
             config = await self.set_afp_configuration(afp_config)
         else:
@@ -82,7 +82,7 @@ class Netshare:
         """
 
         if enabled is not None:
-            samba_config = dict
+            samba_config = {}
             samba_config["file_share_enabled"] = enabled
             config = await self.set_samba_configuration(samba_config)
         else:
@@ -104,7 +104,7 @@ class Netshare:
         """
 
         if enabled is not None:
-            samba_config = dict
+            samba_config = {}
             samba_config["print_share_enabled"] = enabled
             config = await self.set_samba_configuration(samba_config)
         else:

@@ -173,7 +173,7 @@ class Home:
         value : `str` or `dict`
         """
 
-        home_endpoint_value_data = dict
+        home_endpoint_value_data = {}
         if type(value) == type({}):
             home_endpoint_value_data = value
         else:

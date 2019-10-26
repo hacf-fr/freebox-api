@@ -40,7 +40,7 @@ class Ftp:
         """
 
         if enabled is not None:
-            ftp_config = dict
+            ftp_config = {}
             ftp_config["enabled"] = enabled
             config = await self.set_ftp_configuration(ftp_config)
         else:
