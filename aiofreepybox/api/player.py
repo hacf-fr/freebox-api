@@ -133,7 +133,7 @@ if isinstance(player_url_data, str):
 
         await self._access.put(
             f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            player_volume_data,
+            await self.update_player_volume(player_id, player_volume_data)
         )
 
     async def update_player_volume(self, player_id, player_volume_data):
