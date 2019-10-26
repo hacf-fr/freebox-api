@@ -148,13 +148,13 @@ class Freepybox:
         await self._session.close()
         await asyncio.sleep(0.250)
 
-    async def discover(self, default_host=None, default_port=None):
+    async def discover(self, host=None, port=None):
         """
         Discover a freebox on the network
 
-        default_host : `str`
+        host : `str`
             , Default to None
-        default_port : `str`
+        port : `str`
             , Default to None
         """
 
@@ -169,26 +169,30 @@ class Freepybox:
             return None
 
         # Setup host and port
-        if not default_host:
-            default_host = _DEFAULT_HOST
-        if self._is_ipv4(default_host):
-            default_port = _DEFAULT_HTTP_PORT
-        elif self._is_ipv6(default_host):
-            _LOGGER.error(f"{default_host} : IPv6 is not supported")
+        if self._is_ipv6(host):
+            _LOGGER.error(f"{host} : IPv6 is not supported")
             return await _close_to_return()
 
-        if not default_port:
-            default_port = _DEFAULT_HTTPS_PORT if _DEFAULT_SSL else _DEFAULT_HTTP_PORT
+        s = "s" if _DEFAULT_SSL and port != _DEFAULT_HTTP_PORT else ""
 
-        s = "s" if default_port != _DEFAULT_HTTP_PORT and _DEFAULT_SSL else ""
+        if host is None and port is None:
+            host, port = (
+                _DEFAULT_HOST,
+                _DEFAULT_HTTPS_PORT if _DEFAULT_SSL else _DEFAULT_HTTP_PORT,
+            )
+        elif port is None:
+            port = _DEFAULT_HTTP_PORT
+            s = ""
+        elif host is None:
+            host = _DEFAULT_HOST
 
         # Check session
         if self.fbx_desc and self._session is not None and not self._session.closed:
             conns = list(self._session._connector._conns.keys())[0]
-            if default_host != conns.host or default_port != conns.port:
+            if host != conns.host or port != conns.port:
                 await self._session.close()
                 await asyncio.sleep(0.250)
-                return await self.discover(default_host, default_port)
+                return await self.discover(host, port)
             else:
                 return self.fbx_desc
 
@@ -203,7 +207,7 @@ class Freepybox:
             # Checking host and port
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(_DEFAULT_TIMEOUT)
-            result = sock.connect_ex((default_host, int(default_port)))
+            result = sock.connect_ex((host, int(port)))
             sock.close()
             if result != 0:
                 return await _close_to_return()
@@ -225,20 +229,19 @@ class Freepybox:
         # Found freebox
         try:
             r = await self._session.get(
-                f"http{s}://{default_host}:{default_port}/api_version",
-                timeout=self.timeout,
+                f"http{s}://{host}:{port}/api_version", timeout=self.timeout
             )
-            if r.content_type != 'application/json':
-                return await _close_to_return()
-            else:
-                self.fbx_desc = await r.json()
-
         except ssl.SSLCertVerificationError as e:
             await _close_to_return()
             raise HttpRequestError(f"{e}")
         # Only for testing
-        #except Exception as e:
-            #raise e
+        # except Exception as e:
+        # raise e
+
+        if r.content_type != "application/json":
+            return await _close_to_return()
+        else:
+            self.fbx_desc = await r.json()
 
         if self.fbx_desc["device_name"] != _DEFAULT_DEVICE_NAME:
             return await _close_to_return()
@@ -265,50 +268,47 @@ class Freepybox:
         else:
             return None
 
-    async def _check_and_validate_parameters(self, target_host, target_port):
+    async def _check_and_validate_parameters(self, host, port):
         """
         Validate host and port
 
-        target_host : `str`
-        target_port : `str`
+        host : `str`
+        port : `str`
         """
 
-        fbx_host = fbx_port = None
-        # Discover
-        if await self.discover(target_host, target_port):
-            # Setting host and port
-            fbx_ssl = self.fbx_desc["https_available"] if _DEFAULT_SSL else _DEFAULT_SSL
-            fbx_host, fbx_port = (
-                target_host
-                if not not target_host
-                and (
-                    any([(not self._is_ipv4(target_host)), target_port])
-                    and target_port != _DEFAULT_HTTPS_PORT
-                )
-                else (self.fbx_desc["api_domain"] if fbx_ssl else _DEFAULT_HOST),
-                target_port
-                if target_port is not None
-                and target_port.isdigit()
-                and not not target_host
-                and not self._is_ipv4(target_host)
-                or (target_host and not self._is_ipv4(target_host))
-                else (self.fbx_desc["https_port"] if fbx_ssl else _DEFAULT_HTTP_PORT),
-            )
-            if await self.discover(fbx_host, fbx_port):
-                self._check_api_version()
-                self.fbx_url = self._get_base_url(fbx_host, fbx_port)
-                return fbx_host, fbx_port
+        try:
+            if await self.discover(host, port) is None:
+                raise ValueError
 
-        unk = _DEFAULT_UNKNOWN
-        host, port = (
-            next(v for v in [target_host, fbx_host, unk] if v),
-            next(v for v in [target_port, fbx_port, unk] if v),
-        )
-        raise NotOpenError(
-            "Cannot detect freebox at "
-            f"{host}:{port}"
-            ", please check your configuration."
-        )
+            if _DEFAULT_SSL and self.fbx_desc["https_available"]:
+                host, port = (
+                    self.fbx_desc["api_domain"] if host is None else host,
+                    self.fbx_desc["https_port"] if port is None else port,
+                )
+            else:
+                host, port = (
+                    _DEFAULT_HOST if host is None else host,
+                    _DEFAULT_HTTP_PORT if port is None else port,
+                )
+
+            if await self.discover(host, port) is None:
+                raise ValueError
+
+        except (ValueError, HttpRequestError):
+            unk = _DEFAULT_UNKNOWN
+            host, port = (
+                next(v for v in [host, unk] if v),
+                next(v for v in [port, unk] if v),
+            )
+            raise NotOpenError(
+                "Cannot detect freebox at "
+                f"{host}:{port}"
+                ", please check your configuration."
+            )
+
+        self._check_api_version()
+        self.fbx_url = self._get_base_url(host, port)
+        return host, port
 
     def _check_api_version(self):
         """
@@ -470,7 +470,13 @@ class Freepybox:
             , Default to `None`
         """
 
-        s = "s" if self.fbx_desc["https_available"] or _DEFAULT_SSL else ""
+        s = (
+            "s"
+            if _DEFAULT_SSL
+            and self.fbx_desc["https_available"]
+            and port != _DEFAULT_HTTP_PORT
+            else ""
+        )
         if freebox_api_version is None:
             return f"http{s}://{host}:{port}"
         else:
