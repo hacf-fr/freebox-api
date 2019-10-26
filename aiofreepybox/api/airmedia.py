@@ -51,7 +51,7 @@ class Airmedia:
 
         if airmedia_enabled is None and airmedia_password is None:
             return
-        airmedia_configuration_data = dict
+        airmedia_configuration_data = {}
         if airmedia_enabled is not None:
             airmedia_configuration_data["enabled"] = airmedia_enabled
         if airmedia_password is not None:
