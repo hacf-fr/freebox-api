@@ -126,7 +126,7 @@ if isinstance(player_url_data, str):
         player_volume_data = dict
         if mute is None and volume is None:
             return
-        elif mute is not None:
+        if mute is not None:
             player_volume_data["mute"] = mute
         if volume is not None:
             player_volume_data["volume"] = volume
