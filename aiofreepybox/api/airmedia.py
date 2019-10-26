@@ -56,7 +56,7 @@ class Airmedia:
             airmedia_configuration_data["enabled"] = airmedia_enabled
         if airmedia_password is not None:
             airmedia_configuration_data["password"] = airmedia_password
-        return await self._access.put("airmedia/config/", airmedia_configuration_data)
+        return await self.update_airmedia_configuration(airmedia_configuration_data)
 
     async def update_airmedia_configuration(self, airmedia_configuration_data):
         """
