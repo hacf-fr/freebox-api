@@ -12,11 +12,19 @@ class Lcd:
         """
         return await self._access.get("lcd/config")
 
-    async def set_configuration(
+    async def set_configuration(self, lcd_config):
+        """
+        Set configuration
+
+        lcd_config : `dict`
+        """
+        return await self._access.put("lcd/config", lcd_config)
+
+    async def update_configuration(
         self, orientation=None, brightness=None, orientation_forced=None
     ):
         """
-        Set configuration
+        Update configuration
 
         orientation : `int`
         brightness : `int`
@@ -31,12 +39,4 @@ class Lcd:
             lcd_config["brightness"] = brightness
         elif orientation_forced is not None:
             lcd_config["orientation_forced"] = orientation_forced
-        return await self._access.put("lcd/config", lcd_config)
-
-    async def update_configuration(self, lcd_config):
-        """
-        Update configuration
-
-        lcd_config : `dict`
-        """
-        return await self._access.put("lcd/config", lcd_config)
+        return await self.set_configuration(lcd_config)

@@ -8,7 +8,6 @@ class Parental:
 
     # valid values are: allowed, denied or webonly
     default_filter_mode = "allowed"
-
     parental_control_configuration_schema = {"default_filter_mode": default_filter_mode}
 
     async def create_parental_filter(self, parental_filter):
@@ -67,12 +66,10 @@ class Parental:
         """
         return await self._access.get("parental/filter/")
 
-    async def set_parental_control_configuration(self, parental_control_configuration):
+    async def set_parental_control_configuration(self, parental_c_c):
         """
         Set parental control configuration
 
-        parental_control_configuration : `dict`
+        parental_c_c : `dict`
         """
-        return await self._access.put(
-            "parental/config/", parental_control_configuration
-        )
+        return await self._access.put("parental/config/", parental_c_c)

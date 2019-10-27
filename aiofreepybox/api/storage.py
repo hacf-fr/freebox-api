@@ -6,8 +6,6 @@ class Storage:
     def __init__(self, access):
         self._access = access
 
-    eject_schema = {"state": "disabled"}
-
     async def check_partition(self, id):
         """
         Check partition
@@ -24,7 +22,7 @@ class Storage:
         eject_data : `dict`
         """
         if eject_data is None:
-            eject_data = self.eject_schema
+            eject_data = {"state": "disabled"}
         return await self._access.put(f"storage/disk/{disk_id}", eject_data)
 
     async def format_partition(self, id, format_data):

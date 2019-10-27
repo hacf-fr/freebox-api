@@ -7,9 +7,7 @@ class Notifications:
         self._access = access
 
     os_type = ["android", "ios"]
-
     subscription = ["security", "wan", "downloader", "phone"]
-
     notification_target_data_schema = {
         "id": "",
         "name": "",

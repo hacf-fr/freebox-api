@@ -17,8 +17,7 @@ class Connection:
         """
 
         if enabled is not None:
-            lte_config = {}
-            lte_config["enabled"] = enabled
+            lte_config = {"enabled": enabled}
             await self.set_lte_config(lte_config)
 
         config = await self.get_lte_config()

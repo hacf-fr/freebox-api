@@ -19,7 +19,6 @@ class Netshare:
         "airport",
         "xserve",
     ]
-
     afp_configuration_schema = {
         "enabled": False,
         "guest_allow": False,
@@ -27,7 +26,6 @@ class Netshare:
         "login_password": "",
         "server_type": server_type[0],
     }
-
     samba_configuration_schema = {
         "file_share_enabled": False,
         "logon_enabled": False,
@@ -48,8 +46,7 @@ class Netshare:
         """
 
         if enabled is not None:
-            afp_config = {}
-            afp_config["enabled"] = enabled
+            afp_config = {"enabled": enabled}
             config = await self.set_afp_configuration(afp_config)
         else:
             config = await self.get_afp_configuration()
@@ -82,8 +79,7 @@ class Netshare:
         """
 
         if enabled is not None:
-            samba_config = {}
-            samba_config["file_share_enabled"] = enabled
+            samba_config = {"file_share_enabled": enabled}
             config = await self.set_samba_configuration(samba_config)
         else:
             config = await self.get_samba_configuration()
@@ -104,8 +100,7 @@ class Netshare:
         """
 
         if enabled is not None:
-            samba_config = {}
-            samba_config["print_share_enabled"] = enabled
+            samba_config = {"print_share_enabled": enabled}
             config = await self.set_samba_configuration(samba_config)
         else:
             config = await self.get_samba_configuration()

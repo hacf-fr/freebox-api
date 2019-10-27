@@ -1,5 +1,7 @@
 import time
 
+_DEFAULT_BOUQUET = "freeboxtv"
+
 
 class Tv:
     """
@@ -110,11 +112,12 @@ class Tv:
         """
         return await self._access.get("tv/bouquets/")
 
-    async def get_tv_bouquet_channels(self, bouquet_id="freeboxtv"):
+    async def get_tv_bouquet_channels(self, bouquet_id=_DEFAULT_BOUQUET):
         """
         Get tv bouquet channels
 
-        bouquet_id : `str`
+        bouquet_id : `str` , optional
+            , Default to _DEFAULT_BOUQUET
         """
         return await self._access.get(f"tv/bouquets/{bouquet_id}/channels/")
 

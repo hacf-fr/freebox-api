@@ -14,21 +14,16 @@ class Wifi:
         "key": "",
         "max_use_count": 0,
     }
-
     wifi_custom_key_user_schema = {"host": "", "hostname": ""}
-
     wifi_custom_key_data_schema = {
         "id": 0,
         "params": wifi_custom_key_params_schema,
         "remaining": 0,
         "users": [wifi_custom_key_user_schema],
     }
-
     # type can be whitelist or blacklist
     wifi_mac_filter_schema = {"comment": "", "mac": "", "type": "blacklist"}
-
     start_wps_session_data_schema = {"bssid": ""}
-
     stop_wps_session_data_schema = {"sessionid": 0}
 
     async def create_wifi_custom_key(self, wifi_custom_key_data):
@@ -112,13 +107,11 @@ class Wifi:
         """
         return await self._access.get(f"wifi/ap/{ap_id}/allowed_channel_comb/")
 
-    async def get_wifi_access_point_channel_usage(self, ap_id):
+    async def get_ap_list(self):
         """
-        get wifi access point channel usage
-
-        ap_id : `int`
+        Get wifi access points list
         """
-        return await self._access.get(f"wifi/ap/{ap_id}/channel_usage/")
+        return await self._access.get("wifi/ap/")
 
     async def get_ap_neighbors(self, ap_id):
         """
@@ -127,29 +120,6 @@ class Wifi:
         ap_id : `int`
         """
         return await self._access.get(f"wifi/ap/{ap_id}/neighbors/")
-
-    async def get_wifi_access_point_station(self, ap_id, mac):
-        """
-        get wifi access point station
-
-        ap_id : `int`
-        mac : `str`
-        """
-        return await self._access.get(f"wifi/ap/{ap_id}/stations/{mac}")
-
-    async def get_station_list(self, ap_id):
-        """
-        Get the list of Wifi Stations associated to the AP
-
-        ap_id : `int`
-        """
-        return await self._access.get(f"wifi/ap/{ap_id}/stations/")
-
-    async def get_ap_list(self):
-        """
-        Get wifi access points list
-        """
-        return await self._access.get("wifi/ap/")
 
     async def get_bss(self):
         """
@@ -162,6 +132,31 @@ class Wifi:
         Get wifi global configuration
         """
         return await self._access.get("wifi/config/")
+
+    async def get_station_list(self, ap_id):
+        """
+        Get the list of Wifi Stations associated to the AP
+
+        ap_id : `int`
+        """
+        return await self._access.get(f"wifi/ap/{ap_id}/stations/")
+
+    async def get_wifi_access_point_channel_usage(self, ap_id):
+        """
+        get wifi access point channel usage
+
+        ap_id : `int`
+        """
+        return await self._access.get(f"wifi/ap/{ap_id}/channel_usage/")
+
+    async def get_wifi_access_point_station(self, ap_id, mac):
+        """
+        get wifi access point station
+
+        ap_id : `int`
+        mac : `str`
+        """
+        return await self._access.get(f"wifi/ap/{ap_id}/stations/{mac}")
 
     async def get_wifi_custom_keys(self):
         """
@@ -248,4 +243,3 @@ class Wifi:
         stop_wps_session_data : `dict`
         """
         await self._access.post("wifi/wps/stop/", stop_wps_session_data)
-

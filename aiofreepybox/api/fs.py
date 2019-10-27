@@ -3,8 +3,7 @@ import logging
 import os
 import aiofreepybox.exceptions
 
-
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class Fs:
@@ -17,27 +16,16 @@ class Fs:
         self._path = "/"
 
     archive_schema = {"dst": "", "files": [""]}
-
     copy_mode = ["overwrite", "both", "recent", "skip"]
-
     copy_schema = {"dst": "", "files": [""], "mode": copy_mode[0]}
-
     create_directory_schema = {"dirname": "", "parent": ""}
-
     create_path_schema = {"path": ""}
-
     extract_schema = {"src": "", "dst": ""}
-
     hash_file_schema = {"src": "", "hash_type": "sha1"}
-
     move_schema = {"dst": "", "files": [""], "mode": copy_mode[0]}
-
     remove_schema = {"files": [""]}
-
     rename_schema = {"src": "", "dst": ""}
-
     task_state = ["queued", "running", "paused", "done", "failed"]
-
     update_task_state_schema = {"state": task_state[0]}
 
     def pwd(self):
@@ -55,7 +43,7 @@ class Fs:
         if await self._path_exists(path):
             self._path = os.path.join(self._path, path)
         else:
-            logger.error(
+            _LOGGER.error(
                 "{} path does not exist".format(os.path.join(self._path, path))
             )
 
@@ -69,7 +57,7 @@ class Fs:
             await self.get_file_info(os.path.join(self._path, path))
             return True
         except aiofreepybox.exceptions.HttpRequestError:
-            logger.debug(
+            _LOGGER.debug(
                 "{} path does not exist".format(os.path.join(self._path, path))
             )
             return False
@@ -141,11 +129,11 @@ class Fs:
         hash_type : `str`
             The type of hash (md5, sha1, ...)
         """
-        self.hash_file_schema["src"] = base64.b64encode(src.encode("utf-8")).decode(
-            "utf-8"
-        )
-        self.hash_file_schema["hash_type"] = hash_type
-        return await self._access.post("fs/hash/", self.hash_file_schema)
+        hash_file_schema = {
+            "src": base64.b64encode(src.encode("utf-8")).decode("utf-8"),
+            "hash_type": hash_type,
+        }
+        return await self._access.post("fs/hash/", hash_file_schema)
 
     async def list_files(self, path, remove_hidden=0, count_sub_folder=0):
         """
@@ -181,10 +169,10 @@ class Fs:
         path : `str`
             The path to create
         """
-        self.create_path_schema["path"] = base64.b64encode(path.encode("utf-8")).decode(
-            "utf-8"
-        )
-        return await self._access.post("fs/mkpath/", self.create_path_schema)
+        create_path_schema = {
+            "path": base64.b64encode(path.encode("utf-8")).decode("utf-8")
+        }
+        return await self._access.post("fs/mkpath/", create_path_schema)
 
     async def mv(self, move):
         """
@@ -203,11 +191,11 @@ class Fs:
         dst : `str`
             The new file name
         """
-        self.rename_schema["src"] = base64.b64encode(src.encode("utf-8")).decode(
-            "utf-8"
-        )
-        self.rename_schema["dst"] = dst
-        return await self._access.post("fs/rename/", self.rename_schema)
+        rename_schema = {
+            "src": base64.b64encode(src.encode("utf-8")).decode("utf-8"),
+            "dst": dst,
+        }
+        return await self._access.post("fs/rename/", rename_schema)
 
     async def rm(self, remove):
         """

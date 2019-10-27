@@ -17,8 +17,7 @@ class Phone:
         """
 
         if enabled is not None:
-            dect_config = {}
-            dect_config["dect_enabled"] = enabled
+            dect_config = {"dect_enabled": enabled}
             config = await self.set_phone_config(dect_config)
         else:
             config = await self.get_phone_config()

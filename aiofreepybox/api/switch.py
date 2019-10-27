@@ -7,7 +7,6 @@ class Switch:
         self._access = access
 
     switch_duplex = ["auto", "full", "half"]
-
     switch_port_configuration_schema = {"duplex": switch_duplex[0], "speed": ""}
 
     async def get_status(self):
