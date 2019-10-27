@@ -165,11 +165,12 @@ class Freepybox:
             return await self._disc_close_to_return()
 
         # Check session
-        sess = await self._disc_check_session(*self._disc_set_host_and_port(host, port))
-        if not isinstance(sess, tuple):
-            return sess
-        else:
-            host, port, s = sess
+        try:
+            host, port, s = await self._disc_check_session(
+                *self._disc_set_host_and_port(host, port)
+            )
+        except ValueError as err:
+            return err.args[0]
 
         # Connect if session is closed
         if any(
@@ -195,8 +196,8 @@ class Freepybox:
 
         if r.content_type != "application/json":
             return await self._disc_close_to_return()
-        else:
-            self.fbx_desc = await r.json()
+
+        self.fbx_desc = await r.json()
 
         if self.fbx_desc["device_name"] != _DEFAULT_DEVICE_NAME:
             return await self._disc_close_to_return()
@@ -220,8 +221,8 @@ class Freepybox:
 
         if self._access:
             return await self._access.get_permissions()
-        else:
-            return None
+
+        return None
 
     def _check_api_version(self):
         """
@@ -265,9 +266,9 @@ class Freepybox:
                 and conns.port == int(port)
                 and conns.is_ssl == (not not s)
             ):
-                return self.fbx_desc
+                raise ValueError(self.fbx_desc)
             elif await self._disc_close_to_return() is None:
-                return await self.discover(host, port)
+                raise ValueError(await self.discover(host, port))
         return host, port, s
 
     async def _disc_close_to_return(self):
@@ -454,9 +455,9 @@ class Freepybox:
         s = "s" if list(self._session._connector._conns.keys())[0].is_ssl else ""
         if freebox_api_version is None:
             return f"http{s}://{host}:{port}"
-        else:
-            abu = self.fbx_desc["api_base_url"]
-            return f"http{s}://{host}:{port}{abu}{freebox_api_version}/"
+
+        abu = self.fbx_desc["api_base_url"]
+        return f"http{s}://{host}:{port}{abu}{freebox_api_version}/"
 
     def _is_app_desc_valid(self, app_desc):
         """
