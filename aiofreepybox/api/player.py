@@ -15,13 +15,9 @@ class Player:
         )
 
     media_control_seek_args = {"seek_position": 0, "type": "seek_position"}
-
     media_control_stream = {"quality": "", "source": ""}
-
     media_control_stream_args = {"stream": media_control_stream, "type": "stream"}
-
     media_control_track_args = {"track_id": 0, "type": "track_id"}
-
     media_control_command = [
         "play",
         "pause",
@@ -45,7 +41,6 @@ class Player:
         "select_srt_track",
         "select_stream",
     ]
-
     media_control_data_schema = {
         "args": media_control_stream_args,
         "cmd": media_control_command[0],
@@ -95,18 +90,6 @@ class Player:
             await self.set_player_volume(player_id, player_mute_data),
         )
 
-    async def set_player_url(self, player_id, player_url_data):
-        """
-        Set player url and open it
-
-        player_id : `int`
-        player_url_data : `dict`
-        """
-        await self._access.post(
-            f"player/{player_id}/api/{self._player_api_version}/control/open",
-            player_url_data,
-        )
-
     async def open_player_url(self, player_id, player_url):
         """
         Open player url
@@ -128,6 +111,18 @@ class Player:
         await self._access.post(
             f"player/{player_id}/api/{self._player_api_version}/control/mediactrl",
             media_control_data,
+        )
+
+    async def set_player_url(self, player_id, player_url_data):
+        """
+        Set player url and open it
+
+        player_id : `int`
+        player_url_data : `dict`
+        """
+        await self._access.post(
+            f"player/{player_id}/api/{self._player_api_version}/control/open",
+            player_url_data,
         )
 
     async def set_player_volume(self, player_id, player_volume_data):
