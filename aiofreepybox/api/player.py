@@ -77,9 +77,27 @@ class Player:
         """
         return await self._access.get("player")
 
-    async def open_player_url(self, player_id, player_url_data):
+    async def mute_switch(self, player_id, mute=None):
         """
-        Open player url
+        Mute switch
+
+        player_id : `int`
+        mute : `bool`, optional
+            , Default to `None`
+        """
+
+        if mute is None:
+            return await get_player_volume(self, player_id)["mute"]
+
+        player_mute_data = {"mute": mute}
+        await self._access.put(
+            f"player/{player_id}/api/{self._player_api_version}/control/volume",
+            await self.set_player_volume(player_id, player_mute_data),
+        )
+
+    async def set_player_url(self, player_id, player_url_data):
+        """
+        Set player url and open it
 
         player_id : `int`
         player_url_data : `dict`
@@ -89,16 +107,16 @@ class Player:
             player_url_data,
         )
 
-    async def set_player_url(self, player_id, player_url):
+    async def open_player_url(self, player_id, player_url):
         """
-        Set player url
+        Open player url
 
         player_id : `int`
         player_url : `str`
         """
 
         player_url_data = {"url": player_url_data}
-        await self.open_player_url(player_id, player_url_data)
+        await self.set_player_url(player_id, player_url_data)
 
     async def send_media_control(self, player_id, media_control_data):
         """
@@ -112,9 +130,21 @@ class Player:
             media_control_data,
         )
 
-    async def set_player_volume(self, player_id, mute=None, volume=None):
+    async def set_player_volume(self, player_id, player_volume_data):
         """
         Set player volume
+
+        player_id : `int`
+        player_volume_data : `dict`
+        """
+        await self._access.put(
+            f"player/{player_id}/api/{self._player_api_version}/control/volume",
+            player_volume_data,
+        )
+
+    async def update_player_volume(self, player_id, mute=None, volume=None):
+        """
+        Update player volume
 
         player_id : `int`
         mute : `bool`, optional
@@ -133,17 +163,5 @@ class Player:
 
         await self._access.put(
             f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            await self.update_player_volume(player_id, player_volume_data),
-        )
-
-    async def update_player_volume(self, player_id, player_volume_data):
-        """
-        Update player volume
-
-        player_id : `int`
-        player_volume_data : `dict`
-        """
-        await self._access.put(
-            f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            player_volume_data,
+            await self.set_player_volume(player_id, player_volume_data),
         )
