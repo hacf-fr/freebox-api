@@ -77,10 +77,9 @@ class Vm:
 
         disk_path : `str`
         """
-        disk_info = self.disk_info_schema
-        disk_info["disk_path"] = base64.b64encode(disk_path.encode("utf-8")).decode(
-            "utf-8"
-        )
+        disk_info = {
+            "disk_path": base64.b64encode(disk_path.encode("utf-8")).decode("utf-8")
+        }
         return await self._access.post("vm/disk/info", disk_info)
 
     async def get_vms(self):
@@ -98,13 +97,20 @@ class Vm:
         shrink_allow : True | False
             , Default to False
         """
-        resize = self.resize_schema
-        resize["disk_path"] = base64.b64encode(disk_path.encode("utf-8")).decode(
-            "utf-8"
-        )
-        resize["size"] = new_size
-        resize["shrink_allow"] = shrink_allow
-        return await self._access.post("vm/disk/resize", resize)
+        resize = {
+            "disk_path": base64.b64encode(disk_path.encode("utf-8")).decode("utf-8"),
+            "size": new_size,
+            "shrink_allow": shrink_allow,
+        }
+        return await self.set_resize_vm(resize)
+
+    async def set_resize_vm(self, resize_data):
+        """
+        Resize a vm
+
+        resize_data : `dict`
+        """
+        return await self._access.post("vm/disk/resize", resize_data)
 
     async def restart_vm(self, vm_id):
         """
