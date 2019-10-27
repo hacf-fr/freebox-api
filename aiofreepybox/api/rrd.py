@@ -56,10 +56,8 @@ class Rrd:
             self.fields_temps = self.fields_temp + self.fields_fans
             self._setup = True
 
-    async def get_rrd_stats(self, rrd_data=None):
+    async def get_rrd_stats(self, rrd_data):
         """
         Get rrd stats
         """
-        if rrd_data is None:
-            rrd_data = self.rrd_data_schema
         return await self._access.post("rrd/", rrd_data)
