@@ -241,13 +241,6 @@ class Freepybox:
         '''
         return 'https://{0}:{1}/api/{2}/'.format(host, port, freebox_api_version)
 
-    def _get_host_url(self, host, port):
-        """
-        Returns host url for HTTPS requests
-        :return:
-        """
-        return f'https://{host}:{port}/'
-
     def _is_app_desc_valid(self, app_desc):
         '''
         Check validity of the application descriptor

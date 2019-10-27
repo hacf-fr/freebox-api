@@ -44,7 +44,7 @@ class System:
 
         img_id : `int`
         """
-        return f"{self._access.host_url}{self.images_fbx_gw_back[img_id]}"
+        return f"/{self.images_fbx_gw_back[img_id]}"
 
     def get_img_fbx_gw_back_expansion(self, img_expansion_types, slot_index):
         """
@@ -53,7 +53,9 @@ class System:
         img_expansion_types : `expansion_types`[index]
         slot_index : 0 | 1
         """
-        return f"{self._access.host_url}resources/images/fbx/gw_back_v7_{img_expansion_types}_{slot_index}.png"
+        return (
+            f"/resources/images/fbx/gw_back_v7_{img_expansion_types}_{slot_index}.png"
+        )
 
     '''     Disabled: requires password login
 
