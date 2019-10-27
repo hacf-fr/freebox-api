@@ -33,7 +33,7 @@ class Contact:
         return await self._access.post("contact/addtogroup", add_to_group)
 
     async def create_contact_object(
-        self, contact_id, contact_data, contact_object_type=None
+        self, contact_id, contact_data, contact_object_type
     ):
         """
         Create contact object
@@ -42,8 +42,6 @@ class Contact:
         contact_data : `dict`
         contact_object_type : `str`
         """
-        if contact_object_type is None:
-            contact_object_type = self.contact_object_type[0]
         return await self._access.post(
             f"contact/{contact_id}/{contact_object_type}", contact_data
         )
@@ -56,15 +54,13 @@ class Contact:
         """
         return await self._access.post("group/", group_data)
 
-    async def delete_contact_object(self, contact_id, contact_object_type=None):
+    async def delete_contact_object(self, contact_id, contact_object_type):
         """
         Delete contact object
 
         contact_id : `int`
         contact_object_type : `str`
         """
-        if contact_object_type is None:
-            contact_object_type = self.contact_object_type[0]
         await self._access.delete(f"contact/{contact_id}/{contact_object_type}")
 
     async def delete_group(self, group_id):
@@ -75,9 +71,7 @@ class Contact:
         """
         await self._access.delete(f"group/{group_id}")
 
-    async def edit_contact_object(
-        self, contact_id, contact_data, contact_object_type=None
-    ):
+    async def edit_contact_object(self, contact_id, contact_data, contact_object_type):
         """
         Edit contact object
 
@@ -85,8 +79,6 @@ class Contact:
         contact_data : `dict`
         contact_object_type : `str`
         """
-        if contact_object_type is None:
-            contact_object_type = self.contact_object_type[0]
         return await self._access.put(
             f"contact/{contact_id}/{contact_object_type}", contact_data
         )
@@ -105,15 +97,13 @@ class Contact:
         """
         return await self._access.get(f"contact/{contact_id}")
 
-    async def get_contact_data(self, contact_id, contact_object_type=None):
+    async def get_contact_data(self, contact_id, contact_object_type):
         """
         Get contact data
 
         contact_id : `int`
         contact_object_type : `str`
         """
-        if contact_object_type is None:
-            contact_object_type = self.contact_object_type[0]
         return await self._access.get(f"contact/{contact_id}/{contact_object_type}")
 
     async def get_contacts(self):
@@ -164,14 +154,12 @@ class Contact:
         """
         return await self._access.post("contact/import/step2/", import_contacts)
 
-    async def remove_from_group(self, remove_from_group=None):
+    async def remove_from_group(self, remove_from_group):
         """
         Remove from group
 
         remove_from_group : `dict`
         """
-        if remove_from_group is None:
-            remove_from_group = self.add_to_group_schema
         return await self._access.post("contact/removefromgroup", remove_from_group)
 
     async def update_contact(self, contact_id, contact_data):
