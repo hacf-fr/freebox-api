@@ -85,10 +85,8 @@ class Player:
             return await get_player_volume(self, player_id)["mute"]
 
         player_mute_data = {"mute": mute}
-        await self._access.put(
-            f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            await self.set_player_volume(player_id, player_mute_data),
-        )
+        await self.set_player_volume(player_id, player_mute_data)
+        return await get_player_volume(self, player_id)["mute"]
 
     async def open_player_url(self, player_id, player_url):
         """
@@ -156,7 +154,4 @@ class Player:
         if volume is not None:
             player_volume_data["volume"] = volume
 
-        await self._access.put(
-            f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            await self.set_player_volume(player_id, player_volume_data),
-        )
+        await self.set_player_volume(player_id, player_volume_data)
