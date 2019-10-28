@@ -243,3 +243,24 @@ class Wifi:
         stop_wps_session_data : `dict`
         """
         await self._access.post("wifi/wps/stop/", stop_wps_session_data)
+
+    async def wifi_switch(self, enabled=None):
+        """
+        Wifi switch
+
+        enabled : `bool` , optional
+            , Default to None
+
+        Returns `None` or enabled : `bool`
+        """
+
+        if enabled is not None:
+            wifi_config = {"enabled": enabled}
+            config = await self.set_global_config(wifi_config)
+        else:
+            config = await self.get_global_config()
+
+        if config["enabled"] is enabled or enabled is None:
+            return config["enabled"]
+        else:
+            return None
