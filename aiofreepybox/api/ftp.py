@@ -29,7 +29,7 @@ class Ftp:
         """
         return await self._access.put("ftp/config/", ftp_configuration)
 
-    async def switch(self, enabled=None):
+    async def ftp_switch(self, enabled=None):
         """
         Ftp server switch
 
