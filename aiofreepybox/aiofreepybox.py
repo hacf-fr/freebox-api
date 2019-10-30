@@ -35,6 +35,7 @@ from aiofreepybox.api.notifications import Notifications
 from aiofreepybox.api.rrd import Rrd
 from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
+from aiofreepybox.api.switches import Switches
 
 # Token file default location
 token_filename = 'app_auth'
@@ -100,6 +101,9 @@ class Freepybox:
         self.rrd = Rrd(self._access)
         self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
+
+        # switches must be last
+        self.switches = Switches(self)
 
     async def close(self):
         '''
