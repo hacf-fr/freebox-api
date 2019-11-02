@@ -30,11 +30,11 @@ class Switches:
 
     _sw_list: set = set()
 
-    def get_switches(self):
+    def sw_items(self):
         """Return a set of all known switches"""
         return self._sw_list
 
-    async def switch_set(self, switches_set: set, enable: bool):
+    async def sw_update(self, switches_set: set, enable: bool):
         """
         Switch a set of switches
 
@@ -48,7 +48,7 @@ class Switches:
             else:
                 _LOGGER.debug(f"Can't switch {sw_name}, it is not a switch")
 
-    async def status(self, s_list=None):
+    async def sw_status(self, s_list=None):
         """
         Return status dict for a set of switches
 
