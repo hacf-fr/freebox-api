@@ -72,21 +72,25 @@ class Player:
         """
         return await self._access.get("player")
 
-    async def mute_switch(self, player_id, mute=None):
+    async def mute_player_switch(self, player_id=None, enabled=None):
         """
         Mute switch
 
-        player_id : `int`
+        player_id : `int`, optional
+            , Default to `None`
         mute : `bool`, optional
             , Default to `None`
         """
 
-        if mute is None:
-            return await get_player_volume(self, player_id)["mute"]
+        if player_id is None:
+            player_id = (await self.get_players())[0]["id"]
 
-        player_mute_data = {"mute": mute}
+        if enabled is None:
+            return (await self.get_player_volume(player_id))["mute"]
+
+        player_mute_data = {"mute": enabled}
         await self.set_player_volume(player_id, player_mute_data)
-        return await get_player_volume(self, player_id)["mute"]
+        return (await self.get_player_volume(player_id))["mute"]
 
     async def open_player_url(self, player_id, player_url):
         """
