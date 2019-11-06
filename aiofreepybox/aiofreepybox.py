@@ -68,7 +68,8 @@ _LOGGER = logging.getLogger(__name__)
 class Freepybox:
     """
     This python library is implementing the freebox OS API.
-    It handles the authentication process and provides a raw access to the freebox API in an asynchronous manner.
+    It handles the authentication process and provides a raw access
+    to the freebox API in an asynchronous manner.
 
     app_desc : `dict`
         , Default to _APP_DESC
@@ -190,9 +191,6 @@ class Freepybox:
         except ssl.SSLCertVerificationError as e:
             await self._disc_close_to_return()
             raise HttpRequestError(f"{e}")
-        # Only for testing
-        # except Exception as e:
-        # raise e
 
         if r.content_type != "application/json":
             return await self._disc_close_to_return()
@@ -259,6 +257,7 @@ class Freepybox:
 
     async def _disc_check_session(self, host, port, s):
         """Check discovery session"""
+
         if self.fbx_desc and self._session is not None and not self._session.closed:
             conns = list(self._session._connector._conns.keys())[0]
             if (
@@ -269,6 +268,7 @@ class Freepybox:
                 raise ValueError(self.fbx_desc)
             elif await self._disc_close_to_return() is None:
                 raise ValueError(await self.discover(host, port))
+
         return host, port, s
 
     async def _disc_close_to_return(self):
@@ -279,6 +279,7 @@ class Freepybox:
         if self._session is not None and not self._session.closed:
             await self._session.close()
             await asyncio.sleep(0.250)
+
         return None
 
     async def _disc_connect(self, host, port, s):
@@ -301,7 +302,6 @@ class Freepybox:
             else:
                 conn = aiohttp.TCPConnector()
             self._session = aiohttp.ClientSession(connector=conn)
-
         except ssl.SSLCertVerificationError:
             return await self._disc_close_to_return()
 
@@ -414,8 +414,7 @@ class Freepybox:
                 "Authorization failed (APIResponse: {}).".format(json.dumps(resp))
             )
 
-        app_token = resp["result"]["app_token"]
-        track_id = resp["result"]["track_id"]
+        app_token, track_id = resp["result"]["app_token"], resp["result"]["track_id"]
 
         return app_token, track_id
 
@@ -440,6 +439,7 @@ class Freepybox:
         url = urljoin(base_url, f"login/authorize/{track_id}")
         r = await self._session.get(url, timeout=timeout)
         resp = await r.json()
+
         return resp["result"]["status"]
 
     def _get_base_url(self, host, port, freebox_api_version=None):
@@ -465,7 +465,6 @@ class Freepybox:
 
         app_desc : `dict`
         """
-
         return all(
             k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
         )
@@ -476,6 +475,7 @@ class Freepybox:
 
         ip_address : `str`
         """
+
         try:
             ipaddress.IPv4Network(ip_address)
             return True
@@ -488,6 +488,7 @@ class Freepybox:
 
         ip_address : `str`
         """
+
         try:
             ipaddress.IPv6Network(ip_address)
             return True
@@ -505,7 +506,6 @@ class Freepybox:
 
             if await self.discover(host, port) is None:
                 raise ValueError
-
         except (ValueError, HttpRequestError):
             unk = _DEFAULT_UNKNOWN
             host, port = (
@@ -520,6 +520,7 @@ class Freepybox:
 
         self._check_api_version()
         self.fbx_url = self._get_base_url(host, port)
+
         return host, port
 
     def _open_setup(self, host, port):
@@ -539,6 +540,7 @@ class Freepybox:
                 _DEFAULT_HOST if host is None else host,
                 _DEFAULT_HTTP_PORT if port is None else port,
             )
+
         return host, port
 
     def _readfile_app_token(self, file):
@@ -561,7 +563,6 @@ class Freepybox:
                     if k in d
                 }
                 return app_token, track_id, app_desc
-
         except FileNotFoundError:
             return None, None, None
 
@@ -576,6 +577,5 @@ class Freepybox:
         """
 
         d = {**app_desc, "app_token": app_token, "track_id": track_id}
-
         with open(file, "w") as f:
             json.dump(d, f)
