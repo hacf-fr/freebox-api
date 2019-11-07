@@ -71,13 +71,13 @@ class Freepybox:
     It handles the authentication process and provides a raw access
     to the freebox API in an asynchronous manner.
 
-    app_desc : `dict`
+    app_desc : `dict` , optional
         , Default to _APP_DESC
-    token_file : `str`
+    token_file : `str` , optional
         , Default to _TOKEN_FILE
-    api_version : `str`, "server" or "v(1-7)"
+    api_version : `str`, "server" or "v(1-7)" , optional
         , Default to _DEFAULT_API_VERSION
-    timeout : `int`
+    timeout : `int` , optional
         , Default to _DEFAULT_TIMEOUT
     """
 
@@ -98,9 +98,9 @@ class Freepybox:
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
 
-        host : `str`
+        host : `str` , optional
             , Default to `None`
-        port : `str`
+        port : `str` , optional
             , Default to `None`
         """
 
@@ -155,9 +155,9 @@ class Freepybox:
         """
         Discover a freebox on the network
 
-        host : `str`
+        host : `str` , optional
             , Default to None
-        port : `str`
+        port : `str` , optional
             , Default to None
         """
 
@@ -336,7 +336,8 @@ class Freepybox:
         api_version : `str`
         token_file : `str`
         app_desc : `dict`
-        timeout : `int`
+        timeout : `int` , optional
+            , Default to _DEFAULT_TIMEOUT
         """
 
         base_url = self._get_base_url(host, port, api_version)
@@ -397,7 +398,8 @@ class Freepybox:
 
         base_url : `str`
         app_desc : `dict`
-        timeout : `int`
+        timeout : `int` , optional
+            , Default to _DEFAULT_TIMEOUT
 
         Returns app_token, track_id
         """
@@ -426,7 +428,8 @@ class Freepybox:
 
         base_url : `str`
         track_id : `str`
-        timeout : `int`
+        timeout : `int` , optional
+            , Default to _DEFAULT_TIMEOUT
 
         Returns:
             unknown 	the app_token is invalid or has been revoked
@@ -448,7 +451,7 @@ class Freepybox:
 
         host : `str`
         port : `str`
-        freebox_api_version : `str`
+        freebox_api_version : `str` , optional
             , Default to `None`
         """
 
