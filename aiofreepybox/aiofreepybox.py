@@ -185,19 +185,20 @@ class Freepybox:
 
         # Found freebox
         try:
-            r = await self._session.get(
+            async with self._session.get(
                 f"http{s}://{host}:{port}/api_version", timeout=self.timeout
-            )
+            ) as r:
+                if r.content_type != "application/json":
+                    return await self._disc_close_to_return()
+                self.fbx_desc = await r.json()
         except ssl.SSLCertVerificationError as e:
             await self._disc_close_to_return()
             raise HttpRequestError(f"{e}")
 
-        if r.content_type != "application/json":
-            return await self._disc_close_to_return()
-
-        self.fbx_desc = await r.json()
-
-        if self.fbx_desc["device_name"] != _DEFAULT_DEVICE_NAME:
+        if not "device_name" in self.fbx_desc or (
+            "device_name" in self.fbx_desc
+            and self.fbx_desc["device_name"] != _DEFAULT_DEVICE_NAME
+        ):
             return await self._disc_close_to_return()
 
         return self.fbx_desc
@@ -219,7 +220,6 @@ class Freepybox:
 
         if self._access:
             return await self._access.get_permissions()
-
         return None
 
     def _check_api_version(self):
@@ -228,27 +228,22 @@ class Freepybox:
         """
 
         # Set API version if needed
-        server_version = self.fbx_desc["api_version"].split(".")[0]
-        short_api_version_target = _DEFAULT_API_VERSION[1:]
+        s_fbx_version = self.fbx_desc["api_version"].split(".")[0]
+        s_default_api_version = _DEFAULT_API_VERSION[1:]
         if self.api_version == "server":
-            self.api_version = f"v{server_version}"
+            self.api_version = f"v{s_fbx_version}"
 
         # Check user API version
-        short_api_version = self.api_version[1:]
-        if (
-            short_api_version_target < server_version
-            and short_api_version == server_version
-        ):
+        s_api_version = self.api_version[1:]
+        if s_default_api_version < s_fbx_version and s_api_version == s_fbx_version:
             _LOGGER.warning(
                 f"Using new API version {self.api_version}, results may vary."
             )
-        elif (
-            short_api_version < short_api_version_target and int(short_api_version) > 0
-        ):
+        elif 0 < int(s_api_version) and s_api_version < s_default_api_version:
             _LOGGER.warning(
                 f"Using deprecated API version {self.api_version}, results may vary."
             )
-        elif short_api_version > server_version or int(short_api_version) < 1:
+        elif 1 > int(s_api_version) or s_api_version > s_fbx_version:
             _LOGGER.warning(
                 "Freebox server does not support this API version ("
                 f"{self.api_version}), resetting to {_DEFAULT_API_VERSION}."
@@ -259,12 +254,8 @@ class Freepybox:
         """Check discovery session"""
 
         if self.fbx_desc and self._session is not None and not self._session.closed:
-            conns = list(self._session._connector._conns.keys())[0]
-            if (
-                conns.host == host
-                and conns.port == int(port)
-                and conns.is_ssl == (not not s)
-            ):
+            c = list(self._session._connector._conns.keys())[0]
+            if c.host == host and c.port == int(port) and c.is_ssl == (not not s):
                 raise ValueError(self.fbx_desc)
             elif await self._disc_close_to_return() is None:
                 raise ValueError(await self.discover(host, port))
@@ -274,11 +265,10 @@ class Freepybox:
     async def _disc_close_to_return(self):
         """Close discovery session"""
 
-        if self.fbx_desc is not None:
-            self.fbx_desc = None
         if self._session is not None and not self._session.closed:
             await self._session.close()
             await asyncio.sleep(0.250)
+        self.fbx_desc = None if self.fbx_desc is not None else self.fbx_desc
 
         return None
 
@@ -407,8 +397,8 @@ class Freepybox:
         # Get authentification token
         url = urljoin(base_url, "login/authorize/")
         data = json.dumps(app_desc)
-        r = await self._session.post(url, data=data, timeout=timeout)
-        resp = await r.json()
+        async with self._session.post(url, data=data, timeout=timeout) as r:
+            resp = await r.json()
 
         # raise exception if resp.success != True
         if not resp.get("success"):
@@ -417,7 +407,6 @@ class Freepybox:
             )
 
         app_token, track_id = resp["result"]["app_token"], resp["result"]["track_id"]
-
         return app_token, track_id
 
     async def _get_authorization_status(
@@ -440,27 +429,26 @@ class Freepybox:
         """
 
         url = urljoin(base_url, f"login/authorize/{track_id}")
-        r = await self._session.get(url, timeout=timeout)
-        resp = await r.json()
+        async with self._session.get(url, timeout=timeout) as r:
+            resp = await r.json()
+            return resp["result"]["status"]
 
-        return resp["result"]["status"]
-
-    def _get_base_url(self, host, port, freebox_api_version=None):
+    def _get_base_url(self, host, port, fbx_api_version=None):
         """
         Returns base url for HTTP(S) requests
 
         host : `str`
         port : `str`
-        freebox_api_version : `str` , optional
+        fbx_api_version : `str` , optional
             , Default to `None`
         """
 
         s = "s" if list(self._session._connector._conns.keys())[0].is_ssl else ""
-        if freebox_api_version is None:
+        if fbx_api_version is None:
             return f"http{s}://{host}:{port}"
 
         abu = self.fbx_desc["api_base_url"]
-        return f"http{s}://{host}:{port}{abu}{freebox_api_version}/"
+        return f"http{s}://{host}:{port}{abu}{fbx_api_version}/"
 
     def _is_app_desc_valid(self, app_desc):
         """
