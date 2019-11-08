@@ -27,11 +27,14 @@ async def demo():
     if fbx.api_version == 'v6':
         # Get a jpg snapshot from a camera
         fbx_cam_jpg = await fbx.home.get_camera_snapshot()
+        fbx_cam_jpg.close()
 
         # Get a TS stream from a camera
         r = await fbx.home.get_camera_stream_m3u8()
         m3u8_obj = m3u8.loads(await r.text())
+        r.close()
         fbx_ts = await fbx.home.get_camera_ts(m3u8_obj.files[0])
+        fbx_ts.close()
 
     # Dump freebox configuration using system API
     # Extract temperature and mac address
