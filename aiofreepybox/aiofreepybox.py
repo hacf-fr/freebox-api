@@ -128,7 +128,6 @@ class Freepybox:
         '''
 
         base_url = self._get_base_url(host, port, api_version)
-        host_url = self._get_host_url(host, port)
 
         # Read stored application token
         logger.info('Read application authorization file')
@@ -169,7 +168,7 @@ class Freepybox:
             logger.info('Application token file was generated: {0}'.format(token_file))
 
         # Create freebox http access module
-        fbx_access = Access(self._session, base_url, host_url, app_token, app_desc['app_id'], timeout)
+        fbx_access = Access(self._session, base_url, app_token, app_desc['app_id'], timeout)
 
         return fbx_access
 
