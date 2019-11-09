@@ -1,6 +1,7 @@
 import hmac
 import json
 import logging
+from asyncio import TimeoutError
 from urllib.parse import urljoin
 from aiofreepybox.exceptions import (
     AuthorizationError,
@@ -9,7 +10,7 @@ from aiofreepybox.exceptions import (
 )
 
 from aiohttp.client import ClientSession
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 _DEFAULT_TIMEOUT = 10
 _LOGGER = logging.getLogger(__name__)
@@ -33,8 +34,8 @@ class Access:
         self.app_token = app_token
         self.app_id = app_id
         self.timeout = http_timeout
-        self.session_token = None
-        self.session_permissions = None
+        self.session_token: Optional[str] = None
+        self.session_permissions: Optional[str] = None
 
     async def _get_challenge(
         self, base_url: str, timeout: int = _DEFAULT_TIMEOUT
@@ -61,7 +62,7 @@ class Access:
         app_token: str,
         app_id: str,
         timeout: int = _DEFAULT_TIMEOUT,
-    ):
+    ) -> Tuple[str, str]:
         """
         Get session token from freebox.
         Returns (session_token, session_permissions)
@@ -101,11 +102,11 @@ class Access:
         _LOGGER.info("Session opened")
         _LOGGER.debug("Permissions: " + str(self.session_permissions))
 
-    def _get_headers(self) -> Dict[str, Union[str, None]]:
+    def _get_headers(self) -> Dict[str, Optional[str]]:
         """Get headers"""
         return {"X-Fbx-App-Auth": self.session_token}
 
-    async def _perform_request(self, verb: Callable, end_url: str, **kwargs):
+    async def _perform_request(self, verb: Callable, end_url: str, **kwargs) -> Any:
         """
         Perform the given request, refreshing the session token if needed
         """
@@ -118,7 +119,10 @@ class Access:
             "headers": self._get_headers(),
             "timeout": self.timeout,
         }
-        r = await verb(url, **request_params)
+        try:
+            r = await verb(url, **request_params)
+        except TimeoutError as e:
+            raise HttpRequestError(e)
 
         # Return response if content is not json
         if r.content_type != "application/json":
@@ -135,7 +139,7 @@ class Access:
             # Check for 'data' response success
             if not resp["error"] if "error" in resp else False:
                 # Return 'data' response
-                return resp["data"] if "data" in resp else None
+                return resp.get("data", None)
 
             error_message = "Request failed (APIResponse: {})".format(json.dumps(resp))
             if resp.get("error_code") == "insufficient_rights":
@@ -143,37 +147,37 @@ class Access:
             raise HttpRequestError(error_message)
 
         # Return 'result' response
-        return resp["result"] if "result" in resp else None
+        return resp.get("result", None)
 
-    async def get(self, end_url: str, params_url: Union[str, None] = None):
+    async def get(self, end_url: str, params_url: Optional[str] = None) -> Any:
         """
         Send get request and return results
         """
         params = params_url if params_url is not None else None
         return await self._perform_request(self.session.get, end_url, params=params)
 
-    async def post(self, end_url: str, payload: Union[str, None] = None):
+    async def post(self, end_url: str, payload: Optional[str] = None) -> Any:
         """
         Send post request and return results
         """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.post, end_url, data=data)
 
-    async def put(self, end_url: str, payload: Union[str, None] = None):
+    async def put(self, end_url: str, payload: Optional[str] = None) -> Any:
         """
         Send post request and return results
         """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.put, end_url, data=data)
 
-    async def delete(self, end_url: str, payload: Union[str, None] = None):
+    async def delete(self, end_url: str, payload: Optional[str] = None) -> Any:
         """
         Send delete request and return results
         """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.delete, end_url, data=data)
 
-    async def get_permissions(self):
+    async def get_permissions(self) -> Optional[str]:
         """
         Returns the permissions for this session/app.
         """
