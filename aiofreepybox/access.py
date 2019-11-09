@@ -142,7 +142,7 @@ class Access:
                 return resp.get("data", None)
 
             error_message = "Request failed (APIResponse: {})".format(json.dumps(resp))
-            if resp.get("error_code") == "insufficient_rights":
+            if resp.get("error_code") in ["insufficient_rights", "access_denied"]:
                 raise InsufficientPermissionsError(error_message)
             raise HttpRequestError(error_message)
 
