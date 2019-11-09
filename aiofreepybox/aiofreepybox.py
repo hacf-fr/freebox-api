@@ -39,7 +39,7 @@ from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
 # Default application descriptor
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 _APP_DESC = {
     "app_id": "aiofpbx",
@@ -404,7 +404,7 @@ class Freepybox:
 
     async def _get_app_token(
         self, base_url: str, app_desc: Dict[str, str], timeout: int = _DEFAULT_TIMEOUT
-    ):
+    ) -> Tuple[str, str]:
         """
         Get the application token from the freebox
 
@@ -435,7 +435,7 @@ class Freepybox:
 
     async def _get_authorization_status(
         self, base_url: str, track_id: str, timeout: int = _DEFAULT_TIMEOUT
-    ):
+    ) -> str:
         """
         Get authorization status of the application token
 
@@ -569,7 +569,7 @@ class Freepybox:
 
         return host, port
 
-    def _readfile_app_token(self, file: str):
+    def _readfile_app_token(self, file: str) -> Tuple[Any, Any, Any]:
         """
         Read the application token in the authentication file.
 
@@ -594,7 +594,7 @@ class Freepybox:
 
     def _writefile_app_token(
         self, app_token: str, track_id: str, app_desc: Dict[str, str], file: str
-    ):
+    ) -> None:
         """
         Store the application token in a _TOKEN_FILE file
 
