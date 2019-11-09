@@ -137,7 +137,7 @@ class Access:
         # Check for 'result' response success
         if not resp["success"] if "success" in resp else True:
             # Check for 'data' response success
-            if not resp["error"] if "error" in resp else False:
+            if (not resp["error"] if "error" in resp else True) and resp["data"]:
                 # Return 'data' response
                 return resp.get("data", None)
 
