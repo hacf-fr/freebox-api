@@ -7,10 +7,9 @@ from aiofreepybox.exceptions import *
 logger = logging.getLogger(__name__)
 
 class Access:
-    def __init__(self, session, base_url, host_url, app_token, app_id, http_timeout):
+    def __init__(self, session, base_url, app_token, app_id, http_timeout):
         self.session = session
         self.base_url = base_url
-        self.host_url = host_url
         self.app_token = app_token
         self.app_id = app_id
         self.timeout = http_timeout
@@ -105,7 +104,7 @@ class Access:
 
             if not resp['success']:
                 errMsg = 'Request failed (APIResponse: {})'.format(json.dumps(resp))
-                if resp.get('error_code') in ['insufficient_rights', 'access_denied']:
+                if resp.get('error_code') == 'insufficient_rights':
                     raise InsufficientPermissionsError(errMsg)
                 else:
                     raise HttpRequestError(errMsg)
