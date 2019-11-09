@@ -39,6 +39,8 @@ from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 
 # Default application descriptor
+from typing import Dict, Optional, Tuple, Union
+
 _APP_DESC = {
     "app_id": "aiofpbx",
     "app_name": "aiofreepybox",
@@ -81,19 +83,27 @@ class Freepybox:
         , Default to _DEFAULT_TIMEOUT
     """
 
-    def __init__(self, app_desc=None, token_file=None, api_version=None, timeout=None):
-        self.api_version = (
+    def __init__(
+        self,
+        app_desc: Optional[Dict[str, str]] = None,
+        token_file: Optional[str] = None,
+        api_version: Optional[str] = None,
+        timeout: Optional[int] = None,
+    ) -> None:
+        self.api_version: str = (
             api_version if api_version is not None else _DEFAULT_API_VERSION
         )
-        self.app_desc = app_desc if app_desc is not None else _APP_DESC
-        self.fbx_desc = None
-        self.fbx_url = ""
-        self.timeout = timeout if timeout is not None else _DEFAULT_TIMEOUT
-        self.token_file = token_file if token_file is not None else _TOKEN_FILE
-        self._access = None
-        self._session = None
+        self.app_desc: Dict[str, str] = app_desc if app_desc is not None else _APP_DESC
+        self._fbx_desc: dict = {}
+        self._fbx_url: str = ""
+        self.timeout: int = timeout if timeout is not None else _DEFAULT_TIMEOUT
+        self.token_file: str = token_file if token_file is not None else _TOKEN_FILE
+        self._access: Optional[Access] = None
+        self._session: Optional[aiohttp.ClientSession] = None
 
-    async def open(self, host=None, port=None):
+    async def open(
+        self, host: Optional[str] = None, port: Optional[str] = None
+    ) -> None:
         """
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
@@ -109,10 +119,10 @@ class Freepybox:
 
         # Get API access
         self._access = await self._get_app_access(
-            *await self._open_init(host, port),
             self.api_version,
             self.token_file,
             self.app_desc,
+            *await self._open_init(host, port),
             self.timeout,
         )
 
@@ -138,20 +148,22 @@ class Freepybox:
         self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
 
-    async def close(self):
+    async def close(self) -> None:
         """
         Close the freebox session
         """
 
-        if self._access is None or self._session.closed:
+        if self._access is None or self._session.closed:  # type: ignore # noqa
             _LOGGER.warning(f"Closing but freebox is not connected")
             return
 
         await self._access.post("login/logout")
-        await self._session.close()
+        await self._session.close()  # type: ignore # noqa
         await asyncio.sleep(0.250)
 
-    async def discover(self, host=None, port=None):
+    async def discover(
+        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+    ) -> Optional[dict]:
         """
         Discover a freebox on the network
 
@@ -161,14 +173,14 @@ class Freepybox:
             , Default to None
         """
 
-        if self._is_ipv6(host):
-            _LOGGER.error(f"{host} : IPv6 is not supported")
+        if host_in and self._is_ipv6(host_in):
+            _LOGGER.error(f"{host_in} : IPv6 is not supported")
             return await self._disc_close_to_return()
 
         # Check session
         try:
             host, port, s = await self._disc_check_session(
-                *self._disc_set_host_and_port(host, port)
+                *self._disc_set_host_and_port(host_in, port_in)
             )
         except ValueError as err:
             return err.args[0]
@@ -185,25 +197,22 @@ class Freepybox:
 
         # Found freebox
         try:
-            async with self._session.get(
+            async with self._session.get(  # type: ignore # noqa
                 f"http{s}://{host}:{port}/api_version", timeout=self.timeout
             ) as r:
                 if r.content_type != "application/json":
                     return await self._disc_close_to_return()
-                self.fbx_desc = await r.json()
+                self._fbx_desc = await r.json()
         except ssl.SSLCertVerificationError as e:
             await self._disc_close_to_return()
             raise HttpRequestError(f"{e}")
 
-        if not "device_name" in self.fbx_desc or (
-            "device_name" in self.fbx_desc
-            and self.fbx_desc["device_name"] != _DEFAULT_DEVICE_NAME
-        ):
+        if self._fbx_desc.get("device_name", None) != _DEFAULT_DEVICE_NAME:
             return await self._disc_close_to_return()
 
-        return self.fbx_desc
+        return self._fbx_desc
 
-    async def get_permissions(self):
+    async def get_permissions(self) -> Optional[dict]:
         """
         Returns the permissions for this app.
 
@@ -222,13 +231,13 @@ class Freepybox:
             return await self._access.get_permissions()
         return None
 
-    def _check_api_version(self):
+    def _check_api_version(self) -> None:
         """
         Check api version
         """
 
         # Set API version if needed
-        s_fbx_version = self.fbx_desc["api_version"].split(".")[0]
+        s_fbx_version = self._fbx_desc["api_version"].split(".")[0]
         s_default_api_version = _DEFAULT_API_VERSION[1:]
         if self.api_version == "server":
             self.api_version = f"v{s_fbx_version}"
@@ -250,29 +259,35 @@ class Freepybox:
             )
             self.api_version = _DEFAULT_API_VERSION
 
-    async def _disc_check_session(self, host, port, s):
+    async def _disc_check_session(
+        self, host: str, port: str, s: str
+    ) -> Tuple[str, str, str]:
         """Check discovery session"""
 
-        if self.fbx_desc and self._session is not None and not self._session.closed:
-            c = list(self._session._connector._conns.keys())[0]
+        if (
+            self._session
+            and not self._session.closed
+            and self._session._connector._conns  # type: ignore # noqa
+        ):
+            c = list(self._session._connector._conns.keys())[0]  # type: ignore # noqa
             if c.host == host and c.port == int(port) and c.is_ssl == (not not s):
-                raise ValueError(self.fbx_desc)
+                raise ValueError(self._fbx_desc)
             elif await self._disc_close_to_return() is None:
                 raise ValueError(await self.discover(host, port))
 
         return host, port, s
 
-    async def _disc_close_to_return(self):
+    async def _disc_close_to_return(self) -> None:
         """Close discovery session"""
 
         if self._session is not None and not self._session.closed:
             await self._session.close()
             await asyncio.sleep(0.250)
-        self.fbx_desc = None if self.fbx_desc is not None else self.fbx_desc
+        self._fbx_desc = {} if not self._fbx_desc.__len__ else self._fbx_desc
 
         return None
 
-    async def _disc_connect(self, host, port, s):
+    async def _disc_connect(self, host: str, port: str, s: str) -> bool:
         """Connect for discovery"""
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -280,7 +295,8 @@ class Freepybox:
         result = sock.connect_ex((host, int(port)))
         sock.close()
         if result != 0:
-            return await self._disc_close_to_return()
+            await self._disc_close_to_return()
+            return False
 
         # Connect
         try:
@@ -293,31 +309,35 @@ class Freepybox:
                 conn = aiohttp.TCPConnector()
             self._session = aiohttp.ClientSession(connector=conn)
         except ssl.SSLCertVerificationError:
-            return await self._disc_close_to_return()
+            await self._disc_close_to_return()
+            return False
 
         return True
 
-    def _disc_set_host_and_port(self, host, port):
+    def _disc_set_host_and_port(
+        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+    ) -> Tuple[str, str, str]:
         """Set discovery host and port"""
 
+        host, port = (
+            host_in if host_in else _DEFAULT_HOST,
+            port_in if port_in else _DEFAULT_HTTP_PORT,
+        )
+        if not host_in and not port_in:
+            port = _DEFAULT_HTTPS_PORT if _DEFAULT_SSL else port
         s = "s" if _DEFAULT_SSL and port != _DEFAULT_HTTP_PORT else ""
-
-        if not host and not port:
-            host, port = (
-                _DEFAULT_HOST,
-                _DEFAULT_HTTPS_PORT if _DEFAULT_SSL else _DEFAULT_HTTP_PORT,
-            )
-        elif not port:
-            port = _DEFAULT_HTTP_PORT
-            s = ""
-        elif not host:
-            host = _DEFAULT_HOST
 
         return host, port, s
 
     async def _get_app_access(
-        self, host, port, api_version, token_file, app_desc, timeout=_DEFAULT_TIMEOUT
-    ):
+        self,
+        api_version: str,
+        token_file: str,
+        app_desc: Dict[str, str],
+        host: str,
+        port: str,
+        timeout: int = _DEFAULT_TIMEOUT,
+    ) -> Access:
         """
         Returns an access object used for HTTP(S) requests.
 
@@ -326,7 +346,7 @@ class Freepybox:
         api_version : `str`
         token_file : `str`
         app_desc : `dict`
-        timeout : `int` , optional
+        timeout : `int`
             , Default to _DEFAULT_TIMEOUT
         """
 
@@ -382,13 +402,15 @@ class Freepybox:
         )
         return fbx_access
 
-    async def _get_app_token(self, base_url, app_desc, timeout=_DEFAULT_TIMEOUT):
+    async def _get_app_token(
+        self, base_url: str, app_desc: Dict[str, str], timeout: int = _DEFAULT_TIMEOUT
+    ):
         """
         Get the application token from the freebox
 
         base_url : `str`
         app_desc : `dict`
-        timeout : `int` , optional
+        timeout : `int`
             , Default to _DEFAULT_TIMEOUT
 
         Returns app_token, track_id
@@ -397,7 +419,9 @@ class Freepybox:
         # Get authentification token
         url = urljoin(base_url, "login/authorize/")
         data = json.dumps(app_desc)
-        async with self._session.post(url, data=data, timeout=timeout) as r:
+        async with self._session.post(  # type: ignore # noqa
+            url, data=data, timeout=timeout
+        ) as r:
             resp = await r.json()
 
         # raise exception if resp.success != True
@@ -410,30 +434,32 @@ class Freepybox:
         return app_token, track_id
 
     async def _get_authorization_status(
-        self, base_url, track_id, timeout=_DEFAULT_TIMEOUT
+        self, base_url: str, track_id: str, timeout: int = _DEFAULT_TIMEOUT
     ):
         """
         Get authorization status of the application token
 
         base_url : `str`
         track_id : `str`
-        timeout : `int` , optional
+        timeout : `int`
             , Default to _DEFAULT_TIMEOUT
 
         Returns:
-            unknown 	the app_token is invalid or has been revoked
-            pending 	the user has not confirmed the authorization request yet
-            timeout 	the user did not confirmed the authorization within the given time
-            granted 	the app_token is valid and can be used to open a session
-            denied 	    the user denied the authorization request
+            unknown     the app_token is invalid or has been revoked
+            pending     the user has not confirmed the authorization request yet
+            timeout     the user did not confirmed the authorization within the given time
+            granted     the app_token is valid and can be used to open a session
+            denied      the user denied the authorization request
         """
 
         url = urljoin(base_url, f"login/authorize/{track_id}")
-        async with self._session.get(url, timeout=timeout) as r:
+        async with self._session.get(url, timeout=timeout) as r:  # type: ignore # noqa
             resp = await r.json()
             return resp["result"]["status"]
 
-    def _get_base_url(self, host, port, fbx_api_version=None):
+    def _get_base_url(
+        self, host: str, port: str, fbx_api_version: Optional[str] = None
+    ) -> str:
         """
         Returns base url for HTTP(S) requests
 
@@ -443,14 +469,20 @@ class Freepybox:
             , Default to `None`
         """
 
-        s = "s" if list(self._session._connector._conns.keys())[0].is_ssl else ""
+        s = (
+            "s"
+            if list(self._session._connector._conns.keys())[  # type: ignore # noqa
+                0
+            ].is_ssl
+            else ""
+        )
         if fbx_api_version is None:
             return f"http{s}://{host}:{port}"
 
-        abu = self.fbx_desc["api_base_url"]
+        abu = self._fbx_desc["api_base_url"]
         return f"http{s}://{host}:{port}{abu}{fbx_api_version}/"
 
-    def _is_app_desc_valid(self, app_desc):
+    def _is_app_desc_valid(self, app_desc: Dict[str, str]) -> bool:
         """
         Check validity of the application descriptor
 
@@ -460,7 +492,7 @@ class Freepybox:
             k in app_desc for k in ("app_id", "app_name", "app_version", "device_name")
         )
 
-    def _is_ipv4(self, ip_address):
+    def _is_ipv4(self, ip_address: str) -> bool:
         """
         Check ip version for v4
 
@@ -473,7 +505,7 @@ class Freepybox:
         except ValueError:
             return False
 
-    def _is_ipv6(self, ip_address):
+    def _is_ipv6(self, ip_address: str) -> bool:
         """
         Check ip version for v6
 
@@ -486,22 +518,26 @@ class Freepybox:
         except ValueError:
             return False
 
-    async def _open_init(self, host, port):
+    async def _open_init(
+        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+    ) -> Tuple[str, str]:
         """Init host and port for open"""
 
         try:
-            if await self.discover(host, port) is None:
+            if await self.discover(host_in, port_in) is None:
                 raise ValueError
 
-            host, port = self._open_setup(host, port)
+            host, port = self._open_setup(host_in, port_in)
 
             if await self.discover(host, port) is None:
                 raise ValueError
+            self._check_api_version()
+            self._fbx_url = self._get_base_url(host, port)
         except (ValueError, HttpRequestError):
             unk = _DEFAULT_UNKNOWN
             host, port = (
-                next(v for v in [host, unk] if v),
-                next(v for v in [port, unk] if v),
+                next(v for v in [host_in, host, unk] if v),
+                next(v for v in [port_in, port, unk] if v),
             )
             raise NotOpenError(
                 "Cannot detect freebox at "
@@ -509,20 +545,19 @@ class Freepybox:
                 ", please check your configuration."
             )
 
-        self._check_api_version()
-        self.fbx_url = self._get_base_url(host, port)
-
         return host, port
 
-    def _open_setup(self, host, port):
+    def _open_setup(
+        self, host: Optional[str] = None, port: Optional[str] = None
+    ) -> Tuple[str, str]:
         """Setup host and port value for open"""
 
-        if _DEFAULT_SSL and self.fbx_desc["https_available"]:
+        if _DEFAULT_SSL and self._fbx_desc["https_available"]:
             host, port = (
-                self.fbx_desc["api_domain"]
+                self._fbx_desc["api_domain"]
                 if host is None or self._is_ipv4(host)
                 else host,
-                self.fbx_desc["https_port"]
+                self._fbx_desc["https_port"]
                 if port is None or port == _DEFAULT_HTTP_PORT
                 else port,
             )
@@ -534,7 +569,7 @@ class Freepybox:
 
         return host, port
 
-    def _readfile_app_token(self, file):
+    def _readfile_app_token(self, file: str):
         """
         Read the application token in the authentication file.
 
@@ -557,7 +592,9 @@ class Freepybox:
         except FileNotFoundError:
             return None, None, None
 
-    def _writefile_app_token(self, app_token, track_id, app_desc, file):
+    def _writefile_app_token(
+        self, app_token: str, track_id: str, app_desc: Dict[str, str], file: str
+    ):
         """
         Store the application token in a _TOKEN_FILE file
 
@@ -570,3 +607,13 @@ class Freepybox:
         d = {**app_desc, "app_token": app_token, "track_id": track_id}
         with open(file, "w") as f:
             json.dump(d, f)
+
+    @property
+    def fbx_desc(self) -> Optional[dict]:
+        """Freebox description."""
+        return self._fbx_desc
+
+    @property
+    def fbx_url(self) -> Optional[str]:
+        """Freebox url."""
+        return self._fbx_url
