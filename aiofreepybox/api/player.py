@@ -18,7 +18,7 @@ class Player:
     media_control_stream = {"quality": "", "source": ""}
     media_control_stream_args = {"stream": media_control_stream, "type": "stream"}
     media_control_track_args = {"track_id": 0, "type": "track_id"}
-    media_control_command = [
+    media_control_command = {
         "play",
         "pause",
         "play_pause",
@@ -40,28 +40,33 @@ class Player:
         "select_audio_track",
         "select_srt_track",
         "select_stream",
-    ]
-    media_control_data_schema = {
-        "args": media_control_stream_args,
-        "cmd": media_control_command[0],
     }
+    media_control_data_schema = {"args": media_control_stream_args, "cmd": "pause"}
 
-    async def get_player_status(self, player_id):
+    async def get_player_status(self, player_id=None):
         """
         Get player status
 
-        player_id : `int`
+        player_id : `int` , optional
+            , Default to `None`
         """
+
+        if player_id is None:
+            player_id = (await self.get_players())[0]["id"]
         return await self._access.get(
             f"player/{player_id}/api/{self._player_api_version}/status/"
         )
 
-    async def get_player_volume(self, player_id):
+    async def get_player_volume(self, player_id=None):
         """
         Get player volume
 
-        player_id : `int`
+        player_id : `int` , optional
+            , Default to `None`
         """
+
+        if player_id is None:
+            player_id = (await self.get_players())[0]["id"]
         return await self._access.get(
             f"player/{player_id}/api/{self._player_api_version}/control/volume"
         )
@@ -100,7 +105,7 @@ class Player:
         player_url : `str`
         """
 
-        player_url_data = {"url": player_url_data}
+        player_url_data = {"url": player_url}
         await self.set_player_url(player_id, player_url_data)
 
     async def send_media_control(self, player_id, media_control_data):
