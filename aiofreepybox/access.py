@@ -10,7 +10,7 @@ from aiofreepybox.exceptions import (
 )
 
 from aiohttp.client import ClientSession
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 
 _DEFAULT_TIMEOUT = 10
 _LOGGER = logging.getLogger(__name__)
@@ -151,28 +151,28 @@ class Access:
         # Return 'result' response
         return resp.get("result", None)
 
-    async def get(self, end_url: str, params_url: Optional[str] = None) -> Any:
+    async def get(self, end_url: str, params_url: Optional[Mapping[str, str]] = None) -> Any:
         """
         Send get request and return results
         """
         params = params_url if params_url is not None else None
         return await self._perform_request(self.session.get, end_url, params=params)
 
-    async def post(self, end_url: str, payload: Optional[str] = None) -> Any:
+    async def post(self, end_url: str, payload: Optional[Any] = None) -> Any:
         """
         Send post request and return results
         """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.post, end_url, data=data)
 
-    async def put(self, end_url: str, payload: Optional[str] = None) -> Any:
+    async def put(self, end_url: str, payload: Optional[Any] = None) -> Any:
         """
         Send post request and return results
         """
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.put, end_url, data=data)
 
-    async def delete(self, end_url: str, payload: Optional[str] = None) -> Any:
+    async def delete(self, end_url: str, payload: Optional[Any] = None) -> Any:
         """
         Send delete request and return results
         """
