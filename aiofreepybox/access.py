@@ -10,7 +10,7 @@ from aiofreepybox.exceptions import (
 )
 
 from aiohttp.client import ClientSession
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple
 
 _DEFAULT_TIMEOUT = 10
 _LOGGER = logging.getLogger(__name__)
