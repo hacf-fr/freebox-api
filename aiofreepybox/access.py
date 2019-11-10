@@ -140,6 +140,8 @@ class Access:
             if (not resp["error"] if "error" in resp else True) and resp["data"]:
                 # Return 'data' response
                 return resp.get("data", None)
+            elif isinstance(resp["error"], dict):
+                return resp.get("error", None)
 
             error_message = "Request failed (APIResponse: {})".format(json.dumps(resp))
             if resp.get("error_code") in ["insufficient_rights", "access_denied"]:
