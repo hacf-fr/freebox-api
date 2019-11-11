@@ -258,7 +258,9 @@ class Meta:
         """
         return await self._access.get("meta/static/vod/services?join_app=1")
 
-    async def search_catchup(self, search_catchup_query: Optional[str] = None):
+    async def search_catchup(
+        self, search_catchup_query: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Search catchup
 
