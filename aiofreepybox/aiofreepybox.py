@@ -98,6 +98,7 @@ class Freepybox:
         self.token_file: str = token_file if token_file is not None else _TOKEN_FILE
         self._access: Optional[Access] = None
         self._fbx_desc: dict = {}
+        self._fbx_api_url: str = ""
         self._fbx_url: str = ""
         self._session: Optional[aiohttp.ClientSession] = None
 
@@ -118,12 +119,9 @@ class Freepybox:
             raise InvalidTokenError("Invalid application descriptor")
 
         # Get API access
+        await self._open_init(host, port)
         self._access = await self._get_app_access(
-            self.api_version,
-            self.token_file,
-            self.app_desc,
-            *await self._open_init(host, port),
-            self.timeout,
+            self.token_file, self.app_desc, self.timeout
         )
 
         # Instantiate freebox modules
@@ -333,13 +331,7 @@ class Freepybox:
         return host, port, s
 
     async def _get_app_access(
-        self,
-        api_version: str,
-        token_file: str,
-        app_desc: Dict[str, str],
-        host: str,
-        port: str,
-        timeout: int = _DEFAULT_TIMEOUT,
+        self, token_file: str, app_desc: Dict[str, str], timeout: int = _DEFAULT_TIMEOUT
     ) -> Access:
         """
         Returns an access object used for HTTP(S) requests.
@@ -353,8 +345,6 @@ class Freepybox:
             , Default to _DEFAULT_TIMEOUT
         """
 
-        base_url = self._get_base_url(host, port, api_version)
-
         # Read stored application token
         _LOGGER.debug("Reading application authorization file.")
         app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
@@ -366,15 +356,13 @@ class Freepybox:
             )
 
             # Get application token from the freebox
-            app_token, track_id = await self._get_app_token(base_url, app_desc, timeout)
+            app_token, track_id = await self._get_app_token(app_desc, timeout)
 
             # Check the authorization status
             out_msg_flag = False
             status = None
             while status != "granted":
-                status = await self._get_authorization_status(
-                    base_url, track_id, timeout
-                )
+                status = await self._get_authorization_status(track_id, timeout)
 
                 # denied status = authorization failed
                 if status == "denied":
@@ -401,17 +389,16 @@ class Freepybox:
 
         # Create and return freebox http access module
         fbx_access = Access(
-            self._session, base_url, app_token, app_desc["app_id"], timeout
+            self._session, self._fbx_api_url, app_token, app_desc["app_id"], timeout
         )
         return fbx_access
 
     async def _get_app_token(
-        self, base_url: str, app_desc: Dict[str, str], timeout: int = _DEFAULT_TIMEOUT
+        self, app_desc: Dict[str, str], timeout: int = _DEFAULT_TIMEOUT
     ) -> Tuple[str, str]:
         """
         Get the application token from the freebox
 
-        base_url : `str`
         app_desc : `dict`
         timeout : `int`
             , Default to _DEFAULT_TIMEOUT
@@ -420,7 +407,7 @@ class Freepybox:
         """
 
         # Get authentification token
-        url = urljoin(base_url, "login/authorize/")
+        url = urljoin(self._fbx_api_url, "login/authorize/")
         data = json.dumps(app_desc)
         async with self._session.post(  # type: ignore # noqa
             url, data=data, timeout=timeout
@@ -437,12 +424,11 @@ class Freepybox:
         return app_token, track_id
 
     async def _get_authorization_status(
-        self, base_url: str, track_id: str, timeout: int = _DEFAULT_TIMEOUT
+        self, track_id: str, timeout: int = _DEFAULT_TIMEOUT
     ) -> str:
         """
         Get authorization status of the application token
 
-        base_url : `str`
         track_id : `str`
         timeout : `int`
             , Default to _DEFAULT_TIMEOUT
@@ -455,7 +441,7 @@ class Freepybox:
             denied      the user denied the authorization request
         """
 
-        url = urljoin(base_url, f"login/authorize/{track_id}")
+        url = urljoin(self._fbx_api_url, f"login/authorize/{track_id}")
         async with self._session.get(url, timeout=timeout) as r:  # type: ignore # noqa
             resp = await r.json()
             return resp["result"]["status"]
@@ -523,8 +509,8 @@ class Freepybox:
 
     async def _open_init(
         self, host_in: Optional[str] = None, port_in: Optional[str] = None
-    ) -> Tuple[str, str]:
-        """Init host and port for open"""
+    ) -> None:
+        """Init freebox link for open"""
 
         host = None
         port = None
@@ -532,8 +518,6 @@ class Freepybox:
             await self.discover(host_in, port_in)
             host, port = self._open_setup(host_in, port_in)
             await self.discover(host, port)
-            self._check_api_version()
-            self._fbx_url = self._get_base_url(host, port)
         except (ValueError, HttpRequestError):
             unk = _DEFAULT_UNKNOWN
             host, port = (
@@ -546,7 +530,9 @@ class Freepybox:
                 ", please check your configuration."
             )
 
-        return host, port
+        self._check_api_version()
+        self._fbx_api_url = self._get_base_url(host, port, self.api_version)
+        self._fbx_url = self._get_base_url(host, port)
 
     def _open_setup(
         self, host: Optional[str] = None, port: Optional[str] = None
@@ -613,6 +599,11 @@ class Freepybox:
     def fbx_desc(self) -> Optional[dict]:
         """Freebox description."""
         return self._fbx_desc
+
+    @property
+    def fbx_api_url(self) -> Optional[str]:
+        """Freebox api url."""
+        return self._fbx_api_url
 
     @property
     def fbx_url(self) -> Optional[str]:
