@@ -94,11 +94,11 @@ class Freepybox:
             api_version if api_version is not None else _DEFAULT_API_VERSION
         )
         self.app_desc: Dict[str, str] = app_desc if app_desc is not None else _APP_DESC
-        self._fbx_desc: dict = {}
-        self._fbx_url: str = ""
         self.timeout: int = timeout if timeout is not None else _DEFAULT_TIMEOUT
         self.token_file: str = token_file if token_file is not None else _TOKEN_FILE
         self._access: Optional[Access] = None
+        self._fbx_desc: dict = {}
+        self._fbx_url: str = ""
         self._session: Optional[aiohttp.ClientSession] = None
 
     async def open(
@@ -193,7 +193,7 @@ class Freepybox:
                 (self._session and self._session.closed),
             ]
         ) and not await self._disc_connect(host, port, s):
-            return None
+            raise ValueError
 
         # Found freebox
         try:
@@ -290,10 +290,13 @@ class Freepybox:
     async def _disc_connect(self, host: str, port: str, s: str) -> bool:
         """Connect for discovery"""
 
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(_DEFAULT_TIMEOUT)
-        result = sock.connect_ex((host, int(port)))
-        sock.close()
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(_DEFAULT_TIMEOUT)
+            result = sock.connect_ex((host, int(port)))
+            sock.close()
+        except socket.gaierror:
+            result = 1
         if result != 0:
             await self._disc_close_to_return()
             return False
@@ -523,14 +526,12 @@ class Freepybox:
     ) -> Tuple[str, str]:
         """Init host and port for open"""
 
+        host = None
+        port = None
         try:
-            if await self.discover(host_in, port_in) is None:
-                raise ValueError
-
+            await self.discover(host_in, port_in)
             host, port = self._open_setup(host_in, port_in)
-
-            if await self.discover(host, port) is None:
-                raise ValueError
+            await self.discover(host, port)
             self._check_api_version()
             self._fbx_url = self._get_base_url(host, port)
         except (ValueError, HttpRequestError):
