@@ -35,7 +35,7 @@ class Meta:
         self,
         channel_id: int,
         group_id: int,
-        catchup_program_filter: Optional[Mapping[str, str]] = None
+        catchup_program_filter: Optional[Mapping[str, str]] = None,
     ) -> Dict[str, Any]:
         """
         Get catchup group programs
@@ -85,7 +85,7 @@ class Meta:
     async def get_catchup_programs(
         self,
         channel_id: int,
-        catchup_program_filter: Optional[Mapping[str, str]] = None
+        catchup_program_filter: Optional[Mapping[str, str]] = None,
     ) -> Dict[str, Any]:
         """
         Get catchup programs
@@ -101,7 +101,7 @@ class Meta:
     async def get_catchup_top_programs(
         self,
         channel_id: int,
-        catchup_program_filter: Optional[Mapping[str, str]] = None
+        catchup_program_filter: Optional[Mapping[str, str]] = None,
     ) -> Dict[str, Any]:
         """
         Get catchup top program
@@ -238,7 +238,7 @@ class Meta:
 
     async def get_meta_vod_entry_links(
         self, vod_entry_id: int, model: Optional[str] = None
-    ):
+    ) -> Dict[str, Any]:
         """
         Get meta vod entry links
 
@@ -252,7 +252,7 @@ class Meta:
             f"meta/static/vod/catalog/entries/{vod_entry_id}/links", query
         )
 
-    async def get_meta_vod_services(self):
+    async def get_meta_vod_services(self) -> Dict[str, Any]:
         """
         Get meta vod services
         """
@@ -273,7 +273,7 @@ class Meta:
         self,
         search_emissions_query: str,
         search_emission_filter: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> Dict[str, Any]:
         """
         Search meta emissions
 
@@ -291,7 +291,7 @@ class Meta:
 
     async def search_meta_tv_channel(
         self, search_tv_channel_query: Optional[str] = None
-    ):
+    ) -> Dict[str, Any]:
         """
         Search meta tv channel
 
