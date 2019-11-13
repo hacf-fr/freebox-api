@@ -1,22 +1,33 @@
+from typing import Any, Dict, List, Union
+
+
+from aiofreepybox.access import Access
+from aiohttp.client_reqrep import ClientResponse
+
+
 class Contact:
     """
     Contact
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     add_to_group_schema = {"group_id": 1, "contact_id": 1}
-
     contact_object_type = ["numbers", "emails", "urls", "addresses"]
-
     group_schema = {"id": 0, "name": "", "nb_contact": 0}
-
     import_contacts_schema = {"empty_before_adding": False, "contacts": [""]}
-
+    import_contacts_vcard_formats = ["vcard", "ldif", "csv"]
+    import_contacts_vcard_schema = {
+        "file": "",
+        "format": import_contacts_vcard_formats[0],
+        "removeall": 0,
+    }
     photo_url_schema = {"photo_url": ""}
 
-    async def add_contact(self, contact_data):
+    async def add_contact(
+        self, contact_data: Dict[str, Any]
+    ) -> Dict[str, Union[int, str]]:
         """
         Add contact
 
@@ -24,7 +35,7 @@ class Contact:
         """
         return await self._access.post("contact/", contact_data)
 
-    async def add_to_group(self, add_to_group):
+    async def add_to_group(self, add_to_group: Dict[str, Any]) -> None:
         """
         Add to group
 
@@ -33,8 +44,8 @@ class Contact:
         return await self._access.post("contact/addtogroup", add_to_group)
 
     async def create_contact_object(
-        self, contact_id, contact_data, contact_object_type
-    ):
+        self, contact_id: int, contact_data, contact_object_type: str
+    ) -> Dict[str, Any]:
         """
         Create contact object
 
@@ -46,7 +57,7 @@ class Contact:
             f"contact/{contact_id}/{contact_object_type}", contact_data
         )
 
-    async def create_group(self, group_data):
+    async def create_group(self, group_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create group
 
@@ -54,7 +65,9 @@ class Contact:
         """
         return await self._access.post("group/", group_data)
 
-    async def delete_contact_object(self, contact_id, contact_object_type):
+    async def delete_contact_object(
+        self, contact_id: int, contact_object_type: str
+    ) -> None:
         """
         Delete contact object
 
@@ -63,7 +76,7 @@ class Contact:
         """
         await self._access.delete(f"contact/{contact_id}/{contact_object_type}")
 
-    async def delete_group(self, group_id):
+    async def delete_group(self, group_id: int) -> None:
         """
         Delete group
 
@@ -71,7 +84,9 @@ class Contact:
         """
         await self._access.delete(f"group/{group_id}")
 
-    async def edit_contact_object(self, contact_id, contact_data, contact_object_type):
+    async def edit_contact_object(
+        self, contact_id: int, contact_data: Dict[str, Any], contact_object_type: str
+    ) -> Dict[str, Any]:
         """
         Edit contact object
 
@@ -83,13 +98,13 @@ class Contact:
             f"contact/{contact_id}/{contact_object_type}", contact_data
         )
 
-    async def export_contacts(self):
+    async def export_contacts(self) -> ClientResponse:
         """
         Export contacts to vcf format
         """
-        return await self._access.post("contact/export/")
+        return await self._access.get("contact/export/")
 
-    async def get_contact(self, contact_id):
+    async def get_contact(self, contact_id: int) -> Dict[str, Any]:
         """
         Get contact
 
@@ -97,7 +112,9 @@ class Contact:
         """
         return await self._access.get(f"contact/{contact_id}")
 
-    async def get_contact_data(self, contact_id, contact_object_type):
+    async def get_contact_data(
+        self, contact_id: int, contact_object_type: str
+    ) -> List[Dict[str, Any]]:
         """
         Get contact data
 
@@ -106,25 +123,25 @@ class Contact:
         """
         return await self._access.get(f"contact/{contact_id}/{contact_object_type}")
 
-    async def get_contacts(self):
+    async def get_contacts(self) -> List[Dict[str, Any]]:
         """
         Get contacts
         """
         return await self._access.get("contact/")
 
-    async def get_contacts_count(self):
+    async def get_contacts_count(self) -> int:
         """
         Get contacts count
         """
         return await self._access.get("contact/count")
 
-    async def get_contact_groups(self):
+    async def get_contact_groups(self) -> Dict[Any, Any]:
         """
         Get contacts groups
         """
         return await self._access.get("contact/groups")
 
-    async def get_group(self, group_id):
+    async def get_group(self, group_id: int) -> Dict[str, Union[int, str]]:
         """
         Get group
 
@@ -132,21 +149,25 @@ class Contact:
         """
         return await self._access.get(f"group/{group_id}")
 
-    async def get_groups(self):
+    async def get_groups(self) -> List[Dict[str, Union[int, str]]]:
         """
         Get groups
         """
         return await self._access.get("group/?page=1&start=0&limit=200")
 
-    async def import_contacts_step1(self, import_contacts_vcard):
+    async def import_contacts_step1(
+        self, import_contacts_vcard: Dict[Any, Any]
+    ) -> Dict[Any, Any]:
         """
         Import contacts step 1
 
-        import_contacts_vcard : `dict`
+        import_contacts_vcard : `str`
         """
         return await self._access.post("contact/import/step1/", import_contacts_vcard)
 
-    async def import_contacts_step2(self, import_contacts):
+    async def import_contacts_step2(
+        self, import_contacts: Dict[Any, Any]
+    ) -> Dict[Any, Any]:
         """
         Import contacts step 2
 
@@ -154,7 +175,9 @@ class Contact:
         """
         return await self._access.post("contact/import/step2/", import_contacts)
 
-    async def remove_from_group(self, remove_from_group):
+    async def remove_from_group(
+        self, remove_from_group: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Remove from group
 
@@ -162,7 +185,9 @@ class Contact:
         """
         return await self._access.post("contact/removefromgroup", remove_from_group)
 
-    async def update_contact(self, contact_id, contact_data):
+    async def update_contact(
+        self, contact_id: int, contact_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Update contact
 
@@ -171,7 +196,9 @@ class Contact:
         """
         return await self._access.put(f"contact/{contact_id}", contact_data)
 
-    async def update_contact_photo(self, contact_id, photo_url):
+    async def update_contact_photo(
+        self, contact_id: int, photo_url: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Update contact photo
 
