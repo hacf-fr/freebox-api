@@ -119,10 +119,16 @@ class Freepybox:
             raise InvalidTokenError("Invalid application descriptor")
 
         # Get API access
-        await self._open_init(host, port)
-        self._access = await self._get_app_access(
-            self.token_file, self.app_desc, self.timeout
-        )
+        try:
+            await self._open_init(host, port)
+        except NotOpenError:
+            raise
+        try:
+            self._access = await self._get_app_access(
+                self.token_file, self.app_desc, self.timeout
+            )
+        except AuthorizationError:
+            raise
 
         # Instantiate freebox modules
         self.tv = Tv(self._access)
@@ -172,8 +178,7 @@ class Freepybox:
         """
 
         if host_in and self._is_ipv6(host_in):
-            _LOGGER.error(f"{host_in} : IPv6 is not supported")
-            raise ValueError
+            raise ValueError(f"{host_in} : IPv6 is not supported")
 
         # Check session
         try:
@@ -191,7 +196,7 @@ class Freepybox:
                 (self._session and self._session.closed),
             ]
         ) and not await self._disc_connect(host, port, s):
-            raise ValueError
+            raise ValueError("Port closed")
 
         # Found freebox
         try:
@@ -199,17 +204,17 @@ class Freepybox:
                 f"http{s}://{host}:{port}/api_version", timeout=self.timeout
             ) as r:
                 if r.content_type != "application/json":
-                    return await self._disc_close_to_return()
+                    await self._disc_close_to_return()
+                    raise ValueError("Invalid content type")
                 self._fbx_desc = await r.json()
-        except ssl.SSLCertVerificationError as e:
+        except (ssl.SSLCertVerificationError, ValueError) as err:
             await self._disc_close_to_return()
-            raise HttpRequestError(f"{e}")
+            raise ValueError(err.args[0])
 
         fbx_dev = self._fbx_desc.get("device_name", None)
         if fbx_dev != _DEFAULT_DEVICE_NAME:
-            _LOGGER.error(f"{fbx_dev} is not a freebox server")
             await self._disc_close_to_return()
-            raise ValueError
+            raise ValueError(f"{fbx_dev}: Wrong device")
 
         return self._fbx_desc
 
@@ -273,8 +278,8 @@ class Freepybox:
             c = list(self._session._connector._conns.keys())[0]  # type: ignore # noqa
             if c.host == host and c.port == int(port) and c.is_ssl == (not not s):
                 raise ValueError(self._fbx_desc)
-            elif await self._disc_close_to_return() is None:
-                raise ValueError(await self.discover(host, port))
+            await self._disc_close_to_return()
+            raise ValueError(await self.discover(host, port))
 
         return host, port, s
 
@@ -297,7 +302,6 @@ class Freepybox:
         except socket.gaierror:
             result = 1
         if result != 0:
-            await self._disc_close_to_return()
             return False
 
         # Connect
@@ -519,14 +523,14 @@ class Freepybox:
             await self.discover(host_in, port_in)
             host, port = self._open_setup(host_in, port_in)
             await self.discover(host, port)
-        except (ValueError, HttpRequestError):
+        except ValueError as err:
             unk = _DEFAULT_UNKNOWN
             host, port = (
                 next(v for v in [host_in, host, unk] if v),
                 next(v for v in [port_in, port, unk] if v),
             )
             raise NotOpenError(
-                "Cannot detect freebox at "
+                f"{err.args[0]}: Cannot detect freebox at "
                 f"{host}:{port}"
                 ", please check your configuration."
             )
@@ -598,7 +602,7 @@ class Freepybox:
 
     @property
     def fbx_desc(self) -> Optional[dict]:
-        """Freebox description."""
+        """Freebox API description."""
         return self._fbx_desc
 
     @property
