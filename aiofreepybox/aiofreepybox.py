@@ -173,7 +173,7 @@ class Freepybox:
 
         if host_in and self._is_ipv6(host_in):
             _LOGGER.error(f"{host_in} : IPv6 is not supported")
-            return await self._disc_close_to_return()
+            raise ValueError
 
         # Check session
         try:
@@ -205,8 +205,11 @@ class Freepybox:
             await self._disc_close_to_return()
             raise HttpRequestError(f"{e}")
 
-        if self._fbx_desc.get("device_name", None) != _DEFAULT_DEVICE_NAME:
-            return await self._disc_close_to_return()
+        fbx_dev = self._fbx_desc.get("device_name", None)
+        if fbx_dev != _DEFAULT_DEVICE_NAME:
+            _LOGGER.error(f"{fbx_dev} is not a freebox server")
+            await self._disc_close_to_return()
+            raise ValueError
 
         return self._fbx_desc
 
@@ -278,12 +281,10 @@ class Freepybox:
     async def _disc_close_to_return(self) -> None:
         """Close discovery session"""
 
+        self._fbx_desc = {} if not self._fbx_desc.__len__ else self._fbx_desc
         if self._session is not None and not self._session.closed:
             await self._session.close()
             await asyncio.sleep(0.250)
-        self._fbx_desc = {} if not self._fbx_desc.__len__ else self._fbx_desc
-
-        return None
 
     async def _disc_connect(self, host: str, port: str, s: str) -> bool:
         """Connect for discovery"""
