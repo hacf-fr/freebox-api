@@ -149,7 +149,7 @@ class Freepybox:
                 (self._session and self._session.closed),
             ]
         ) and not await self._disc_connect(**(fbx_addict)):
-            raise ValueError("Port closed")
+            raise ValueError("Port closed or dns failed")
 
         # Found freebox
         try:
@@ -358,16 +358,18 @@ class Freepybox:
 
     async def _fbx_enum_conns(self, db: Dict[str, Any]) -> Dict[str, Any]:
         """Try freebox connections"""
+
+        d = None
         for i, conn in enumerate(db["conn"]):
             try:
                 d = await self.discover(conn["host"], conn["port"])
-            except ValueError:
-                pass
+            except ValueError as err:
+                err_out = err
             else:
                 self._fbx_db[d["uid"]]["conf"]["cc"] = i
                 break
-        if not d:
-            raise NotOpenError
+        if d is None:
+            raise ValueError(err_out.args[0])
         return d
 
     async def _fbx_open_init(
@@ -409,17 +411,24 @@ class Freepybox:
                 d = await self.discover()
             except ValueError as err:
                 raise NotOpenError(
-                f"{err.args[0]}: Cannot detect freebox for uid: {uid}"
-                ", please check your configuration."
+                    f"{err.args[0]}: Cannot detect freebox for uid: {uid}"
+                    ", please check your configuration."
                 )
         else:
             self._fbx_db[uid] = db
-            d = await self._fbx_enum_conns(db)
-        if uid != d["uid"]:
-            raise NotOpenError(
-                f"Cannot detect freebox for uid: {uid}"
-                ", please check your configuration."
+            try:
+                d = await self._fbx_enum_conns(db)
+            except ValueError as err:
+                raise NotOpenError(
+                    f"{err.args[0]}: "
+                    f"Cannot detect freebox for uid: {uid}"
+                    ", please check your configuration."
                 )
+        if isinstance(d['uid'], str) and uid != d["uid"]:
+            raise NotOpenError(
+                f"{d['uid']}: Cannot detect freebox for uid: {uid}"
+                ", please check your configuration."
+            )
         self._fbx_db[d["uid"]]["conf"]["api_version"] = self._check_api_version(
             self._fbx_db[d["uid"]]["desc"]["api_version"]
         )
@@ -636,7 +645,7 @@ class Freepybox:
         if api:
             abu = self._fbx_db[uid]["desc"]["api_base_url"]
             api_version = self._fbx_db[uid]["conf"]["api_version"]
-            abu =  f"{abu}{api_version}/"
+            abu = f"{abu}{api_version}/"
         return f"http{conn['s']}://{conn['host']}:{conn['port']}{abu}"
 
     def _is_app_desc_valid(self, app_desc: Dict[str, str]) -> bool:
