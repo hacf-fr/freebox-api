@@ -407,13 +407,19 @@ class Freepybox:
         if db is None:
             try:
                 d = await self.discover()
-            except ValueError:
-                raise NotOpenError
+            except ValueError as err:
+                raise NotOpenError(
+                f"{err.args[0]}: Cannot detect freebox for uid: {uid}"
+                ", please check your configuration."
+                )
         else:
             self._fbx_db[uid] = db
             d = await self._fbx_enum_conns(db)
         if uid != d["uid"]:
-            raise NotOpenError
+            raise NotOpenError(
+                f"Cannot detect freebox for uid: {uid}"
+                ", please check your configuration."
+                )
         self._fbx_db[d["uid"]]["conf"]["api_version"] = self._check_api_version(
             self._fbx_db[d["uid"]]["desc"]["api_version"]
         )
@@ -625,12 +631,13 @@ class Freepybox:
             , Default to `True`
         """
 
+        abu = ""
         conn = self._fbx_db[uid]["conn"][(self._fbx_db[uid]["conf"]["cc"])]
         if api:
             abu = self._fbx_db[uid]["desc"]["api_base_url"]
             api_version = self._fbx_db[uid]["conf"]["api_version"]
-            return f"http{conn['s']}://{conn['host']}:{conn['port']}{abu}{api_version}/"
-        return f"http{conn['s']}://{conn['host']}:{conn['port']}"
+            abu =  f"{abu}{api_version}/"
+        return f"http{conn['s']}://{conn['host']}:{conn['port']}{abu}"
 
     def _is_app_desc_valid(self, app_desc: Dict[str, str]) -> bool:
         """
