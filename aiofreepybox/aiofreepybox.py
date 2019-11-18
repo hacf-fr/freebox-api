@@ -111,6 +111,73 @@ class Freepybox:
         await self._session.close()  # type: ignore # noqa
         await asyncio.sleep(0.250)
 
+    def db_clean(self, uids: Optional[list] = None, all_: bool = False) -> bool:
+        """
+        Remove unauth fbx's from db
+
+        uids : `list`, optional
+            , Default to None
+        all_ : `bool`
+            , Default to False
+        """
+
+        if uids is None:
+            uids = [
+                base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
+                for x in _DATA_DIR.glob(_F_DB_NAME + "_*")
+            ]
+        auth = [
+            base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
+            for x in _DATA_DIR.glob(_F_TOKEN_NAME + "_*")
+        ]
+        c = 0
+        for uid in uids:
+            if uid not in auth or all_:
+                file_p = _DATA_DIR
+                fname = file_p.joinpath(
+                    _F_DB_NAME
+                    + "_"
+                    + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+                )
+                try:
+                    fname.unlink()
+                    c += 1
+                except FileNotFoundError:
+                    pass
+        if c != 0:
+            _LOGGER.debug(f"{c} db entry cleared")
+            return True
+        return False
+
+    def db_get(
+        self, uids: Optional[List[str]] = None
+    ) -> Optional[List[Dict[str, Any]]]:
+        """
+        Get fbx_db from uids
+
+        uids : `list`
+            , Default to None
+        """
+
+        fbx_db = []
+        if uids is None:
+            uids = [
+                base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
+                for x in _DATA_DIR.glob(_F_DB_NAME + "_*")
+            ]
+        for uid in uids:
+            try:
+                fbx_db.append({uid: self._fbx_db[uid]})
+            except KeyError:
+                d = self._readfile_fbx_db(_DATA_DIR, uid)
+                if d is not None:
+                    fbx_db.append({uid: d})
+
+        if not fbx_db:
+            return None
+        _LOGGER.debug(f"{fbx_db.__len__} uid(s) in db")
+        return fbx_db
+
     async def discover(
         self, host_in: Optional[str] = None, port_in: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -131,10 +198,10 @@ class Freepybox:
             fbx_addict = await self._disc_check_session(
                 self._disc_set_host_and_port(host_in, port_in)
             )
-        except ValueError as err:
-            if isinstance(err, ValueError):
-                raise
-            return err.args[0]
+        except ValueError as e:
+            raise
+        except KeyError as e:
+            return e.args[0]
 
         # Connect if session is closed
         if any(
@@ -155,9 +222,7 @@ class Freepybox:
             ) as r:
                 if r.content_type != "application/json":
                     await self._disc_close_to_return()
-                    raise ValueError(
-                        f"Invalid content type: {r.content_type}"
-                    )
+                    raise ValueError(f"Invalid content type: {r.content_type}")
                 fbx_desc = await r.json()
         except asyncio.TimeoutError:
             raise ValueError(f"{_DEFAULT_ERR}Timeout")
@@ -165,6 +230,8 @@ class Freepybox:
             raise ValueError(f"{_DEFAULT_ERR}SSL error")
         except aiohttp.ClientConnectorError:
             raise ValueError(f"{_DEFAULT_ERR}connect error")
+        except aiohttp.ClientResponseError:
+            raise ValueError(f"{_DEFAULT_ERR}response error")
         except aiohttp.ServerDisconnectedError:
             raise ValueError(f"{_DEFAULT_ERR}disconnected")
         except ValueError as e:
@@ -299,11 +366,9 @@ class Freepybox:
                 and c.port == int(fbx_addict["port"])
                 and c.is_ssl == (not not fbx_addict["s"])
             ):
-                raise ValueError(self._fbx_db[self._fbx_uid]["desc"])
+                raise KeyError(self._fbx_db[self._fbx_uid]["desc"])
             await self._disc_close_to_return()
-            raise ValueError(
-                await self.discover(fbx_addict["host"], fbx_addict["port"])
-            )
+            raise KeyError(await self.discover(fbx_addict["host"], fbx_addict["port"]))
 
         return fbx_addict
 
@@ -682,17 +747,17 @@ class Freepybox:
         except ValueError:
             return False
 
-    def _readfile_app_token(self, file: Path, uid: str) -> Tuple[Any, Any, Any]:
+    def _readfile_app_token(self, file_p: Path, uid: str) -> Tuple[Any, Any, Any]:
         """
         Read the application token in the authentication file.
 
-        file : `Path`
+        file_p : `Path`
         uid : `str`
 
         Returns app_token, track_id, app_desc
         """
 
-        fname = file.joinpath(
+        fname = file_p.joinpath(
             _F_TOKEN_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
         )
         try:
@@ -709,17 +774,17 @@ class Freepybox:
         except FileNotFoundError:
             return None, None, None
 
-    def _readfile_fbx_db(self, file: Path, uid: str) -> Optional[Dict[str, Any]]:
+    def _readfile_fbx_db(self, file_p: Path, uid: str) -> Optional[Dict[str, Any]]:
         """
         Read the freebox db in the db file.
 
-        file : `Path`
+        file_p : `Path`
         uid : `str`
 
         Returns fbx_db
         """
 
-        fname = file.joinpath(
+        fname = file_p.joinpath(
             _F_DB_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
         )
         try:
@@ -734,7 +799,7 @@ class Freepybox:
         app_token: str,
         track_id: str,
         app_desc: Dict[str, str],
-        file: Path,
+        file_p: Path,
         uid: str,
     ) -> str:
         """
@@ -743,27 +808,27 @@ class Freepybox:
         app_token : `str`
         track_id : `str`
         app_desc : `dict`
-        file : `Path`
+        file_p : `Path`
         uid : `str`
         """
 
         d = {**app_desc, "app_token": app_token, "track_id": track_id}
-        fname = file.joinpath(
+        fname = file_p.joinpath(
             _F_TOKEN_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
         )
         with bz2.open(fname, "wt", encoding="utf-8") as zf:
             json.dump(d, zf)
         return fspath(fname)
 
-    def _writefile_fbx_db(self, file: Path, uid: str) -> str:
+    def _writefile_fbx_db(self, file_p: Path, uid: str) -> str:
         """
         Store the freebox db in a ``_F_DB`` file
 
-        file : `Path`
+        file_p : `Path`
         uid : `str`
         """
 
-        fname = file.joinpath(
+        fname = file_p.joinpath(
             _F_DB_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
         )
         with bz2.open(fname, "wt", encoding="utf-8") as zf:
