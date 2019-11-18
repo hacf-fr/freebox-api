@@ -2,15 +2,20 @@ import aiohttp
 import asyncio
 import base64
 import bz2
+import inspect
 import ipaddress
 import json
 import logging
-import os
+import pkgutil
 import socket
 import ssl
+from importlib import import_module
+from os import fspath
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
 
+# aiofpbx imports
 import aiofreepybox
 from aiofreepybox.exceptions import (
     AuthorizationError,
@@ -19,27 +24,21 @@ from aiofreepybox.exceptions import (
     InvalidTokenError,
     NotOpenError,
 )
+
+_API_MODS = {}
+_DATA_DIR = Path(__file__).parent
+
 from aiofreepybox.access import Access
-from aiofreepybox.api.tv import Tv
-from aiofreepybox.api.system import System
-from aiofreepybox.api.dhcp import Dhcp
-from aiofreepybox.api.switch import Switch
-from aiofreepybox.api.lan import Lan
-from aiofreepybox.api.lcd import Lcd
-from aiofreepybox.api.wifi import Wifi
-from aiofreepybox.api.phone import Phone
-from aiofreepybox.api.fs import Fs
-from aiofreepybox.api.fw import Fw
-from aiofreepybox.api.freeplug import Freeplug
-from aiofreepybox.api.call import Call
-from aiofreepybox.api.connection import Connection
-from aiofreepybox.api.home import Home
-from aiofreepybox.api.parental import Parental
-from aiofreepybox.api.nat import Nat
-from aiofreepybox.api.notifications import Notifications
-from aiofreepybox.api.rrd import Rrd
-from aiofreepybox.api.upnpav import Upnpav
-from aiofreepybox.api.upnpigd import Upnpigd
+
+# Import API modules
+for _, name, _ in pkgutil.iter_modules([str(_DATA_DIR.joinpath("api"))]):
+    import_api_mod = import_module(".api." + name, package=__name__.rsplit(".", 1)[0])
+    for i in dir(import_api_mod):
+        if inspect.isclass(getattr(import_api_mod, i)):
+            _API_MODS.update({name: import_api_mod})
+
+# API modules extra parameters
+_API_MODS_PARAMS: Dict[str, Any] = {}  # {"player": {"api_version": "v6"}}
 
 # Default application descriptor
 _APP_DESC = {
@@ -48,16 +47,12 @@ _APP_DESC = {
     "app_version": aiofreepybox.__version__,
     "device_name": socket.gethostname(),
 }
-_DATA_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Db file default location
-_DB_FILENAME = ".db"
-_DB_FILE = os.path.join(_DATA_DIR, _DB_FILENAME)
 
 # App defaults
 _DEFAULT_API_VERSION = "v6"
 _DEFAULT_CERT = "freebox_certificates.pem"
-_DEFAULT_DEVICE_NAME = "Freebox Server"
+_DEFAULT_DEVICE_TYPE = "FreeboxServer"
+_DEFAULT_ERR = "Error: "
 _DEFAULT_HOST = "mafreebox.freebox.fr"
 _DEFAULT_HTTP_PORT = "80"
 _DEFAULT_HTTPS_PORT = "443"
@@ -66,9 +61,11 @@ _DEFAULT_TIMEOUT = 10
 _DEFAULT_UNKNOWN = "None"
 _LOGGER = logging.getLogger(__name__)
 
-# Token file default location
-_TOKEN_FILENAME = ".app_auth"
-_TOKEN_FILE = os.path.join(_DATA_DIR, _TOKEN_FILENAME)
+# Db file prefix
+_F_DB_NAME = ".db"
+
+# Token file prefix
+_F_TOKEN_NAME = ".app_auth"
 
 
 class Freepybox:
@@ -79,8 +76,6 @@ class Freepybox:
 
     app_desc : `dict` , optional
         , Default to _APP_DESC
-    token_file : `str` , optional
-        , Default to _TOKEN_FILE
     api_version : `str`, "server" or "v(1-7)" , optional
         , Default to _DEFAULT_API_VERSION
     timeout : `int` , optional
@@ -90,7 +85,6 @@ class Freepybox:
     def __init__(
         self,
         app_desc: Optional[Dict[str, str]] = None,
-        token_file: Optional[str] = None,
         api_version: Optional[str] = None,
         timeout: Optional[int] = None,
     ) -> None:
@@ -99,7 +93,6 @@ class Freepybox:
         )
         self.app_desc: Dict[str, str] = app_desc if app_desc is not None else _APP_DESC
         self.timeout: int = timeout if timeout is not None else _DEFAULT_TIMEOUT
-        self.token_file: str = token_file if token_file is not None else _TOKEN_FILE
         self._access: Optional[Access] = None
         self._fbx_db: Dict[str, Any] = {}
         self._fbx_uid: str = ""
@@ -131,7 +124,7 @@ class Freepybox:
         """
 
         if host_in and self._is_ipv6(host_in):
-            raise ValueError(f"{host_in} : IPv6 is not supported")
+            raise ValueError(f"{_DEFAULT_ERR}{host_in} : IPv6 is not supported")
 
         # Check session
         try:
@@ -139,6 +132,8 @@ class Freepybox:
                 self._disc_set_host_and_port(host_in, port_in)
             )
         except ValueError as err:
+            if isinstance(err, ValueError):
+                raise
             return err.args[0]
 
         # Connect if session is closed
@@ -149,26 +144,37 @@ class Freepybox:
                 (self._session and self._session.closed),
             ]
         ) and not await self._disc_connect(**(fbx_addict)):
-            raise ValueError("Port closed or dns failed")
+            raise ValueError(f"{_DEFAULT_ERR}Port closed or dns failed")
 
         # Found freebox
         try:
             async with self._session.get(  # type: ignore # noqa
                 f"http{fbx_addict['s']}://{fbx_addict['host']}:{fbx_addict['port']}/api_version",
                 timeout=self.timeout,
+                skip_auto_headers=["User-Agent"],
             ) as r:
                 if r.content_type != "application/json":
                     await self._disc_close_to_return()
-                    raise ValueError("Invalid content type")
+                    raise ValueError(
+                        f"Invalid content type: {r.content_type}"
+                    )
                 fbx_desc = await r.json()
-        except (ssl.SSLCertVerificationError, ValueError) as err:
+        except asyncio.TimeoutError:
+            raise ValueError(f"{_DEFAULT_ERR}Timeout")
+        except aiohttp.ClientSSLError:
+            raise ValueError(f"{_DEFAULT_ERR}SSL error")
+        except aiohttp.ClientConnectorError:
+            raise ValueError(f"{_DEFAULT_ERR}connect error")
+        except aiohttp.ServerDisconnectedError:
+            raise ValueError(f"{_DEFAULT_ERR}disconnected")
+        except ValueError as e:
             await self._disc_close_to_return()
-            raise ValueError(err.args[0])
+            raise ValueError(f"{_DEFAULT_ERR}{e.args[0]}")
 
-        fbx_device = fbx_desc.get("device_name", None)
-        if fbx_device != _DEFAULT_DEVICE_NAME:
+        fbx_device = fbx_desc.get("device_type", None)
+        if _DEFAULT_DEVICE_TYPE not in fbx_device:
             await self._disc_close_to_return()
-            raise ValueError(f"{fbx_device}: Wrong device")
+            raise ValueError(f"{_DEFAULT_ERR}{fbx_device}: Wrong device")
 
         self._fbx_update_db(fbx_desc, fbx_addict)
         return fbx_desc
@@ -211,7 +217,7 @@ class Freepybox:
         """
 
         if not self._is_app_desc_valid(self.app_desc):
-            raise InvalidTokenError("Invalid application descriptor")
+            raise InvalidTokenError(f"{_DEFAULT_ERR}Invalid application descriptor")
 
         # Get API access
         if uid is None:
@@ -228,32 +234,22 @@ class Freepybox:
 
         try:
             self._access = await self._get_app_access(
-                uid, self.token_file, self.app_desc, self.timeout
+                uid, _DATA_DIR, self.app_desc, self.timeout
             )
         except AuthorizationError:
             raise
 
         # Instantiate freebox modules
-        self.tv = Tv(self._access)
-        self.system = System(self._access)
-        self.dhcp = Dhcp(self._access)
-        self.switch = Switch(self._access)
-        self.lan = Lan(self._access)
-        self.lcd = Lcd(self._access)
-        self.wifi = Wifi(self._access)
-        self.phone = Phone(self._access)
-        self.fs = Fs(self._access)
-        self.fw = Fw(self._access)
-        self.freeplug = Freeplug(self._access)
-        self.call = Call(self._access)
-        self.connection = Connection(self._access)
-        self.home = Home(self._access)
-        self.parental = Parental(self._access)
-        self.nat = Nat(self._access)
-        self.notifications = Notifications(self._access)
-        self.rrd = Rrd(self._access)
-        self.upnpav = Upnpav(self._access)
-        self.upnpigd = Upnpigd(self._access)
+        kwargs: Dict[str, str] = {}
+        for api_mod in _API_MODS:
+            api_mod_class = getattr(_API_MODS[api_mod], api_mod.capitalize())
+            if api_mod in _API_MODS_PARAMS and isinstance(
+                _API_MODS_PARAMS[api_mod], dict
+            ):
+                kwargs = _API_MODS_PARAMS[api_mod]
+            setattr(self, api_mod, api_mod_class(self._access, **kwargs))
+            if kwargs:
+                kwargs = {}
 
     def _check_api_version(self, fbx_api_version: str) -> str:
         """
@@ -327,7 +323,7 @@ class Freepybox:
         # Connect
         try:
             if s == "s":
-                cert_path = os.path.join(os.path.dirname(__file__), _DEFAULT_CERT)
+                cert_path = str(_DATA_DIR.joinpath(_DEFAULT_CERT))
                 ssl_ctx = ssl.create_default_context()
                 ssl_ctx.load_verify_locations(cafile=cert_path)
                 conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
@@ -404,7 +400,7 @@ class Freepybox:
     async def _fbx_open_db(self, uid: str) -> str:
         """Open freebox db"""
 
-        db = self._readfile_fbx_db(_DB_FILE, uid)
+        db = self._readfile_fbx_db(_DATA_DIR, uid)
         d: Dict[str, Any] = {}
         if db is None:
             try:
@@ -424,9 +420,9 @@ class Freepybox:
                     f"Cannot detect freebox for uid: {uid}"
                     ", please check your configuration."
                 )
-        if isinstance(d['uid'], str) and uid != d["uid"]:
+        if isinstance(d["uid"], str) and uid != d["uid"]:
             raise NotOpenError(
-                f"{d['uid']}: Cannot detect freebox for uid: {uid}"
+                f"{_DEFAULT_ERR}{d['uid']}: Cannot detect freebox for uid: {uid}"
                 ", please check your configuration."
             )
         self._fbx_db[d["uid"]]["conf"]["api_version"] = self._check_api_version(
@@ -464,7 +460,7 @@ class Freepybox:
         result = 0
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(_DEFAULT_TIMEOUT)
+            sock.settimeout(self.timeout)
             result = sock.connect_ex((host, int(port)))
             sock.close()
         except socket.gaierror:
@@ -493,8 +489,8 @@ class Freepybox:
             fbx_entry = {uid: {"conn": fbx_api_add, "conf": fbx_conf, "desc": fbx_desc}}
             self._fbx_db.update(fbx_entry)
             fbx_data = self._fbx_db[uid]["conn"]
-            if not self._readfile_fbx_db(_DB_FILE, uid):
-                self._writefile_fbx_db(_DB_FILE, uid)
+            if not self._readfile_fbx_db(_DATA_DIR, uid):
+                self._writefile_fbx_db(_DATA_DIR, uid)
 
         finally:
             if fbx_addict is not None:
@@ -503,12 +499,12 @@ class Freepybox:
                         return
                 fbx_data.append(fbx_addict)
                 self._fbx_db[uid]["conn"] = fbx_data
-                self._writefile_fbx_db(_DB_FILE, uid)
+                self._writefile_fbx_db(_DATA_DIR, uid)
 
     async def _get_app_access(
         self,
         uid: str,
-        token_file: str,
+        token_file: Path,
         app_desc: Dict[str, str],
         timeout: int = _DEFAULT_TIMEOUT,
     ) -> Access:
@@ -516,7 +512,7 @@ class Freepybox:
         Returns an access object used for HTTP(S) requests.
 
         uid : `str`
-        token_file : `str`
+        token_file : `Path`
         app_desc : `dict`
         timeout : `int`
             , Default to _DEFAULT_TIMEOUT
@@ -544,7 +540,7 @@ class Freepybox:
                 # denied status = authorization failed
                 if status == "denied":
                     raise AuthorizationError(
-                        "The app token is invalid or has been revoked."
+                        f"{_DEFAULT_ERR}The app token is invalid or has been revoked."
                     )
 
                 # Pending status : user must accept the app request on the freebox
@@ -556,7 +552,7 @@ class Freepybox:
 
                 # timeout = authorization failed
                 elif status == "timeout":
-                    raise AuthorizationError("Authorization timed out.")
+                    raise AuthorizationError(f"{_DEFAULT_ERR}Authorization timed out.")
 
             _LOGGER.info("Application authorization granted.")
 
@@ -594,14 +590,14 @@ class Freepybox:
         url = urljoin(self._get_db_base_url(uid), "login/authorize/")
         data = json.dumps(app_desc)
         async with self._session.post(  # type: ignore # noqa
-            url, data=data, timeout=timeout
+            url, data=data, timeout=timeout, skip_auto_headers=["User-Agent"]
         ) as r:
             resp = await r.json()
 
         # raise exception if resp.success != True
         if not resp.get("success"):
             raise AuthorizationError(
-                "Authorization failed (APIResponse: {}).".format(json.dumps(resp))
+                f"{_DEFAULT_ERR}Authorization failed (APIResponse: {json.dumps(resp)})."
             )
 
         app_token, track_id = resp["result"]["app_token"], resp["result"]["track_id"]
@@ -627,7 +623,9 @@ class Freepybox:
         """
 
         url = urljoin(self._get_db_base_url(uid), f"login/authorize/{track_id}")
-        async with self._session.get(url, timeout=timeout) as r:  # type: ignore # noqa
+        async with self._session.get(  # type: ignore # noqa
+            url, timeout=timeout, skip_auto_headers=["User-Agent"]
+        ) as r:
             resp = await r.json()
             return resp["result"]["status"]
 
@@ -684,17 +682,19 @@ class Freepybox:
         except ValueError:
             return False
 
-    def _readfile_app_token(self, file: str, uid: str) -> Tuple[Any, Any, Any]:
+    def _readfile_app_token(self, file: Path, uid: str) -> Tuple[Any, Any, Any]:
         """
         Read the application token in the authentication file.
 
-        file : `str`
+        file : `Path`
         uid : `str`
 
         Returns app_token, track_id, app_desc
         """
-        fname = file + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
 
+        fname = file.joinpath(
+            _F_TOKEN_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+        )
         try:
             with bz2.open(fname, "rt", encoding="utf-8") as zf:
                 d = json.load(zf)
@@ -709,17 +709,19 @@ class Freepybox:
         except FileNotFoundError:
             return None, None, None
 
-    def _readfile_fbx_db(self, file: str, uid: str) -> Optional[Dict[str, Any]]:
+    def _readfile_fbx_db(self, file: Path, uid: str) -> Optional[Dict[str, Any]]:
         """
         Read the freebox db in the db file.
 
-        file : `str`
+        file : `Path`
         uid : `str`
 
         Returns fbx_db
         """
-        fname = file + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
 
+        fname = file.joinpath(
+            _F_DB_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+        )
         try:
             with bz2.open(fname, "rt", encoding="utf-8") as zf:
                 d = json.load(zf)
@@ -732,37 +734,41 @@ class Freepybox:
         app_token: str,
         track_id: str,
         app_desc: Dict[str, str],
-        file: str,
+        file: Path,
         uid: str,
     ) -> str:
         """
-        Store the application token in a _TOKEN_FILE file
+        Store the application token in a ``_F_TOKEN`` file
 
         app_token : `str`
         track_id : `str`
         app_desc : `dict`
-        file : `str`
+        file : `Path`
         uid : `str`
         """
 
         d = {**app_desc, "app_token": app_token, "track_id": track_id}
-        fname = file + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+        fname = file.joinpath(
+            _F_TOKEN_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+        )
         with bz2.open(fname, "wt", encoding="utf-8") as zf:
             json.dump(d, zf)
-        return fname
+        return fspath(fname)
 
-    def _writefile_fbx_db(self, file: str, uid: str) -> str:
+    def _writefile_fbx_db(self, file: Path, uid: str) -> str:
         """
-        Store the freebox db in a _DB_FILE file
+        Store the freebox db in a ``_F_DB`` file
 
-        file : `str`
+        file : `Path`
         uid : `str`
         """
 
-        fname = file + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+        fname = file.joinpath(
+            _F_DB_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
+        )
         with bz2.open(fname, "wt", encoding="utf-8") as zf:
             json.dump(self._fbx_db[uid], zf)
-        return fname
+        return fspath(fname)
 
     @property
     def fbx_desc(self) -> Optional[dict]:
