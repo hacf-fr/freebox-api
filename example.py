@@ -9,6 +9,7 @@ import asyncio
 import m3u8
 
 from aiofreepybox import Freepybox
+from aiofreepybox.exceptions import (NotOpenError, AuthorizationError)
 
 
 async def demo():
@@ -22,7 +23,13 @@ async def demo():
     # Connect to the freebox
     # Be ready to authorize the application on the Freebox if you use this
     # example for the first time
-    await fbx.open()
+
+    try:
+        await fbx.open()
+    except NotOpenError as e:
+        print(f"Something went wrong {e}")
+    except AuthorizationError as e:
+        print(str(e))
 
     if fbx.api_version == 'v6':
         # Get a jpg snapshot from a camera
