@@ -103,13 +103,18 @@ class Freepybox:
         Close the freebox session
         """
 
-        if self._access is None or self._session.closed:  # type: ignore # noqa
-            _LOGGER.warning(f"Closing but freebox is not connected")
-            return
+        if self._session and self._session.closed:  # type: ignore # noqa
+            return None
 
-        await self._access.post("login/logout")
-        await self._session.close()  # type: ignore # noqa
-        await asyncio.sleep(0.250)
+        try:
+            await self._access.post("login/logout")  # type: ignore # noqa
+        except AttributeError:
+            pass
+        try:
+            await self._session.close()  # type: ignore # noqa
+            await asyncio.sleep(0.250)
+        except AttributeError:
+            pass
 
     def db_clean(self, uids: Optional[list] = None, all_: bool = False) -> bool:
         """
@@ -204,14 +209,10 @@ class Freepybox:
             return e.args[0]
 
         # Connect if session is closed
-        if any(
-            [
-                self._session is None,
-                not isinstance(self._session, aiohttp.ClientSession),
-                (self._session and self._session.closed),
-            ]
-        ) and not await self._disc_connect(**(fbx_addict)):
-            raise ValueError(f"{_DEFAULT_ERR}Port closed or dns failed")
+        try:
+            await self._disc_connect(**(fbx_addict))
+        except ValueError:
+            raise
 
         # Found freebox
         try:
@@ -226,14 +227,14 @@ class Freepybox:
                 fbx_desc = await r.json()
         except asyncio.TimeoutError:
             raise ValueError(f"{_DEFAULT_ERR}Timeout")
-        except aiohttp.ClientSSLError:
-            raise ValueError(f"{_DEFAULT_ERR}SSL error")
-        except aiohttp.ClientConnectorError:
-            raise ValueError(f"{_DEFAULT_ERR}connect error")
-        except aiohttp.ClientResponseError:
-            raise ValueError(f"{_DEFAULT_ERR}response error")
-        except aiohttp.ServerDisconnectedError:
-            raise ValueError(f"{_DEFAULT_ERR}disconnected")
+        except (
+            aiohttp.ClientSSLError,
+            aiohttp.ClientConnectorError,
+            aiohttp.ClientOSError,
+            aiohttp.ClientResponseError,
+            aiohttp.ServerDisconnectedError,
+        ) as e:
+            raise ValueError(f"{_DEFAULT_ERR}{str(e)}")
         except ValueError as e:
             await self._disc_close_to_return()
             raise ValueError(f"{_DEFAULT_ERR}{e.args[0]}")
@@ -375,15 +376,19 @@ class Freepybox:
     async def _disc_close_to_return(self) -> None:
         """Close discovery session"""
 
-        if self._session is not None and not self._session.closed:
-            await self._session.close()
+        try:
+            await self._session.close()  # type: ignore # noqa
             await asyncio.sleep(0.250)
+        except AttributeError:
+            pass
 
-    async def _disc_connect(self, host: str, port: str, s: str) -> bool:
+    async def _disc_connect(self, host: str, port: str, s: str) -> None:
         """Connect for discovery"""
 
-        if not self._fbx_ping_port(host, port):
-            return False
+        try:
+            self._fbx_ping_port(host, port)
+        except ValueError:
+            raise
 
         # Connect
         try:
@@ -395,11 +400,9 @@ class Freepybox:
             else:
                 conn = aiohttp.TCPConnector()
             self._session = aiohttp.ClientSession(connector=conn)
-        except ssl.SSLCertVerificationError:
+        except ssl.SSLCertVerificationError as e:
             await self._disc_close_to_return()
-            return False
-
-        return True
+            raise ValueError(str(e))
 
     def _disc_set_host_and_port(
         self, host_in: Optional[str] = None, port_in: Optional[str] = None
@@ -424,8 +427,8 @@ class Freepybox:
         for i, conn in enumerate(db["conn"]):
             try:
                 d = await self.discover(conn["host"], conn["port"])
-            except ValueError as err:
-                err_out = err
+            except ValueError as e:
+                err_out = e
             else:
                 self._fbx_db[d["uid"]]["conf"]["cc"] = i
                 break
@@ -443,14 +446,14 @@ class Freepybox:
         try:
             fbx_desc = await self.discover(host_in, port_in)
             host, port = self._fbx_open_setup(fbx_desc, host_in, port_in)
-        except ValueError as err:
+        except ValueError as e:
             unk = _DEFAULT_UNKNOWN
             host, port = (
                 next(v for v in [host_in, host, unk] if v),
                 next(v for v in [port_in, port, unk] if v),
             )
             raise NotOpenError(
-                f"{err.args[0]}: Cannot detect freebox at "
+                f"{e.args[0]}: host error for "
                 f"{host}:{port}"
                 ", please check your configuration."
             )
@@ -470,18 +473,18 @@ class Freepybox:
         if db is None:
             try:
                 d = await self.discover()
-            except ValueError as err:
+            except ValueError as e:
                 raise NotOpenError(
-                    f"{err.args[0]}: Cannot detect freebox for uid: {uid}"
+                    f"{e.args[0]}: Cannot detect freebox for uid: {uid}"
                     ", please check your configuration."
                 )
         else:
             self._fbx_db[uid] = db
             try:
                 d = await self._fbx_enum_conns(db)
-            except ValueError as err:
+            except ValueError as e:
                 raise NotOpenError(
-                    f"{err.args[0]}: "
+                    f"{e.args[0]}: "
                     f"Cannot detect freebox for uid: {uid}"
                     ", please check your configuration."
                 )
@@ -528,11 +531,11 @@ class Freepybox:
             sock.settimeout(self.timeout)
             result = sock.connect_ex((host, int(port)))
             sock.close()
-        except socket.gaierror:
-            result = 1
+        except socket.gaierror as e:
+            raise ValueError(f"{_DEFAULT_ERR}socket error: {str(e)}")
         finally:
             if result != 0:
-                return False
+                raise ValueError(f"{_DEFAULT_ERR}socket error: {result}")
             return True
 
     def _fbx_update_db(
@@ -613,6 +616,7 @@ class Freepybox:
                     if not out_msg_flag:
                         out_msg_flag = True
                         print("Please confirm the authentification on the freebox.")
+                        _LOGGER.info(f"User action required: please confirm access on freebox.")
                     await asyncio.sleep(1)
 
                 # timeout = authorization failed
