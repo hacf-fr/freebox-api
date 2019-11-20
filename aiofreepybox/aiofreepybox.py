@@ -98,25 +98,7 @@ class Freepybox:
         self._fbx_uid: str = ""
         self._session: Optional[aiohttp.ClientSession] = None
 
-    async def close(self) -> None:
-        """
-        Close the freebox session
-        """
-
-        if self._session and self._session.closed:  # type: ignore # noqa
-            return None
-
-        try:
-            await self._access.post("login/logout")  # type: ignore # noqa
-        except AttributeError:
-            pass
-        try:
-            await self._session.close()  # type: ignore # noqa
-            await asyncio.sleep(0.250)
-        except AttributeError:
-            pass
-
-    def db_clean(self, uids: Optional[list] = None, all_: bool = False) -> bool:
+    def clean_db(self, uids: Optional[list] = None, all_: bool = False) -> bool:
         """
         Remove unauth fbx's from db
 
@@ -154,7 +136,85 @@ class Freepybox:
             return True
         return False
 
-    def db_get(
+    async def close(self) -> None:
+        """
+        Close the freebox session
+        """
+
+        if self._session and self._session.closed:  # type: ignore # noqa
+            return None
+
+        try:
+            await self._access.post("login/logout")  # type: ignore # noqa
+        except AttributeError:
+            pass
+        try:
+            await self._session.close()  # type: ignore # noqa
+            await asyncio.sleep(0.250)
+        except AttributeError:
+            pass
+
+    async def discover(
+        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Discover a freebox on the network
+
+        host : `str` , optional
+            , Default to None
+        port : `str` , optional
+            , Default to None
+        """
+
+        if host_in and self._is_ipv6(host_in):
+            raise ValueError(f"{_DEFAULT_ERR}{host_in} : IPv6 is not supported")
+
+        # Check session
+        try:
+            fbx_addict = await self._disc_c_session(
+                self._disc_s_host_port(host_in, port_in)
+            )
+        except ValueError as e:
+            raise
+        except KeyError as e:
+            return e.args[0]
+
+        # Found freebox ?
+        fbx_desc: Dict[str, Any] = {}
+        try:
+            async with self._fbx_open_session(**fbx_addict) as session:
+                try:
+                    async with session.get(  # type: ignore # noqa
+                        f"http{fbx_addict['s']}://{fbx_addict['host']}:{fbx_addict['port']}"
+                        "/api_version",
+                        timeout=self.timeout,
+                        skip_auto_headers=["User-Agent"],
+                    ) as r:
+                        if r.content_type != "application/json":
+                            raise ValueError(f"Invalid content type: {r.content_type}")
+                        fbx_desc = await r.json()
+                except asyncio.TimeoutError:
+                    raise ValueError(f"{_DEFAULT_ERR}Timeout")
+                except (
+                    aiohttp.ClientSSLError,
+                    aiohttp.ClientConnectorError,
+                    aiohttp.ClientOSError,
+                    aiohttp.ClientResponseError,
+                    aiohttp.ServerDisconnectedError,
+                ) as e:
+                    raise ValueError(f"{_DEFAULT_ERR}{str(e)}")
+                except ValueError as e:
+                    raise ValueError(f"{_DEFAULT_ERR}{e.args[0]}")
+        except ValueError:
+            raise
+        fbx_device = fbx_desc.get("device_type", None)
+        if _DEFAULT_DEVICE_TYPE not in fbx_device:
+            raise ValueError(f"{_DEFAULT_ERR}{fbx_device}: Wrong device")
+
+        uid = self._fbx_update_db(fbx_desc, fbx_addict)
+        return self._fbx_db[uid]["desc"]
+
+    def get_db(
         self, uids: Optional[List[str]] = None
     ) -> Optional[List[Dict[str, Any]]]:
         """
@@ -182,70 +242,6 @@ class Freepybox:
             return None
         _LOGGER.debug(f"{fbx_db.__len__} uid(s) in db")
         return fbx_db
-
-    async def discover(
-        self, host_in: Optional[str] = None, port_in: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """
-        Discover a freebox on the network
-
-        host : `str` , optional
-            , Default to None
-        port : `str` , optional
-            , Default to None
-        """
-
-        if host_in and self._is_ipv6(host_in):
-            raise ValueError(f"{_DEFAULT_ERR}{host_in} : IPv6 is not supported")
-
-        # Check session
-        try:
-            fbx_addict = await self._disc_check_session(
-                self._disc_set_host_and_port(host_in, port_in)
-            )
-        except ValueError as e:
-            raise
-        except KeyError as e:
-            return e.args[0]
-
-        # Connect if session is closed
-        try:
-            await self._disc_connect(**(fbx_addict))
-        except ValueError:
-            raise
-
-        # Found freebox
-        try:
-            async with self._session.get(  # type: ignore # noqa
-                f"http{fbx_addict['s']}://{fbx_addict['host']}:{fbx_addict['port']}/api_version",
-                timeout=self.timeout,
-                skip_auto_headers=["User-Agent"],
-            ) as r:
-                if r.content_type != "application/json":
-                    await self._disc_close_to_return()
-                    raise ValueError(f"Invalid content type: {r.content_type}")
-                fbx_desc = await r.json()
-        except asyncio.TimeoutError:
-            raise ValueError(f"{_DEFAULT_ERR}Timeout")
-        except (
-            aiohttp.ClientSSLError,
-            aiohttp.ClientConnectorError,
-            aiohttp.ClientOSError,
-            aiohttp.ClientResponseError,
-            aiohttp.ServerDisconnectedError,
-        ) as e:
-            raise ValueError(f"{_DEFAULT_ERR}{str(e)}")
-        except ValueError as e:
-            await self._disc_close_to_return()
-            raise ValueError(f"{_DEFAULT_ERR}{e.args[0]}")
-
-        fbx_device = fbx_desc.get("device_type", None)
-        if _DEFAULT_DEVICE_TYPE not in fbx_device:
-            await self._disc_close_to_return()
-            raise ValueError(f"{_DEFAULT_ERR}{fbx_device}: Wrong device")
-
-        self._fbx_update_db(fbx_desc, fbx_addict)
-        return fbx_desc
 
     async def get_permissions(self) -> Optional[dict]:
         """
@@ -291,7 +287,7 @@ class Freepybox:
         if uid is None:
             uid = ""
             try:
-                uid = await self._fbx_open_init(host, port)
+                uid = await self._fbx_open_disc(host, port)
             except NotOpenError:
                 raise
         else:
@@ -307,6 +303,8 @@ class Freepybox:
         except AuthorizationError:
             raise
 
+        self._fbx_uid = uid
+
         # Instantiate freebox modules
         kwargs: Dict[str, str] = {}
         for api_mod in _API_MODS:
@@ -319,7 +317,46 @@ class Freepybox:
             if kwargs:
                 kwargs = {}
 
-    def _check_api_version(self, fbx_api_version: str) -> str:
+    async def _disc_c_session(self, fbx_addict: Dict[str, Any]) -> Dict[str, Any]:
+        """Check discovery session"""
+
+        if (
+            self._session
+            and not self._session.closed
+            and self._session._connector._conns  # type: ignore # noqa
+        ):
+            c = list(self._session._connector._conns.keys())[0]  # type: ignore # noqa
+            if (
+                c.host == fbx_addict["host"]
+                and c.port == int(fbx_addict["port"])
+                and c.is_ssl == (not not fbx_addict["s"])
+            ):
+                raise KeyError(self._fbx_db[self._fbx_uid]["desc"])
+            try:
+                await self._session.close()  # type: ignore # noqa
+                await asyncio.sleep(0.250)
+            except AttributeError:
+                pass
+
+        return fbx_addict
+
+    def _disc_s_host_port(
+        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Set discovery host and port"""
+
+        host, port = (
+            host_in if host_in else _DEFAULT_HOST,
+            port_in if port_in else _DEFAULT_HTTP_PORT,
+        )
+        if not host_in and not port_in:
+            port = _DEFAULT_HTTPS_PORT if _DEFAULT_SSL else port
+        s = "s" if _DEFAULT_SSL and port != _DEFAULT_HTTP_PORT else ""
+
+        del self, host_in, port_in
+        return locals()
+
+    def _fbx_c_api_version(self, fbx_api_version: str) -> str:
         """
         Check api version
         """
@@ -330,6 +367,7 @@ class Freepybox:
         s_default_api_version = _DEFAULT_API_VERSION[1:]
         if self.api_version == "server":
             api_version = f"v{s_fbx_version}"
+
         # Check user API version
         s_api_version = self.api_version[1:]
         if s_default_api_version < s_fbx_version and s_api_version == s_fbx_version:
@@ -353,90 +391,57 @@ class Freepybox:
             self.api_version = api_version
             return api_version
 
-    async def _disc_check_session(self, fbx_addict: Dict[str, Any]) -> Dict[str, Any]:
-        """Check discovery session"""
-
-        if (
-            self._session
-            and not self._session.closed
-            and self._session._connector._conns  # type: ignore # noqa
-        ):
-            c = list(self._session._connector._conns.keys())[0]  # type: ignore # noqa
-            if (
-                c.host == fbx_addict["host"]
-                and c.port == int(fbx_addict["port"])
-                and c.is_ssl == (not not fbx_addict["s"])
-            ):
-                raise KeyError(self._fbx_db[self._fbx_uid]["desc"])
-            await self._disc_close_to_return()
-            raise KeyError(await self.discover(fbx_addict["host"], fbx_addict["port"]))
-
-        return fbx_addict
-
-    async def _disc_close_to_return(self) -> None:
-        """Close discovery session"""
-
-        try:
-            await self._session.close()  # type: ignore # noqa
-            await asyncio.sleep(0.250)
-        except AttributeError:
-            pass
-
-    async def _disc_connect(self, host: str, port: str, s: str) -> None:
-        """Connect for discovery"""
-
-        try:
-            self._fbx_ping_port(host, port)
-        except ValueError:
-            raise
-
-        # Connect
-        try:
-            if s == "s":
-                cert_path = str(_DATA_DIR.joinpath(_DEFAULT_CERT))
-                ssl_ctx = ssl.create_default_context()
-                ssl_ctx.load_verify_locations(cafile=cert_path)
-                conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
-            else:
-                conn = aiohttp.TCPConnector()
-            self._session = aiohttp.ClientSession(connector=conn)
-        except ssl.SSLCertVerificationError as e:
-            await self._disc_close_to_return()
-            raise ValueError(str(e))
-
-    def _disc_set_host_and_port(
-        self, host_in: Optional[str] = None, port_in: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """Set discovery host and port"""
-
-        host, port = (
-            host_in if host_in else _DEFAULT_HOST,
-            port_in if port_in else _DEFAULT_HTTP_PORT,
-        )
-        if not host_in and not port_in:
-            port = _DEFAULT_HTTPS_PORT if _DEFAULT_SSL else port
-        s = "s" if _DEFAULT_SSL and port != _DEFAULT_HTTP_PORT else ""
-
-        del self, host_in, port_in
-        return locals()
-
-    async def _fbx_enum_conns(self, db: Dict[str, Any]) -> Dict[str, Any]:
+    def _fbx_enum_conns(self, db: Dict[str, Any]) -> None:
         """Try freebox connections"""
 
-        d = None
+        uid = db["desc"]["uid"]
         for i, conn in enumerate(db["conn"]):
             try:
-                d = await self.discover(conn["host"], conn["port"])
+                self._fbx_ping_port(conn["host"], conn["port"])
+                self._session = self._fbx_open_session(**conn)
             except ValueError as e:
                 err_out = e
             else:
-                self._fbx_db[d["uid"]]["conf"]["cc"] = i
+                self._fbx_db[uid]["conf"]["cc"] = i
                 break
-        if d is None:
+        if self._session is None and err_out:
             raise ValueError(err_out.args[0])
-        return d
 
-    async def _fbx_open_init(
+    async def _fbx_open_db(self, uid: str) -> str:
+        """Open freebox db"""
+
+        db = self._readfile_fbx_db(_DATA_DIR, uid)
+        d: Dict[str, Any] = {}
+        if db is None:
+            try:
+                fbx_desc = await self.discover()
+            except ValueError as e:
+                raise NotOpenError(
+                    f"{e.args[0]}: Cannot detect freebox for uid: {uid}"
+                    ", please check your configuration."
+                )
+            else:
+                if uid != fbx_desc["uid"]:
+                    raise NotOpenError(
+                        f"{_DEFAULT_ERR}{d['uid']}: Cannot detect freebox for uid: {uid}"
+                        ", please check your configuration."
+                    )
+        else:
+            self._fbx_db[uid] = db
+            try:
+                self._fbx_enum_conns(db)
+            except ValueError as e:
+                raise NotOpenError(
+                    f"{e.args[0]}: "
+                    f"Cannot detect freebox for uid: {uid}"
+                    ", please check your configuration."
+                )
+        self._fbx_db[uid]["conf"]["api_version"] = self._fbx_c_api_version(
+            self._fbx_db[uid]["desc"]["api_version"]
+        )
+        return uid
+
+    async def _fbx_open_disc(
         self, host_in: Optional[str] = None, port_in: Optional[str] = None
     ) -> str:
         """Init freebox link for open"""
@@ -457,47 +462,35 @@ class Freepybox:
                 f"{host}:{port}"
                 ", please check your configuration."
             )
-        d = await self._fbx_enum_conns(self._fbx_db[fbx_desc["uid"]])
-
-        self._fbx_db[d["uid"]]["conf"]["api_version"] = self._check_api_version(
-            self._fbx_db[d["uid"]]["desc"]["api_version"]
+        uid: str = fbx_desc["uid"]
+        self._fbx_enum_conns(self._fbx_db[uid])
+        self._fbx_db[uid]["conf"]["api_version"] = self._fbx_c_api_version(
+            self._fbx_db[uid]["desc"]["api_version"]
         )
-        self._fbx_uid = d["uid"]
-        return d["uid"]
-
-    async def _fbx_open_db(self, uid: str) -> str:
-        """Open freebox db"""
-
-        db = self._readfile_fbx_db(_DATA_DIR, uid)
-        d: Dict[str, Any] = {}
-        if db is None:
-            try:
-                d = await self.discover()
-            except ValueError as e:
-                raise NotOpenError(
-                    f"{e.args[0]}: Cannot detect freebox for uid: {uid}"
-                    ", please check your configuration."
-                )
-        else:
-            self._fbx_db[uid] = db
-            try:
-                d = await self._fbx_enum_conns(db)
-            except ValueError as e:
-                raise NotOpenError(
-                    f"{e.args[0]}: "
-                    f"Cannot detect freebox for uid: {uid}"
-                    ", please check your configuration."
-                )
-        if isinstance(d["uid"], str) and uid != d["uid"]:
-            raise NotOpenError(
-                f"{_DEFAULT_ERR}{d['uid']}: Cannot detect freebox for uid: {uid}"
-                ", please check your configuration."
-            )
-        self._fbx_db[d["uid"]]["conf"]["api_version"] = self._check_api_version(
-            self._fbx_db[d["uid"]]["desc"]["api_version"]
-        )
-        self._fbx_uid = uid
         return uid
+
+    def _fbx_open_session(self, host: str, port: str, s: str) -> aiohttp.ClientSession:
+        """Connect for discovery"""
+
+        try:
+            self._fbx_ping_port(host, port)
+        except ValueError:
+            raise
+
+        # Connect
+        try:
+            if s == "s":
+                cert_path = str(_DATA_DIR.joinpath(_DEFAULT_CERT))
+                ssl_ctx = ssl.create_default_context()
+                ssl_ctx.load_verify_locations(cafile=cert_path)
+                conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
+            else:
+                conn = aiohttp.TCPConnector()
+            session = aiohttp.ClientSession(connector=conn)
+        except ssl.SSLCertVerificationError as e:
+            raise ValueError(str(e))
+        else:
+            return session
 
     def _fbx_open_setup(
         self,
@@ -530,22 +523,29 @@ class Freepybox:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(self.timeout)
             result = sock.connect_ex((host, int(port)))
-            sock.close()
         except socket.gaierror as e:
-            raise ValueError(f"{_DEFAULT_ERR}socket error: {str(e)}")
-        finally:
+            raise ValueError(f"socket resolve error: {str(e)}")
+        else:
             if result != 0:
-                raise ValueError(f"{_DEFAULT_ERR}socket error: {result}")
+                raise ValueError(f"socket error: {result}")
             return True
+        finally:
+            sock.close()
 
     def _fbx_update_db(
         self, fbx_desc: Dict[str, Any], fbx_addict: Optional[Dict[str, Any]]
-    ) -> None:
+    ) -> str:
 
+        fbx_conn: List[Dict[str, Any]] = []
         uid: str = fbx_desc["uid"]
-        try:
-            fbx_data: List[Dict[str, Any]] = self._fbx_db[uid]["conn"]
-        except KeyError:
+        write_db = False
+        if uid in self._fbx_db:
+            fbx_conn = self._fbx_db[uid]["conn"]
+            if fbx_desc != self._fbx_db[uid]["desc"]:
+                write_db = True
+                self._fbx_db[uid]["desc"] = fbx_desc
+                write_db = True
+        else:
             fbx_api_add = [
                 {
                     "host": fbx_desc["api_domain"],
@@ -556,18 +556,24 @@ class Freepybox:
             fbx_conf = {"api_version": "", "cc": 0}
             fbx_entry = {uid: {"conn": fbx_api_add, "conf": fbx_conf, "desc": fbx_desc}}
             self._fbx_db.update(fbx_entry)
-            fbx_data = self._fbx_db[uid]["conn"]
+            fbx_conn = self._fbx_db[uid]["conn"]
             if not self._readfile_fbx_db(_DATA_DIR, uid):
-                self._writefile_fbx_db(_DATA_DIR, uid)
+                write_db = True
 
-        finally:
-            if fbx_addict is not None:
-                for k in fbx_data:
-                    if dict(k) == fbx_addict:
-                        return
-                fbx_data.append(fbx_addict)
-                self._fbx_db[uid]["conn"] = fbx_data
-                self._writefile_fbx_db(_DATA_DIR, uid)
+        if fbx_addict is not None:
+            for k in fbx_conn:
+                if dict(k) == fbx_addict:
+                    return uid
+            fbx_conn.append(fbx_addict)
+            self._fbx_db[uid]["conn"] = fbx_conn
+            write_db = True
+
+        if write_db:
+            asyncio.create_task(
+                self._writefile_fbx_db(_DATA_DIR, uid, self._fbx_db[uid])
+            )
+
+        return uid
 
     async def _get_app_access(
         self,
@@ -616,7 +622,9 @@ class Freepybox:
                     if not out_msg_flag:
                         out_msg_flag = True
                         print("Please confirm the authentification on the freebox.")
-                        _LOGGER.info(f"User action required: please confirm access on freebox.")
+                        _LOGGER.info(
+                            f"User action required: please confirm access on freebox."
+                        )
                     await asyncio.sleep(1)
 
                 # timeout = authorization failed
@@ -824,7 +832,9 @@ class Freepybox:
             json.dump(d, zf)
         return fspath(fname)
 
-    def _writefile_fbx_db(self, file_p: Path, uid: str) -> str:
+    async def _writefile_fbx_db(
+        self, file_p: Path, uid: str, db: Dict[str, Any]
+    ) -> str:
         """
         Store the freebox db in a ``_F_DB`` file
 
@@ -836,7 +846,7 @@ class Freepybox:
             _F_DB_NAME + "_" + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
         )
         with bz2.open(fname, "wt", encoding="utf-8") as zf:
-            json.dump(self._fbx_db[uid], zf)
+            json.dump(db, zf)
         return fspath(fname)
 
     @property
