@@ -284,17 +284,13 @@ class Freepybox:
             raise InvalidTokenError(f"{_DEFAULT_ERR}Invalid application descriptor")
 
         # Get API access
-        if uid is None:
-            uid = ""
-            try:
+        try:
+            if uid is None:
                 uid = await self._fbx_open_disc(host, port)
-            except NotOpenError:
-                raise
-        else:
-            try:
+            else:
                 uid = await self._fbx_open_db(uid)
-            except NotOpenError:
-                raise
+        except NotOpenError:
+            raise
 
         try:
             self._access = await self._get_app_access(
