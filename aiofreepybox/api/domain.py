@@ -6,7 +6,7 @@ class Domain:
     Domain
     """
 
-    def __init__(self, access):
+    def __init__(self, access) -> None:
         self._access = access
 
     request_cert_schema = {"key_type": "rsa"}
