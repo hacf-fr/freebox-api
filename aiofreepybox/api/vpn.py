@@ -36,7 +36,9 @@ class Vpn:
     }
     vpn_user_data_schema = {"ip_reservation": "", "login": "", "password": ""}
 
-    async def create_vpn_client_configurations(self, vpn_client_configuration: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_vpn_client_configurations(
+        self, vpn_client_configuration: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Create vpn client configurations
 
