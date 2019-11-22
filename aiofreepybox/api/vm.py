@@ -1,4 +1,6 @@
 import base64
+from aiofreepybox.access import Access
+from typing import Any, Dict, List, Optional, Union
 
 
 class Vm:
@@ -6,15 +8,12 @@ class Vm:
     Vm
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     oses = ["fedora", "debian", "ubuntu", "freebsd"]
-
     disk_info_schema = {"disk_path": ""}
-
     resize_schema = {"disk_path": "", "size": 45097156608, "shrink_allow": False}
-
     vm_init_schema = {
         "name": "",
         "disk_path": "",
@@ -32,15 +31,15 @@ class Vm:
         "os": "ubuntu",
     }
 
-    async def create_vm(self, vm_init_data):
+    async def create_vm(self, vm_init_data: Dict[str, Any]):
         """
         Create a vm
 
-        vm_init_data : `vm_init_schema`
+        vm_init_data : `dict`
         """
         return await self._access.post("vm/", vm_init_data)
 
-    async def delete_vm(self, vm_id):
+    async def delete_vm(self, vm_id: int) -> None:
         """
         Delete a vm
 
@@ -48,7 +47,9 @@ class Vm:
         """
         await self._access.delete(f"vm/{vm_id}")
 
-    async def edit_vm(self, vm_id, vm_config_data):
+    async def edit_vm(
+        self, vm_id: int, vm_config_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Edit vm configuration
 
@@ -65,13 +66,13 @@ class Vm:
         return await self._access.wsget(f'vm/{vm_id}/console')
     '''
 
-    async def get_distros(self):
+    async def get_distros(self) -> List[Dict[str, str]]:
         """
         Get distros
         """
         return await self._access.get("vm/distros/")
 
-    async def get_disk_info(self, disk_path):
+    async def get_disk_info(self, disk_path: str) -> Dict[str, Union[int, str]]:
         """
         Get disk info
 
@@ -82,13 +83,13 @@ class Vm:
         }
         return await self._access.post("vm/disk/info", disk_info)
 
-    async def get_vms(self):
+    async def get_vms(self) -> List[Dict[str, Any]]:
         """
         Get the list of vms
         """
         return await self._access.get("vm/")
 
-    async def resize_vm(self, disk_path, new_size, shrink_allow=False):
+    async def resize_vm(self, disk_path: str, new_size: int, shrink_allow=False):
         """
         Resize a vm
 
@@ -104,7 +105,7 @@ class Vm:
         }
         return await self.set_resize_vm(resize)
 
-    async def set_resize_vm(self, resize_data):
+    async def set_resize_vm(self, resize_data: Dict[str, Any]):
         """
         Resize a vm
 
@@ -112,7 +113,7 @@ class Vm:
         """
         return await self._access.post("vm/disk/resize", resize_data)
 
-    async def restart_vm(self, vm_id):
+    async def restart_vm(self, vm_id: int) -> Optional[Dict[str, Any]]:
         """
         Restart a vm
 
@@ -120,7 +121,7 @@ class Vm:
         """
         return await self._access.post(f"vm/{vm_id}/restart/")
 
-    async def start_vm(self, vm_id):
+    async def start_vm(self, vm_id: int) -> Optional[Dict[str, Any]]:
         """
         Start a vm
 
@@ -128,7 +129,7 @@ class Vm:
         """
         return await self._access.post(f"vm/{vm_id}/start/")
 
-    async def shutdown_vm(self, vm_id):
+    async def shutdown_vm(self, vm_id: int) -> Optional[Dict[str, Any]]:
         """
         Shutdown a vm
 
@@ -136,7 +137,7 @@ class Vm:
         """
         return await self._access.post(f"vm/{vm_id}/powerbutton/")
 
-    async def stop_vm(self, vm_id):
+    async def stop_vm(self, vm_id: int) -> Optional[Dict[str, Any]]:
         """
         Stop a vm
 
