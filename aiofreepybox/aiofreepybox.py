@@ -120,8 +120,7 @@ class Freepybox:
         c = 0
         for uid in uids:
             if uid not in auth or all_:
-                file_p = _DATA_DIR
-                fname = file_p.joinpath(
+                fname = _DATA_DIR.joinpath(
                     _F_DB_NAME
                     + "_"
                     + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
@@ -155,25 +154,24 @@ class Freepybox:
             pass
 
     async def discover(
-        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+        self, host: Optional[str] = None, port: Optional[Union[int, str]] = None
     ) -> Dict[str, Any]:
         """
         Discover a freebox on the network
 
         host : `str` , optional
             , Default to None
-        port : `str` , optional
+        port : Union[int,str] , optional
             , Default to None
         """
 
-        if host_in and self._is_ipv6(host_in):
-            raise ValueError(f"{_DEFAULT_ERR}{host_in} : IPv6 is not supported")
+        if host and self._is_ipv6(host):
+            raise ValueError(f"{_DEFAULT_ERR}{host} : IPv6 is not supported")
+        port = str(port) if isinstance(port, int) else port
 
         # Check session
         try:
-            fbx_addict = await self._disc_c_session(
-                self._disc_s_host_port(host_in, port_in)
-            )
+            fbx_addict = await self._disc_c_session(self._disc_s_host_port(host, port))
         except ValueError as e:
             raise
         except KeyError as e:
@@ -183,30 +181,27 @@ class Freepybox:
         fbx_desc: Dict[str, Any] = {}
         try:
             async with self._fbx_open_session(**fbx_addict) as session:
-                try:
-                    async with session.get(  # type: ignore # noqa
-                        f"http{fbx_addict['s']}://{fbx_addict['host']}:{fbx_addict['port']}"
-                        "/api_version",
-                        timeout=self.timeout,
-                        skip_auto_headers=["User-Agent"],
-                    ) as r:
-                        if r.content_type != "application/json":
-                            raise ValueError(f"Invalid content type: {r.content_type}")
-                        fbx_desc = await r.json()
-                except asyncio.TimeoutError:
-                    raise ValueError(f"{_DEFAULT_ERR}Timeout")
-                except (
-                    aiohttp.ClientSSLError,
-                    aiohttp.ClientConnectorError,
-                    aiohttp.ClientOSError,
-                    aiohttp.ClientResponseError,
-                    aiohttp.ServerDisconnectedError,
-                ) as e:
-                    raise ValueError(f"{_DEFAULT_ERR}{str(e)}")
-                except ValueError as e:
-                    raise ValueError(f"{_DEFAULT_ERR}{e.args[0]}")
-        except ValueError:
-            raise
+                async with session.get(  # type: ignore # noqa
+                    f"http{fbx_addict['s']}://{fbx_addict['host']}:{fbx_addict['port']}"
+                    "/api_version",
+                    timeout=self.timeout,
+                    skip_auto_headers=["User-Agent"],
+                ) as r:
+                    if r.content_type != "application/json":
+                        raise ValueError(f"Invalid content type: {r.content_type}")
+                    fbx_desc = await r.json()
+        except asyncio.TimeoutError:
+            raise ValueError(f"{_DEFAULT_ERR}Timeout")
+        except (
+            aiohttp.ClientSSLError,
+            aiohttp.ClientConnectorError,
+            aiohttp.ClientOSError,
+            aiohttp.ClientResponseError,
+            aiohttp.ServerDisconnectedError,
+        ) as e:
+            raise ValueError(f"{_DEFAULT_ERR}{str(e)}")
+        except ValueError as e:
+            raise ValueError(f"{_DEFAULT_ERR}{e.args[0]}")
         fbx_device = fbx_desc.get("device_type", None)
         if _DEFAULT_DEVICE_TYPE not in fbx_device:
             raise ValueError(f"{_DEFAULT_ERR}{fbx_device}: Wrong device")
@@ -265,7 +260,7 @@ class Freepybox:
     async def open(
         self,
         host: Optional[str] = None,
-        port: Optional[str] = None,
+        port: Optional[Union[int, str]] = None,
         uid: Optional[str] = None,
     ) -> None:
         """
@@ -274,7 +269,7 @@ class Freepybox:
 
         host : `str` , optional
             , Default to `None`
-        port : `str` , optional
+        port : Union[`str`,`int`] , optional
             , Default to `None`
         uid : `str` , optional
             , Default to `None`
@@ -400,6 +395,7 @@ class Freepybox:
             else:
                 self._fbx_db[uid]["conf"]["cc"] = i
                 break
+
         if self._session is None and err_out:
             raise ValueError(err_out.args[0])
 
@@ -407,43 +403,33 @@ class Freepybox:
         """Open freebox db"""
 
         db = self._readfile_fbx_db(_DATA_DIR, uid)
-        d: Dict[str, Any] = {}
-        if db is None:
-            try:
+        try:
+            if db is None:
                 fbx_desc = await self.discover()
-            except ValueError as e:
-                raise NotOpenError(
-                    f"{e.args[0]}: Cannot detect freebox for uid: {uid}"
-                    ", please check your configuration."
-                )
-            else:
                 if uid != fbx_desc["uid"]:
-                    raise NotOpenError(
-                        f"{_DEFAULT_ERR}{d['uid']}: Cannot detect freebox for uid: {uid}"
-                        ", please check your configuration."
-                    )
-        else:
-            self._fbx_db[uid] = db
-            try:
+                    raise ValueError(f"found: {fbx_desc['uid']}")
+            else:
+                self._fbx_db[uid] = db
                 self._fbx_enum_conns(db)
-            except ValueError as e:
-                raise NotOpenError(
-                    f"{e.args[0]}: "
-                    f"Cannot detect freebox for uid: {uid}"
-                    ", please check your configuration."
-                )
+        except ValueError as e:
+            raise NotOpenError(
+                f"{e.args[0]}: Cannot detect freebox for uid: {uid}"
+                ", please check your configuration."
+            )
         self._fbx_db[uid]["conf"]["api_version"] = self._fbx_c_api_version(
             self._fbx_db[uid]["desc"]["api_version"]
         )
         return uid
 
     async def _fbx_open_disc(
-        self, host_in: Optional[str] = None, port_in: Optional[str] = None
+        self, host_in: Optional[str] = None, port_in: Optional[Union[int, str]] = None
     ) -> str:
         """Init freebox link for open"""
 
         host = None
         port = None
+        port_in = str(port_in) if isinstance(port_in, int) else port_in
+
         try:
             fbx_desc = await self.discover(host_in, port_in)
             host, port = self._fbx_open_setup(fbx_desc, host_in, port_in)
@@ -473,7 +459,7 @@ class Freepybox:
         except ValueError:
             raise
 
-        # Connect
+        # Connect session
         try:
             if s == "s":
                 cert_path = str(_DATA_DIR.joinpath(_DEFAULT_CERT))
@@ -538,7 +524,6 @@ class Freepybox:
         if uid in self._fbx_db:
             fbx_conn = self._fbx_db[uid]["conn"]
             if fbx_desc != self._fbx_db[uid]["desc"]:
-                write_db = True
                 self._fbx_db[uid]["desc"] = fbx_desc
                 write_db = True
         else:
@@ -556,10 +541,7 @@ class Freepybox:
             if not self._readfile_fbx_db(_DATA_DIR, uid):
                 write_db = True
 
-        if fbx_addict is not None:
-            for k in fbx_conn:
-                if dict(k) == fbx_addict:
-                    return uid
+        if fbx_addict is not None and fbx_addict not in fbx_conn:
             fbx_conn.append(fbx_addict)
             self._fbx_db[uid]["conn"] = fbx_conn
             write_db = True
