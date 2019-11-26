@@ -31,7 +31,7 @@ _DATA_DIR = Path(__file__).parent
 from aiofreepybox.access import Access
 
 # Import API modules
-for _, name, _ in pkgutil.iter_modules([str(_DATA_DIR.joinpath("api"))]):
+for _, name, _ in pkgutil.iter_modules([str(Path(_DATA_DIR).joinpath("api"))]):
     import_api_mod = import_module(".api." + name, package=__name__.rsplit(".", 1)[0])
     for i in dir(import_api_mod):
         if inspect.isclass(getattr(import_api_mod, i)):
@@ -111,16 +111,16 @@ class Freepybox:
         if uids is None:
             uids = [
                 base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
-                for x in _DATA_DIR.glob(_F_DB_NAME + "_*")
+                for x in Path(_DATA_DIR).glob(_F_DB_NAME + "_*")
             ]
         auth = [
             base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
-            for x in _DATA_DIR.glob(_F_TOKEN_NAME + "_*")
+            for x in Path(_DATA_DIR).glob(_F_TOKEN_NAME + "_*")
         ]
         c = 0
         for uid in uids:
             if uid not in auth or all_:
-                fname = _DATA_DIR.joinpath(
+                fname = Path(_DATA_DIR).joinpath(
                     _F_DB_NAME
                     + "_"
                     + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
@@ -223,13 +223,13 @@ class Freepybox:
         if uids is None:
             uids = [
                 base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
-                for x in _DATA_DIR.glob(_F_DB_NAME + "_*")
+                for x in Path(_DATA_DIR).glob(_F_DB_NAME + "_*")
             ]
         for uid in uids:
             try:
                 fbx_db.append({uid: self._fbx_db[uid]})
             except KeyError:
-                d = self._readfile_fbx_db(_DATA_DIR, uid)
+                d = self._readfile_fbx_db(Path(_DATA_DIR), uid)
                 if d is not None:
                     fbx_db.append({uid: d})
 
@@ -289,7 +289,7 @@ class Freepybox:
 
         try:
             self._access = await self._get_app_access(
-                uid, _DATA_DIR, self.app_desc, self.timeout
+                uid, Path(_DATA_DIR), self.app_desc, self.timeout
             )
         except AuthorizationError:
             raise
@@ -385,6 +385,7 @@ class Freepybox:
     def _fbx_enum_conns(self, db: Dict[str, Any]) -> None:
         """Try freebox connections"""
 
+        err_out: ValueError = ValueError()
         uid = db["desc"]["uid"]
         for i, conn in enumerate(db["conn"]):
             try:
@@ -396,13 +397,13 @@ class Freepybox:
                 self._fbx_db[uid]["conf"]["cc"] = i
                 break
 
-        if self._session is None and err_out:
+        if self._session is None:
             raise ValueError(err_out.args[0])
 
     async def _fbx_open_db(self, uid: str) -> str:
         """Open freebox db"""
 
-        db = self._readfile_fbx_db(_DATA_DIR, uid)
+        db = self._readfile_fbx_db(Path(_DATA_DIR), uid)
         try:
             if db is None:
                 fbx_desc = await self.discover()
@@ -462,7 +463,7 @@ class Freepybox:
         # Connect session
         try:
             if s == "s":
-                cert_path = str(_DATA_DIR.joinpath(_DEFAULT_CERT))
+                cert_path = str(Path(_DATA_DIR).joinpath(_DEFAULT_CERT))
                 ssl_ctx = ssl.create_default_context()
                 ssl_ctx.load_verify_locations(cafile=cert_path)
                 conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
@@ -482,20 +483,21 @@ class Freepybox:
     ) -> Tuple[str, str]:
         """Setup host and port value for open"""
 
+        host_s, port_s = "", ""
         if _DEFAULT_SSL and fbx_desc["https_available"]:
-            host, port = (
+            host_s, port_s = (
                 fbx_desc["api_domain"] if host is None or self._is_ipv4(host) else host,
                 fbx_desc["https_port"]
                 if port is None or port == _DEFAULT_HTTP_PORT
                 else port,
             )
         else:
-            host, port = (
+            host_s, port_s = (
                 _DEFAULT_HOST if host is None else host,
                 _DEFAULT_HTTP_PORT if port is None else port,
             )
 
-        return host, port
+        return host_s, port_s
 
     def _fbx_ping_port(self, host: str, port: str) -> bool:
         """Check if a port if open"""
@@ -505,14 +507,13 @@ class Freepybox:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(self.timeout)
             result = sock.connect_ex((host, int(port)))
+            sock.close()
         except socket.gaierror as e:
             raise ValueError(f"socket resolve error: {str(e)}")
         else:
             if result != 0:
                 raise ValueError(f"socket error: {result}")
             return True
-        finally:
-            sock.close()
 
     def _fbx_update_db(
         self, fbx_desc: Dict[str, Any], fbx_addict: Optional[Dict[str, Any]]
@@ -538,7 +539,7 @@ class Freepybox:
             fbx_entry = {uid: {"conn": fbx_api_add, "conf": fbx_conf, "desc": fbx_desc}}
             self._fbx_db.update(fbx_entry)
             fbx_conn = self._fbx_db[uid]["conn"]
-            if not self._readfile_fbx_db(_DATA_DIR, uid):
+            if not self._readfile_fbx_db(Path(_DATA_DIR), uid):
                 write_db = True
 
         if fbx_addict is not None and fbx_addict not in fbx_conn:
@@ -548,7 +549,7 @@ class Freepybox:
 
         if write_db:
             asyncio.create_task(
-                self._writefile_fbx_db(_DATA_DIR, uid, self._fbx_db[uid])
+                self._writefile_fbx_db(Path(_DATA_DIR), uid, self._fbx_db[uid])
             )
 
         return uid
