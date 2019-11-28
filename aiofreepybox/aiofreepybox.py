@@ -2,7 +2,6 @@ import aiohttp
 import asyncio
 import base64
 import bz2
-import inspect
 import ipaddress
 import json
 import logging
@@ -10,6 +9,7 @@ import pkgutil
 import socket
 import ssl
 from importlib import import_module
+from importlib import resources
 from os import fspath
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -24,18 +24,7 @@ from aiofreepybox.exceptions import (
     InvalidTokenError,
     NotOpenError,
 )
-
-_API_MODS = {}
-_DATA_DIR = Path(__file__).parent
-
 from aiofreepybox.access import Access
-
-# Import API modules
-for _, name, _ in pkgutil.iter_modules([str(Path(_DATA_DIR).joinpath("api"))]):
-    import_api_mod = import_module(".api." + name, package=__name__.rsplit(".", 1)[0])
-    for i in dir(import_api_mod):
-        if inspect.isclass(getattr(import_api_mod, i)):
-            _API_MODS.update({name: import_api_mod})
 
 # API modules extra parameters
 _API_MODS_PARAMS: Dict[str, Any] = {}  # {"player": {"api_version": "v6"}}
@@ -47,6 +36,8 @@ _APP_DESC = {
     "app_version": aiofreepybox.__version__,
     "device_name": socket.gethostname(),
 }
+
+_DATA_DIR = Path(__file__).parent
 
 # App defaults
 _DEFAULT_API_VERSION = "v6"
@@ -97,6 +88,50 @@ class Freepybox:
         self._fbx_db: Dict[str, Any] = {}
         self._fbx_uid: str = ""
         self._session: Optional[aiohttp.ClientSession] = None
+
+    def __imp_api__(self, api_l: List[str]) -> Dict[str, Any]:
+        """ Import API modules """
+
+        l = len(api_l)
+        api_l = list(
+            filter(
+                lambda n: resources.is_resource(
+                    __name__.rsplit(".", 1)[0] + ".api", str(n) + ".py"
+                ),
+                api_l,
+            )
+        )
+        if len(api_l) != l:
+            raise KeyError
+
+        mods = {
+            str(n): import_module(".api." + str(n), package=__name__.rsplit(".", 1)[0])
+            for n in api_l
+        }
+        return mods
+
+    def __getattr__(self, k):
+        """ Return API attribute """
+
+        if "__" in k:
+            raise AttributeError
+
+        try:
+            mod = self.__imp_api__([k])
+        except KeyError:
+            _LOGGER.error(f"Invalid API name: {k}")
+            raise AttributeError
+        else:
+            if self._access:
+                kwargs: Dict[str, str] = {}
+                api_mod_class = getattr(mod[k], k.capitalize())
+                if k in _API_MODS_PARAMS and isinstance(_API_MODS_PARAMS[k], dict):
+                    kwargs = _API_MODS_PARAMS[k]
+                setattr(self, k, api_mod_class(self._access, **kwargs))
+            else:
+                return getattr(mod[k], k.capitalize())
+
+        return getattr(self, k)
 
     def clean_db(self, uids: Optional[list] = None, all_: bool = False) -> bool:
         """
@@ -235,7 +270,7 @@ class Freepybox:
 
         if not fbx_db:
             return None
-        _LOGGER.debug(f"{fbx_db.__len__} uid(s) in db")
+        _LOGGER.debug(f"{len(fbx_db)} uid(s) in db")
         return fbx_db
 
     async def get_permissions(self) -> Optional[dict]:
@@ -296,17 +331,14 @@ class Freepybox:
 
         self._fbx_uid = uid
 
-        # Instantiate freebox modules
-        kwargs: Dict[str, str] = {}
-        for api_mod in _API_MODS:
-            api_mod_class = getattr(_API_MODS[api_mod], api_mod.capitalize())
-            if api_mod in _API_MODS_PARAMS and isinstance(
-                _API_MODS_PARAMS[api_mod], dict
-            ):
-                kwargs = _API_MODS_PARAMS[api_mod]
-            setattr(self, api_mod, api_mod_class(self._access, **kwargs))
-            if kwargs:
-                kwargs = {}
+    def _api_mods_l(self) -> List[str]:
+        """ Return mods list """
+        return list(
+            map(
+                lambda t: t[1],
+                pkgutil.iter_modules([str(Path(_DATA_DIR).joinpath("api"))]),
+            )
+        )
 
     async def _disc_c_session(self, fbx_addict: Dict[str, Any]) -> Dict[str, Any]:
         """Check discovery session"""
@@ -837,6 +869,11 @@ class Freepybox:
     def fbx_api_url(self) -> Optional[str]:
         """Freebox api url."""
         return self._get_db_base_url(self._fbx_uid)
+
+    @property
+    def fbx_api_mods(self) -> Optional[list]:
+        """Freebox available api modules list."""
+        return self._api_mods_l()
 
     @property
     def fbx_uid(self) -> Optional[str]:
