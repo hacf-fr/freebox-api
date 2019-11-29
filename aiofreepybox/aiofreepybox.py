@@ -124,10 +124,11 @@ class Freepybox:
         else:
             if self._access:
                 kwargs: Dict[str, str] = {}
-                api_mod_class = getattr(mod[k], k.capitalize())
                 if k in _API_MODS_PARAMS and isinstance(_API_MODS_PARAMS[k], dict):
                     kwargs = _API_MODS_PARAMS[k]
-                setattr(self, k, api_mod_class(self._access, **kwargs))
+                setattr(
+                    self, k, getattr(mod[k], k.capitalize())(self._access, **kwargs)
+                )
             else:
                 return getattr(mod[k], k.capitalize())
 
@@ -315,10 +316,11 @@ class Freepybox:
 
         # Get API access
         try:
-            if uid is None:
-                uid = await self._fbx_open_disc(host, port)
-            else:
-                uid = await self._fbx_open_db(uid)
+            uid = (
+                await self._fbx_open_disc(host, port)
+                if uid is None
+                else await self._fbx_open_db(uid)
+            )
         except NotOpenError:
             raise
 
