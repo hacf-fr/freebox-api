@@ -1,4 +1,5 @@
 import base64
+from typing import Any, Dict
 
 
 class Sharelink:
@@ -6,10 +7,10 @@ class Sharelink:
     Sharelink
     """
 
-    def __init__(self, access):
+    def __init__(self, access) -> None:
         self._access = access
 
-    async def create_share_link(self, path, expire):
+    async def create_share_link(self, path: str, expire: int):
         """
         Create share link
 
@@ -17,12 +18,13 @@ class Sharelink:
         expire : `int`
         """
 
-        share_link_data = {}
-        share_link_data["path"] = base64.b64encode(path.encode("utf-8")).decode("utf-8")
-        share_link_data["expire"] = expire
+        share_link_data = {
+            path: base64.b64encode(path.encode("utf-8")).decode("utf-8"),
+            expire: str(expire),
+        }
         return await self._access.post("share_link/", share_link_data)
 
-    async def delete_share_link(self, token):
+    async def delete_share_link(self, token: str) -> None:
         """
         Delete share link
 
@@ -30,7 +32,7 @@ class Sharelink:
         """
         await self._access.delete(f"share_link/{token}")
 
-    async def get_share_link(self, token):
+    async def get_share_link(self, token: str):
         """
         Get a share link
         """
@@ -42,7 +44,7 @@ class Sharelink:
         """
         return await self._access.get("share_link/")
 
-    async def set_share_link(self, share_link_data):
+    async def set_share_link(self, share_link_data: Dict[str, Any]):
         """
         Set share link
         While all ShareLink attributes are read-only, this can be used to create
