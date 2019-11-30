@@ -35,6 +35,8 @@ class Sharelink:
     async def get_share_link(self, token: str):
         """
         Get a share link
+
+        token : `str`
         """
         return await self._access.get(f"share_link/{token}")
 
