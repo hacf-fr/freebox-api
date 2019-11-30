@@ -1,12 +1,13 @@
+from typing import Any, List
 class Upload:
     """
     Upload
     """
 
-    def __init__(self, access):
+    def __init__(self, access) -> None:
         self._access = access
 
-    async def cancel_upload(self, upload_id):
+    async def cancel_upload(self, upload_id: int) -> None:
         """
         Cancel upload
 
@@ -14,13 +15,13 @@ class Upload:
         """
         await self._access.delete(f"upload/{upload_id}/cancel")
 
-    async def clean_uploads(self):
+    async def clean_uploads(self) -> None:
         """
         Clean uploads
         """
         await self._access.delete(f"upload/clean")
 
-    async def delete_upload(self, upload_id):
+    async def delete_upload(self, upload_id: int) -> None:
         """
         Delete upload
 
@@ -28,13 +29,13 @@ class Upload:
         """
         await self._access.delete(f"upload/{upload_id}")
 
-    async def get_uploads(self):
+    async def get_uploads(self) -> List[Any]:
         """
         Get uploads
         """
         return await self._access.get("upload/")
 
-    async def get_upload(self, upload_id):
+    async def get_upload(self, upload_id: int):
         """
         Get upload
 
