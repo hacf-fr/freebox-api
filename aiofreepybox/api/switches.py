@@ -1,5 +1,7 @@
 import inspect
 import logging
+from typing import Any, Dict, Optional, Set
+from aiofreepybox.aiofreepybox import Freepybox
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -11,8 +13,8 @@ class Switches:
     All your switch are belong to us
     """
 
-    def __init__(self, shelf):
-        api_members = inspect.getmembers(shelf, predicate=inspect.getmembers)
+    def __init__(self, shelf: Freepybox) -> None:
+        api_members = inspect.getmembers(shelf)
         s_name = self.__class__.__name__.casefold()
         for c_name, c_obj in api_members:
             if (
@@ -30,11 +32,11 @@ class Switches:
 
     _sw_list: set = set()
 
-    def sw_items(self):
+    def sw_items(self) -> Set[Any]:
         """Return a set of all known switches"""
         return self._sw_list
 
-    async def sw_update(self, switches_set: set, enable: bool):
+    async def sw_update(self, switches_set: set, enable: bool) -> None:
         """
         Switch a set of switches
 
@@ -48,7 +50,7 @@ class Switches:
             else:
                 _LOGGER.debug(f"Can't switch {sw_name}, it is not a switch")
 
-    async def sw_status(self, s_list=None):
+    async def sw_status(self, s_list: Optional[set] = None) -> Dict[str, Any]:
         """
         Return status dict for a set of switches
 
