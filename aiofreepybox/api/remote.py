@@ -1,6 +1,8 @@
 import asyncio
-from asyncio import TimeoutError as Timeout
+from aiofreepybox.access import Access
 from aiohttp import client_exceptions as cl_ex
+from asyncio import TimeoutError as Timeout
+from typing import Any, Dict, List, Optional, Union
 
 _PL_LOCAL = "Freebox-Player.local"
 _PL_HOST = "freeboxhd"
@@ -20,7 +22,7 @@ class Remote:
     Remote
     """
 
-    def __init__(self, access, access_m=None):
+    def __init__(self, access: Access, access_m: Optional[str] = None) -> None:
         self._access = access
         self.set_player_host(access_m)
 
@@ -71,7 +73,7 @@ class Remote:
     }
     key_macro_test = [{"key": "info", "long": "False"}, {"key": "info", "repeat": 0}]
 
-    def build_key(self, **key_data):
+    def build_key(self, **key_data: Union[str, int]) -> Dict[str, Any]:
         """
         Build key dict
 
@@ -95,7 +97,11 @@ class Remote:
         return key_data
 
     async def send_key(
-        self, key, code, long_press=_DEFAULT_LONG_PRESS, repeat=_DEFAULT_REPEAT
+        self,
+        code: str,
+        key: str,
+        long_press: str = _DEFAULT_LONG_PRESS,
+        repeat: int = _DEFAULT_REPEAT,
     ):
         """
         Send Key
@@ -111,7 +117,12 @@ class Remote:
             key_data=self.build_key(code=code, key=key, long=long_press, repeat=repeat)
         )
 
-    async def send_macro(self, keys_data, code=None, delay=_DEFAULT_DELAY):
+    async def send_macro(
+        self,
+        keys_data: List[Dict[str, Any]],
+        code: Optional[str] = None,
+        delay: float = _DEFAULT_DELAY,
+    ) -> bool:
         """
         Send macro
 
@@ -130,7 +141,9 @@ class Remote:
 
         return True
 
-    async def set_key(self, key_data, code=None):
+    async def set_key(
+        self, key_data: Dict[str, Any], code: Optional[str] = None
+    ) -> bool:
         """
         Set Key
 
@@ -167,7 +180,12 @@ class Remote:
 
         return False
 
-    def set_player_host(self, access_m=None, host=None, player_id=None):
+    def set_player_host(
+        self,
+        access_m: Optional[str] = None,
+        host: Optional[str] = None,
+        player_id: Optional[int] = None,
+    ) -> None:
         """
         Set player host
 
