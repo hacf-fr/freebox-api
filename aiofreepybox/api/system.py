@@ -1,9 +1,13 @@
+from aiofreepybox.access import Access
+from typing import Any, Dict, Optional
+
+
 class System:
     """
     System
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     expansion_types = [
@@ -14,7 +18,6 @@ class System:
         "ftth_pon",
         "security",
     ]
-
     expansions_type = {
         "unknown": "Inconnu",
         "dsl_lte": "xDSL + 4G",
@@ -23,7 +26,6 @@ class System:
         "ftth_pon": "FTTH PON",
         "security": "Sécurité / Alarme",
     }
-
     images_fbx_gw_back = [
         "resources/images/fbx/gw_back_v6.png",
         "resources/images/fbx/gw_back_mini4k.png",
@@ -32,13 +34,13 @@ class System:
         "resources/images/fbx/gw_back_v7_empty.png",
     ]
 
-    async def get_config(self):
+    async def get_config(self) -> Optional[Dict[str, Any]]:
         """
         Get system configuration:
         """
         return await self._access.get("system/")
 
-    def get_img_fbx_gw_back(self, img_id):
+    def get_img_fbx_gw_back(self, img_id: int) -> str:
         """
         Get freebox gateway back image
 
@@ -46,9 +48,9 @@ class System:
         """
         return f"/{self.images_fbx_gw_back[img_id]}"
 
-    def get_img_fbx_gw_back_expansion(self, img_expansion_types, slot_index):
+    def get_img_fbx_gw_back_expansion(self, img_expansion_types: str, slot_index: int) -> str:
         """
-        Get freebox gateway back expansion image
+        Get freebox gateway back expansion image path
 
         img_expansion_types : `expansion_types`[index]
         slot_index : 0 | 1
@@ -66,7 +68,7 @@ class System:
         return await self._access.get('settings/')
     '''
 
-    async def reboot(self):
+    async def reboot(self) -> None:
         """
         Reboot freebox
         """
