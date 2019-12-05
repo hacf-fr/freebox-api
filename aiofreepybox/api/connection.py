@@ -1,12 +1,16 @@
+from aiofreepybox.access import Access
+from typing import Any, Dict, List, Optional, Union
+
+
 class Connection:
     """
     Connection
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
-    async def lte_switch(self, enabled=None):
+    async def lte_switch(self, enabled: Optional[bool] = None) -> Optional[bool]:
         """
         Lte switch
 
@@ -21,42 +25,42 @@ class Connection:
             await self.set_lte_config(lte_config)
 
         config = await self.get_lte_config()
-        if config["enabled"] is enabled or enabled is None:
+        if config is not None:
             return config["enabled"]
         else:
             return None
 
-    async def get_config(self):
+    async def get_config(self) -> Optional[Dict[str, Any]]:
         """
         Get connection configuration
         """
         return await self._access.get("connection/config/")
 
-    async def get_connection_logs(self):
+    async def get_connection_logs(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get connection logs
         """
         return await self._access.get("connection/logs/")
 
-    async def get_ftth(self):
+    async def get_ftth(self) -> Optional[Dict[str, Any]]:
         """
         Get ftth infos
         """
         return await self._access.get("connection/ftth/")
 
-    async def get_lte_config(self):
+    async def get_lte_config(self) -> Optional[Dict[str, Any]]:
         """
         Get lte connection configuration
         """
         return await self._access.get("connection/lte/config/")
 
-    async def get_status(self):
+    async def get_status(self) -> Optional[Dict[str, Any]]:
         """
         Get connection status
         """
         return await self._access.get("connection/")
 
-    async def get_xdsl(self):
+    async def get_xdsl(self) -> Optional[Dict[str, Any]]:
         """
         Get xdsl infos
         """
@@ -68,7 +72,7 @@ class Connection:
         """
         return await self._access.delete("connection/logs/")
 
-    async def set_config(self, connection_configuration):
+    async def set_config(self, connection_configuration: Dict[str, Any]) -> None:
         """
         Update connection configuration
 
@@ -76,7 +80,7 @@ class Connection:
         """
         await self._access.put("connection/config/", connection_configuration)
 
-    async def set_lte_config(self, lte_configuration_data):
+    async def set_lte_config(self, lte_configuration_data: Dict[str, Any]) -> None:
         """
         Set lte connection configuration
 
