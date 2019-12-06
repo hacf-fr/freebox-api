@@ -1,4 +1,6 @@
 import logging
+from aiofreepybox.access import Access
+from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -8,7 +10,7 @@ class Dhcp:
     Dhcp
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     static_lease_schema = {"ip": "", "mac": "", "comment": ""}
@@ -26,7 +28,7 @@ class Dhcp:
         "use_custom_dns": False,
     }
 
-    async def create_dhcp_static_lease(self, static_lease):
+    async def create_dhcp_static_lease(self, static_lease: Dict[str, Any]):
         """
         Create dhcp static lease
 
@@ -34,7 +36,7 @@ class Dhcp:
         """
         return await self._access.post("dhcp/static_lease/", static_lease)
 
-    async def delete_dhcp_static_lease(self, lease_id):
+    async def delete_dhcp_static_lease(self, lease_id: int) -> None:
         """
         Delete dhcp static lease
 
@@ -42,7 +44,7 @@ class Dhcp:
         """
         await self._access.delete(f"dhcp/static_lease/{lease_id}")
 
-    async def edit_dhcp_static_lease(self, lease_id, static_lease):
+    async def edit_dhcp_static_lease(self, lease_id: int, static_lease: Dict[str, Any]):
         """
         Edit dhcp static lease
 
@@ -51,13 +53,13 @@ class Dhcp:
         """
         return await self._access.put(f"dhcp/static_lease/{lease_id}", static_lease)
 
-    async def get_config(self):
+    async def get_config(self) -> Optional[Dict[str, Any]]:
         """
         Get DHCP configuration
         """
         return await self._access.get("dhcp/config/")
 
-    async def set_config(self, dhcp_configuration):
+    async def set_config(self, dhcp_configuration: Dict[str, Any]):
         """
         Update DHCP configuration
 
@@ -65,13 +67,13 @@ class Dhcp:
         """
         return await self._access.put("dhcp/config/", dhcp_configuration)
 
-    async def get_v6_config(self):
+    async def get_v6_config(self) -> Optional[Dict[str, Any]]:
         """
         Get DHCP v6 configuration
         """
         return await self._access.get("dhcpv6/config/")
 
-    async def set_v6_config(self, dhcp_v6_configuration_data):
+    async def set_v6_config(self, dhcp_v6_configuration_data: Dict[str, Any]):
         """
         Update DHCP v6 configuration
 
@@ -79,13 +81,13 @@ class Dhcp:
         """
         return await self._access.put("dhcpv6/config/", dhcp_v6_configuration_data)
 
-    async def get_dhcp_dynamic_leases(self):
+    async def get_dhcp_dynamic_leases(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get the list of DHCP dynamic leases
         """
         return await self._access.get("dhcp/dynamic_lease/")
 
-    async def get_dhcp_static_leases(self):
+    async def get_dhcp_static_leases(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get the list of DHCP static leases
         """
