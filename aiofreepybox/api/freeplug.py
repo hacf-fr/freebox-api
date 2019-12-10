@@ -1,4 +1,5 @@
-from typing import Any, Dict, List
+from aiofreepybox.access import Access
+from typing import Any, Dict, List, Optional
 
 
 class Freeplug:
@@ -6,10 +7,10 @@ class Freeplug:
     Freeplug
     """
 
-    def __init__(self, access) -> None:
+    def __init__(self, access: Access) -> None:
         self._access = access
 
-    async def get_freeplug_networks(self) -> List[Dict[str, Any]]:
+    async def get_freeplug_networks(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get freeplug networks
         """
