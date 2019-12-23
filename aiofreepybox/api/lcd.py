@@ -1,18 +1,22 @@
+from aiofreepybox.access import Access
+from typing import Any, Dict, Optional
+
+
 class Lcd:
     """
     Lcd
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
-    async def get_configuration(self):
+    async def get_config(self) -> Optional[Dict[str, Any]]:
         """
         Get configuration
         """
         return await self._access.get("lcd/config")
 
-    async def set_configuration(self, lcd_config):
+    async def set_config(self, lcd_config: Dict[str, Any]):
         """
         Set configuration
 
@@ -20,8 +24,11 @@ class Lcd:
         """
         return await self._access.put("lcd/config", lcd_config)
 
-    async def update_configuration(
-        self, orientation=None, brightness=None, orientation_forced=None
+    async def update_config(
+        self,
+        orientation: int = None,
+        brightness: int = None,
+        orientation_forced: bool = None,
     ):
         """
         Update configuration
@@ -32,11 +39,11 @@ class Lcd:
         """
         lcd_config = {}
         if orientation is None and brightness is None and orientation_forced is None:
-            return await self.get_configuration()
-        elif orientation is not None:
+            return await self.get_config()
+        if orientation is not None:
             lcd_config["orientation"] = orientation
         if brightness is not None:
             lcd_config["brightness"] = brightness
-        elif orientation_forced is not None:
+        if orientation_forced is not None:
             lcd_config["orientation_forced"] = orientation_forced
-        return await self.set_configuration(lcd_config)
+        return await self.set_config(lcd_config)
