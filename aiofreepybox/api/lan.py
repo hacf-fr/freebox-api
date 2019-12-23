@@ -1,11 +1,15 @@
-_DEFAULT_INTERFACE = 'pub'
+from aiofreepybox.access import Access
+from typing import Any, Dict, List, Optional
+
+_DEFAULT_INTERFACE = "pub"
+
 
 class Lan:
     """
     Lan
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     host_type = [
@@ -30,7 +34,7 @@ class Lan:
     lan_host_data_schema = {"id": "", "primary_name": "", "host_type": host_type[0]}
     wol_schema = {"mac": "", "password": ""}
 
-    async def delete_lan_host(self, host_id, interface=_DEFAULT_INTERFACE):
+    async def delete_lan_host(self, host_id: int, interface: str = _DEFAULT_INTERFACE):
         """
         Delete lan host
 
@@ -40,13 +44,13 @@ class Lan:
         """
         await self._access.delete(f"lan/browser/{interface}/{host_id}/")
 
-    async def get_config(self):
+    async def get_config(self) -> Optional[Dict[str, str]]:
         """
         Get Lan configuration
         """
         return await self._access.get("lan/config/")
 
-    async def set_config(self, conf):
+    async def set_config(self, conf: Dict[str, str]):
         """
         Update Lan config with conf dictionary
 
@@ -54,13 +58,15 @@ class Lan:
         """
         return await self._access.put("lan/config/", conf)
 
-    async def get_interfaces(self):
+    async def get_interfaces(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get browsable Lan interfaces
         """
         return await self._access.get("lan/browser/interfaces")
 
-    async def get_hosts_list(self, interface=_DEFAULT_INTERFACE):
+    async def get_hosts_list(
+        self, interface: str = _DEFAULT_INTERFACE
+    ) -> Optional[List[Dict[str, Any]]]:
         """
         Get the list of hosts on a given interface
 
@@ -69,7 +75,9 @@ class Lan:
         """
         return await self._access.get(f"lan/browser/{interface}")
 
-    async def get_host_information(self, host_id, interface=_DEFAULT_INTERFACE):
+    async def get_host_information(
+        self, host_id: int, interface: str = _DEFAULT_INTERFACE
+    ):
         """
         Get specific host informations on a given interface
 
@@ -79,7 +87,12 @@ class Lan:
         """
         return await self._access.get(f"lan/browser/{interface}/{host_id}")
 
-    async def set_host_information(self, host_id, lan_host_data, interface=_DEFAULT_INTERFACE):
+    async def set_host_information(
+        self,
+        host_id: int,
+        lan_host_data: Dict[str, Any],
+        interface: str = _DEFAULT_INTERFACE,
+    ):
         """
         Update specific host informations on a given interface
 
@@ -92,7 +105,9 @@ class Lan:
             f"lan/browser/{interface}/{host_id}", lan_host_data
         )
 
-    async def wake_lan_host(self, wol, interface=_DEFAULT_INTERFACE):
+    async def wake_lan_host(
+        self, wol: Dict[str, str], interface: str = _DEFAULT_INTERFACE
+    ):
         """
         Wake lan host
 
