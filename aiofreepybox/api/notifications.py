@@ -20,7 +20,9 @@ class Notifications:
         "type": os_type[0],
     }
 
-    async def create_notification_target(self, notification_target_data: Dict[str, Any]):
+    async def create_notification_target(
+        self, notification_target_data: Dict[str, Any]
+    ):
         """
         Create notification target
 
@@ -36,7 +38,9 @@ class Notifications:
         """
         await self._access.delete(f"notif/targets/{target_id}")
 
-    async def edit_notification_target(self, target_id: str, notification_target_data: Dict[str, Any]):
+    async def edit_notification_target(
+        self, target_id: str, notification_target_data: Dict[str, Any]
+    ):
         """
         Edit notification target
 
