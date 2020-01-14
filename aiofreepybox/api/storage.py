@@ -18,7 +18,9 @@ class Storage:
         """
         return await self._access.put(f"storage/partition/{id}/check")
 
-    async def eject_disk(self, disk_id: int, eject_data: Optional[Dict[str, str]]=None):
+    async def eject_disk(
+        self, disk_id: int, eject_data: Optional[Dict[str, str]] = None
+    ):
         """
         Eject storage disk
 
