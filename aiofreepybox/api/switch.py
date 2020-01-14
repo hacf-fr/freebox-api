@@ -27,14 +27,18 @@ class Switch:
         """
         return await self._access.get(f"switch/port/{port_id}")
 
-    async def set_port_conf(self, port_id: int, switch_port_configuration: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def set_port_conf(
+        self, port_id: int, switch_port_configuration: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Update port_id Port configuration with conf dictionary
 
         port_id : `int`
         switch_port_configuration : `dict`
         """
-        return await self._access.put(f"switch/port/{port_id}", switch_port_configuration)
+        return await self._access.put(
+            f"switch/port/{port_id}", switch_port_configuration
+        )
 
     async def get_port_stats(self, port_id: int) -> Optional[Dict[str, int]]:
         """
