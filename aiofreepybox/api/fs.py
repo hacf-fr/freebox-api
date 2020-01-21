@@ -1,9 +1,10 @@
-import aiofreepybox.exceptions
 import base64
 import logging
 import os
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
+import aiofreepybox.exceptions
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +65,7 @@ class Fs:
             )
             return False
 
-    async def archive_files(self, archive: Dict[str, Any]):
+    async def archive_files(self, archive: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Archive files
 
@@ -72,7 +73,7 @@ class Fs:
         """
         return await self._access.post("fs/archive/", archive)
 
-    async def cp(self, copy: Dict[str, Any]):
+    async def cp(self, copy: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Copy files
 
@@ -88,7 +89,9 @@ class Fs:
         """
         return await self._access.delete(f"fs/tasks/{task_id}")
 
-    async def extract_archive(self, extract: Dict[str, Any]):
+    async def extract_archive(
+        self, extract: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Extract archive
 
@@ -105,7 +108,7 @@ class Fs:
         path_b64 = base64.b64encode(path.encode("utf-8")).decode("utf-8")
         return await self._access.get(f"fs/ls/{path_b64}")
 
-    async def get_hash(self, hash_id: int):
+    async def get_hash(self, hash_id: int) -> Optional[Dict[str, str]]:
         """
         Get the hash value
 
@@ -122,7 +125,7 @@ class Fs:
         """
         return await self._access.get("fs/tasks/")
 
-    async def hash_file(self, src: str, hash_type: str):
+    async def hash_file(self, src: str, hash_type: str) -> Optional[Dict[str, Any]]:
         """
         Hash a file
 
@@ -182,7 +185,7 @@ class Fs:
         }
         return await self._access.post("fs/mkpath/", create_path_schema)
 
-    async def mv(self, move: Dict[str, Any]):
+    async def mv(self, move: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Move files
 
@@ -190,7 +193,7 @@ class Fs:
         """
         return await self._access.post("fs/mv/", move)
 
-    async def rename_file(self, src: str, dst: str):
+    async def rename_file(self, src: str, dst: str) -> Optional[str]:
         """
         Rename file
 
@@ -205,7 +208,7 @@ class Fs:
         }
         return await self._access.post("fs/rename/", rename_schema)
 
-    async def rm(self, remove: Dict[str, Any]):
+    async def rm(self, remove: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Delete files
 
@@ -215,7 +218,7 @@ class Fs:
 
     async def set_file_task_state(
         self, task_id: int, update_task_state: Dict[str, Any]
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Set file task state
 
