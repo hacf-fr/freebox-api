@@ -1,8 +1,10 @@
 import asyncio
-from aiofreepybox.access import Access
-from aiohttp import client_exceptions as cl_ex
 from asyncio import TimeoutError as Timeout
 from typing import Any, Dict, List, Optional, Union
+
+from aiohttp import client_exceptions as cl_ex
+
+from aiofreepybox.access import Access
 
 _PL_LOCAL = "Freebox-Player.local"
 _PL_HOST = "freeboxhd"
