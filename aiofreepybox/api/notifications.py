@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
 
 
 class Notifications:
@@ -7,7 +8,7 @@ class Notifications:
     Notifications
     """
 
-    def __init__(self, access: Access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     os_type = ["android", "ios"]
