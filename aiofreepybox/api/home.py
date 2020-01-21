@@ -1,6 +1,8 @@
-from aiofreepybox.access import Access
+from typing import Any, Dict, List, Optional
+
 from aiohttp.client_reqrep import ClientResponse
-from typing import Any, Dict, List, Optional, Union
+
+from aiofreepybox.access import Access
 
 _DEFAULT_CAMERA_INDEX = 0
 _DEFAULT_CHANNEL = 2
@@ -218,7 +220,7 @@ class Home:
         """
         return await self._access.get("home/links")
 
-    async def get_home_node(self, node_id: int):
+    async def get_home_node(self, node_id: int) -> Optional[Dict[str, Any]]:
         """
         Get home node id
 
@@ -243,7 +245,7 @@ class Home:
 
     async def create_home_node_rule(
         self, template_name: str, create_home_node_rule_payload: Dict[str, Any]
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Create home node rule
 
@@ -256,7 +258,7 @@ class Home:
 
     async def get_home_node_existing_rule_config(
         self, node_id: int, rule_node_id: int, role_id: int
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Get home node existing rule configuration data
 
@@ -290,7 +292,9 @@ class Home:
             f"home/nodes/{node_id}/rules/template/{template_name}/{role_id}"
         )
 
-    async def get_home_pairing_state(self, home_adapter_id: int):
+    async def get_home_pairing_state(
+        self, home_adapter_id: int
+    ) -> Optional[Dict[str, Any]]:
         """
         Get the current home pairing state
 
@@ -298,7 +302,7 @@ class Home:
         """
         return await self._access.get(f"home/pairing/{home_adapter_id}")
 
-    async def get_home_tile(self, tile_id: int):
+    async def get_home_tile(self, tile_id: int) -> Optional[Dict[str, Any]]:
         """
         Get the home tile with provided id
 
@@ -406,6 +410,17 @@ class Home:
         return await self._access.post(
             f"home/pairing/{home_adapter_id}", stop_p_s_payload
         )
+
+    async def update_home_adapter_status(self, home_adapter_id: int, status: str):
+        """
+        Update home adapter status
+
+        home_adapter_id : `int`
+        status : `str'
+            , "enabled" or "disabled"
+        """
+        home_a_status = {"status": "disabled"}
+        return await self._access.put(f"home/adapters/{home_adapter_id}", home_a_status)
 
     async def update_home_endpoint_value(
         self, node_id: int, endpoint_id: int, value: str
