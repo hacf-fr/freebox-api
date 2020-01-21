@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
 class Domain:
@@ -29,7 +29,7 @@ class Domain:
         """
         await self._access.delete(f"domain/owned/{domain_id}")
 
-    async def get_domains_configuration(self) -> Dict[str, Union[str, List[str]]]:
+    async def get_domains_configuration(self) -> Dict[str, Any]:
         """
         Get domains configuration
         """
@@ -83,7 +83,7 @@ class Domain:
             f"domain/owned/{domain_id}/request_cert", request_cert_data
         )
 
-    async def reserve_domain(self, reserve_data):
+    async def reserve_domain(self, reserve_data: Dict[str, str]):
         """
         Reserve domain
 
