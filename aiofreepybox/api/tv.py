@@ -1,6 +1,7 @@
 import time
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
 
 _DEFAULT_BOUQUET = "freeboxtv"
 
