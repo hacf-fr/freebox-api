@@ -72,7 +72,9 @@ class Netshare:
         """
         return await self._access.get("netshare/samba/")
 
-    async def samba_file_share_switch(self, enabled: Optional[bool] = None) -> Optional[bool]:
+    async def samba_file_share_switch(
+        self, enabled: Optional[bool] = None
+    ) -> Optional[bool]:
         """
         Samba file share switch
 
@@ -92,7 +94,9 @@ class Netshare:
         else:
             return None
 
-    async def samba_print_share_switch(self, enabled: Optional[bool] = None) -> Optional[bool]:
+    async def samba_print_share_switch(
+        self, enabled: Optional[bool] = None
+    ) -> Optional[bool]:
         """
         Samba print share switch
 
