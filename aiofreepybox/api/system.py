@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, Optional
+
+from aiofreepybox.access import Access
 
 
 class System:
@@ -48,7 +49,9 @@ class System:
         """
         return f"/{self.images_fbx_gw_back[img_id]}"
 
-    def get_img_fbx_gw_back_expansion(self, img_expansion_types: str, slot_index: int) -> str:
+    def get_img_fbx_gw_back_expansion(
+        self, img_expansion_types: str, slot_index: int
+    ) -> str:
         """
         Get freebox gateway back expansion image path
 
