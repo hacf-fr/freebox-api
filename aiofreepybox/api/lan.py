@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
 
 _DEFAULT_INTERFACE = "pub"
 
@@ -34,7 +35,9 @@ class Lan:
     lan_host_data_schema = {"id": "", "primary_name": "", "host_type": host_type[0]}
     wol_schema = {"mac": "", "password": ""}
 
-    async def delete_lan_host(self, host_id: int, interface: str = _DEFAULT_INTERFACE):
+    async def delete_lan_host(
+        self, host_id: int, interface: str = _DEFAULT_INTERFACE
+    ) -> None:
         """
         Delete lan host
 
@@ -50,7 +53,7 @@ class Lan:
         """
         return await self._access.get("lan/config/")
 
-    async def set_config(self, conf: Dict[str, str]):
+    async def set_config(self, conf: Dict[str, str]) -> Optional[Dict[str, str]]:
         """
         Update Lan config with conf dictionary
 
@@ -77,7 +80,7 @@ class Lan:
 
     async def get_host_information(
         self, host_id: int, interface: str = _DEFAULT_INTERFACE
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Get specific host informations on a given interface
 
@@ -92,7 +95,7 @@ class Lan:
         host_id: int,
         lan_host_data: Dict[str, Any],
         interface: str = _DEFAULT_INTERFACE,
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Update specific host informations on a given interface
 
