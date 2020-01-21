@@ -28,7 +28,9 @@ class Ftp:
         """
         return await self._access.get("ftp/config/")
 
-    async def set_ftp_configuration(self, ftp_configuration: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def set_ftp_configuration(
+        self, ftp_configuration: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Set ftp configuration
         """
@@ -50,7 +52,7 @@ class Ftp:
         else:
             config = await self.get_ftp_configuration()
 
-        if config["enabled"] is enabled or enabled is None:
+        if config is not None:
             return config["enabled"]
         else:
             return None
