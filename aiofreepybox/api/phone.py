@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
 
 
 class Phone:
@@ -7,7 +8,7 @@ class Phone:
     Phone
     """
 
-    def __init__(self, access: Access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     async def dect_switch(self, enabled: Optional[bool] = None) -> Optional[bool]:
@@ -20,15 +21,12 @@ class Phone:
         Returns `None` or enabled : `bool`
         """
 
-        config: Dict[str, Any] = {}
         if enabled is not None:
             dect_config = {"dect_enabled": enabled}
-            configset = await self.set_phone_config(dect_config)
+            config = await self.set_phone_config(dect_config)
         else:
-            configset = await self.get_phone_config()
-        if configset is not None:
-            config = configset
-        if config["dect_enabled"] is enabled or enabled is None:
+            config = await self.get_phone_config()
+        if config is not None:
             return config["dect_enabled"]
         else:
             return None
