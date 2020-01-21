@@ -8,7 +8,7 @@ class Netshare:
     Netshare
     """
 
-    def __init__(self, access: Access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     server_type = [

@@ -8,7 +8,7 @@ class Ftp:
     Ftp
     """
 
-    def __init__(self, access: Access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     ftp_configuration_schema = {
@@ -51,7 +51,6 @@ class Ftp:
             config = await self.set_ftp_configuration(ftp_config)
         else:
             config = await self.get_ftp_configuration()
-
         if config is not None:
             return config["enabled"]
         else:

@@ -8,7 +8,7 @@ class Lcd:
     Lcd
     """
 
-    def __init__(self, access: Access):
+    def __init__(self, access: Access) -> None:
         self._access = access
 
     async def get_config(self) -> Optional[Dict[str, Any]]:
