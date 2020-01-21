@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, Optional
+
+from aiofreepybox.access import Access
 
 
 class Ftp:
@@ -27,7 +28,7 @@ class Ftp:
         """
         return await self._access.get("ftp/config/")
 
-    async def set_ftp_configuration(self, ftp_configuration: Dict[str, Any]):
+    async def set_ftp_configuration(self, ftp_configuration: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Set ftp configuration
         """
