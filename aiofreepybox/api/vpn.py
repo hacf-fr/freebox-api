@@ -1,5 +1,6 @@
+from typing import Any, Dict, List, Optional
+
 from aiofreepybox.access import Access
-from typing import Any, Dict, List, Optional, Union
 
 
 class Vpn:
@@ -38,7 +39,7 @@ class Vpn:
 
     async def create_vpn_client_configurations(
         self, vpn_client_configuration: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Create vpn client configurations
 
@@ -46,7 +47,9 @@ class Vpn:
         """
         return await self._access.post("vpn_client/config/", vpn_client_configuration)
 
-    async def create_vpn_user(self, vpn_user_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_vpn_user(
+        self, vpn_user_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Create vpn user
 
@@ -89,7 +92,7 @@ class Vpn:
 
     async def edit_vpn_client_configurations(
         self, config_id: int, vpn_client_configuration: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Edit vpn client configurations
 
@@ -102,7 +105,7 @@ class Vpn:
 
     async def edit_vpn_server_configuration(
         self, vpn_server_id: int, vpn_server_configuration: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Edit vpn server configurations
 
@@ -113,7 +116,7 @@ class Vpn:
             f"vpn/{vpn_server_id}/config/", vpn_server_configuration
         )
 
-    async def get_vpn_client_applications(self) -> Dict[str, Dict[str, bool]]:
+    async def get_vpn_client_applications(self) -> Optional[Dict[str, Any]]:
         """
         Get vpn client applications
         """
@@ -125,19 +128,21 @@ class Vpn:
         """
         return await self._access.get("vpn_client/config/")
 
-    async def get_vpn_client_status(self) -> Dict[str, bool]:
+    async def get_vpn_client_status(self) -> Optional[Dict[str, bool]]:
         """
         Get vpn client status
         """
         return await self._access.get("vpn_client/status/")
 
-    async def get_vpn_ip_reservations(self) -> Dict[str, str]:
+    async def get_vpn_ip_reservations(self) -> Optional[Dict[str, str]]:
         """
         Get vpn ip reservations
         """
         return await self._access.get("vpn/ip_pool/")
 
-    async def get_vpn_server_configuration(self, vpn_server_id: str) -> Dict[str, Any]:
+    async def get_vpn_server_configuration(
+        self, vpn_server_id: str
+    ) -> Optional[Dict[str, Any]]:
         """
         Get vpn server configuration
 
@@ -145,21 +150,19 @@ class Vpn:
         """
         return await self._access.get(f"vpn/{vpn_server_id}/config/")
 
-    async def get_vpn_server_connections(
-        self
-    ) -> Optional[List[Dict[str, Union[int, bool, str]]]]:
+    async def get_vpn_server_connections(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get vpn server connections
         """
         return await self._access.get("vpn/connection/")
 
-    async def get_vpn_servers(self) -> List[Dict[str, Union[str, int]]]:
+    async def get_vpn_servers(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get vpn servers
         """
         return await self._access.get("vpn/")
 
-    async def get_vpn_users(self) -> Optional[List[Dict[str, Union[bool, str]]]]:
+    async def get_vpn_users(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get vpn users
         """
