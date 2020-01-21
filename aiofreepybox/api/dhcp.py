@@ -1,6 +1,7 @@
 import logging
+from typing import Any, Dict, List, Optional
+
 from aiofreepybox.access import Access
-from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,9 @@ class Dhcp:
         "use_custom_dns": False,
     }
 
-    async def create_dhcp_static_lease(self, static_lease: Dict[str, Any]):
+    async def create_dhcp_static_lease(
+        self, static_lease: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Create dhcp static lease
 
@@ -59,7 +62,9 @@ class Dhcp:
         """
         return await self._access.get("dhcp/config/")
 
-    async def set_config(self, dhcp_configuration: Dict[str, Any]):
+    async def set_config(
+        self, dhcp_configuration: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Update DHCP configuration
 
@@ -73,7 +78,9 @@ class Dhcp:
         """
         return await self._access.get("dhcpv6/config/")
 
-    async def set_v6_config(self, dhcp_v6_configuration_data: Dict[str, Any]):
+    async def set_v6_config(
+        self, dhcp_v6_configuration_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Update DHCP v6 configuration
 
