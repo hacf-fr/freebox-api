@@ -1,6 +1,8 @@
 import base64
 from typing import Any, Dict
 
+_SL_PATH = "share_link/"
+
 
 class Sharelink:
     """
@@ -22,7 +24,7 @@ class Sharelink:
             path: base64.b64encode(path.encode("utf-8")).decode("utf-8"),
             expire: str(expire),
         }
-        return await self._access.post("share_link/", share_link_data)
+        return await self._access.post(_SL_PATH, share_link_data)
 
     async def delete_share_link(self, token: str) -> None:
         """
@@ -30,7 +32,7 @@ class Sharelink:
 
         token : `str`
         """
-        await self._access.delete(f"share_link/{token}")
+        await self._access.delete(f"{_SL_PATH}{token}")
 
     async def get_share_link(self, token: str):
         """
@@ -38,13 +40,13 @@ class Sharelink:
 
         token : `str`
         """
-        return await self._access.get(f"share_link/{token}")
+        return await self._access.get(f"{_SL_PATH}{token}")
 
     async def get_share_links(self):
         """
         Get share links
         """
-        return await self._access.get("share_link/")
+        return await self._access.get(_SL_PATH)
 
     async def set_share_link(self, share_link_data: Dict[str, Any]):
         """
@@ -55,4 +57,4 @@ class Sharelink:
 
         share_link_data : `dict`
         """
-        return await self._access.post("share_link/", share_link_data)
+        return await self._access.post(_SL_PATH, share_link_data)
