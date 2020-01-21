@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, Optional
+
+from aiofreepybox.access import Access
 
 
 class Lcd:
@@ -16,7 +17,7 @@ class Lcd:
         """
         return await self._access.get("lcd/config")
 
-    async def set_config(self, lcd_config: Dict[str, Any]):
+    async def set_config(self, lcd_config: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Set configuration
 
@@ -29,7 +30,7 @@ class Lcd:
         orientation: int = None,
         brightness: int = None,
         orientation_forced: bool = None,
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Update configuration
 
