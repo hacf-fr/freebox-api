@@ -1,22 +1,23 @@
-import aiohttp
 import asyncio
 import base64
 import bz2
+from importlib import import_module
+from importlib import resources
 import ipaddress
 import json
 import logging
+from os import fspath
+from pathlib import Path
 import pkgutil
 import socket
 import ssl
-from importlib import import_module
-from importlib import resources
-from os import fspath
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
 
-# aiofpbx imports
+import aiohttp
+
 import aiofreepybox
+from aiofreepybox.access import Access
 from aiofreepybox.exceptions import (
     AuthorizationError,
     HttpRequestError,
@@ -24,7 +25,6 @@ from aiofreepybox.exceptions import (
     InvalidTokenError,
     NotOpenError,
 )
-from aiofreepybox.access import Access
 
 # API modules extra parameters
 _API_MODS_PARAMS: Dict[str, Any] = {}  # {"player": {"api_version": "v6"}}
@@ -322,6 +322,7 @@ class Freepybox:
                 else await self._fbx_open_db(uid)
             )
         except NotOpenError:
+            _LOGGER.error(f"Cannot open freebox with uid: {uid}")
             raise
 
         try:
@@ -329,6 +330,7 @@ class Freepybox:
                 uid, Path(_DATA_DIR), self.app_desc, self.timeout
             )
         except AuthorizationError:
+            _LOGGER.error("Authorization error")
             raise
 
         self._fbx_uid = uid
@@ -492,6 +494,7 @@ class Freepybox:
         try:
             self._fbx_ping_port(host, port)
         except ValueError:
+            _LOGGER.error("Cannot open freebox port")
             raise
 
         # Connect session
