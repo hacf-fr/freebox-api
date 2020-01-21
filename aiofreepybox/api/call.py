@@ -1,6 +1,7 @@
 import logging
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,7 +58,9 @@ class Call:
         """
         return await self._access.get(f"call/log/mark_all_as_read")
 
-    async def update_call_log(self, log_id: int, call_entry: Dict[str, Any]):
+    async def update_call_log(
+        self, log_id: int, call_entry: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Update call log
         Used to mark call log as read
