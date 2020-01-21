@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Optional
+
+from aiofreepybox.access import Access
 
 
 class Fw:
@@ -26,7 +27,7 @@ class Fw:
 
     async def create_port_forwarding_configuration(
         self, port_forwarding_config: Dict[str, Any]
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Create port forwarding configuration
 
@@ -44,7 +45,7 @@ class Fw:
 
     async def edit_incoming_port_configuration(
         self, port_id: int, incoming_port_configuration_data: Dict[str, Any]
-    ):
+    ) -> Optional[Dict[str, Any]]:
         """
         Edit incoming port configuration
 
@@ -73,10 +74,22 @@ class Fw:
         """
         return await self._access.get("fw/redir/")
 
-    async def set_dmz_configuration(self, dmz_configuration: Dict[str, Any]):
+    async def set_dmz_configuration(
+        self, dmz_configuration: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Set dmz configuration
 
         dmz_configuration : `dict`
         """
         return await self._access.put("fw/dmz/", dmz_configuration)
+
+    async def update_port_forwarding_configuration(
+        self, port_forwarding_config: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Update port forwarding configuration
+
+        port_forwarding_config : `dict`
+        """
+        return await self._access.put("fw/redir/", port_forwarding_config)
