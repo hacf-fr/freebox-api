@@ -1,8 +1,8 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional
 
+from aiohttp.client_reqrep import ClientResponse
 
 from aiofreepybox.access import Access
-from aiohttp.client_reqrep import ClientResponse
 
 
 class Contact:
@@ -27,7 +27,7 @@ class Contact:
 
     async def add_contact(
         self, contact_data: Dict[str, Any]
-    ) -> Dict[str, Union[int, str]]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Add contact
 
@@ -45,7 +45,7 @@ class Contact:
 
     async def create_contact_object(
         self, contact_id: int, contact_data, contact_object_type: str
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Create contact object
 
@@ -57,7 +57,9 @@ class Contact:
             f"contact/{contact_id}/{contact_object_type}", contact_data
         )
 
-    async def create_group(self, group_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_group(
+        self, group_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Create group
 
@@ -86,7 +88,7 @@ class Contact:
 
     async def edit_contact_object(
         self, contact_id: int, contact_data: Dict[str, Any], contact_object_type: str
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Edit contact object
 
@@ -98,13 +100,13 @@ class Contact:
             f"contact/{contact_id}/{contact_object_type}", contact_data
         )
 
-    async def export_contacts(self) -> ClientResponse:
+    async def export_contacts(self) -> Optional[ClientResponse]:
         """
         Export contacts to vcf format
         """
         return await self._access.get("contact/export/")
 
-    async def get_contact(self, contact_id: int) -> Dict[str, Any]:
+    async def get_contact(self, contact_id: int) -> Optional[Dict[str, Any]]:
         """
         Get contact
 
@@ -114,7 +116,7 @@ class Contact:
 
     async def get_contact_data(
         self, contact_id: int, contact_object_type: str
-    ) -> List[Dict[str, Any]]:
+    ) -> Optional[List[Dict[str, Any]]]:
         """
         Get contact data
 
@@ -123,25 +125,25 @@ class Contact:
         """
         return await self._access.get(f"contact/{contact_id}/{contact_object_type}")
 
-    async def get_contacts(self) -> List[Dict[str, Any]]:
+    async def get_contacts(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get contacts
         """
         return await self._access.get("contact/")
 
-    async def get_contacts_count(self) -> int:
+    async def get_contacts_count(self) -> Optional[int]:
         """
         Get contacts count
         """
         return await self._access.get("contact/count")
 
-    async def get_contact_groups(self) -> Dict[Any, Any]:
+    async def get_contact_groups(self) -> Optional[Dict[Any, Any]]:
         """
         Get contacts groups
         """
         return await self._access.get("contact/groups")
 
-    async def get_group(self, group_id: int) -> Dict[str, Union[int, str]]:
+    async def get_group(self, group_id: int) -> Optional[Dict[str, Any]]:
         """
         Get group
 
@@ -149,7 +151,7 @@ class Contact:
         """
         return await self._access.get(f"group/{group_id}")
 
-    async def get_groups(self) -> List[Dict[str, Union[int, str]]]:
+    async def get_groups(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get groups
         """
@@ -157,7 +159,7 @@ class Contact:
 
     async def import_contacts_step1(
         self, import_contacts_vcard: Dict[Any, Any]
-    ) -> Dict[Any, Any]:
+    ) -> Optional[Dict[Any, Any]]:
         """
         Import contacts step 1
 
@@ -167,7 +169,7 @@ class Contact:
 
     async def import_contacts_step2(
         self, import_contacts: Dict[Any, Any]
-    ) -> Dict[Any, Any]:
+    ) -> Optional[Dict[Any, Any]]:
         """
         Import contacts step 2
 
@@ -177,7 +179,7 @@ class Contact:
 
     async def remove_from_group(
         self, remove_from_group: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Remove from group
 
@@ -187,7 +189,7 @@ class Contact:
 
     async def update_contact(
         self, contact_id: int, contact_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Update contact
 
@@ -198,7 +200,7 @@ class Contact:
 
     async def update_contact_photo(
         self, contact_id: int, photo_url: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Update contact photo
 
