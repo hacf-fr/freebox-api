@@ -1,16 +1,17 @@
+from asyncio import TimeoutError
 import hmac
 import json
 import logging
-from asyncio import TimeoutError
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple
 from urllib.parse import urljoin
+
+from aiohttp.client import ClientSession
+
 from aiofreepybox.exceptions import (
     AuthorizationError,
     HttpRequestError,
     InsufficientPermissionsError,
 )
-
-from aiohttp.client import ClientSession
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple
 
 _DEFAULT_TIMEOUT = 10
 _LOGGER = logging.getLogger(__name__)
@@ -151,7 +152,9 @@ class Access:
         # Return 'result' response
         return resp.get("result", None)
 
-    async def get(self, end_url: str, params_url: Optional[Mapping[str, str]] = None) -> Any:
+    async def get(
+        self, end_url: str, params_url: Optional[Mapping[str, str]] = None
+    ) -> Any:
         """
         Send get request and return results
         """
