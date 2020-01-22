@@ -1,7 +1,8 @@
-import time
 import operator
+import time
+from typing import Any, Dict, List, Optional
+
 from aiofreepybox.access import Access
-from typing import Dict, List, Union
 
 _UPTO_V5_FIELDS_TEMP = ["cpub", "cpum", "hdd", "sw"]
 _UPTO_V5_FIELDS_FAN = ["fan_speed"]
@@ -62,8 +63,8 @@ class Rrd:
             self._setup = True
 
     async def get_rrd_stats(
-        self, rrd_data: Dict[str, Union[int, str, List[str]]]
-    ) -> Dict[str, Union[int, List[Dict[str, int]]]]:
+        self, rrd_data: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         """
         Get rrd stats
         """
