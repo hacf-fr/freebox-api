@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Awaitable, Dict, List, Mapping, Optional, Union
+
 from aiofreepybox.access import Access
 
 
@@ -10,7 +11,7 @@ class Meta:
     def __init__(self, access: Access) -> None:
         self._access = access
 
-    async def get_catchup_channel(self, channel_id: int) -> Dict[str, Dict[str, Any]]:
+    async def get_catchup_channel(self, channel_id: int) -> Optional[Dict[str, Any]]:
         """
         Get catchup channel
 
@@ -20,7 +21,7 @@ class Meta:
 
     async def get_catchup_group(
         self, channel_id: int, group_id: int
-    ) -> Dict[str, Dict[str, Union[bool, str, int, None, Dict[Any, Any]]]]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get catchup group
 
@@ -36,7 +37,7 @@ class Meta:
         channel_id: int,
         group_id: int,
         catchup_program_filter: Optional[Mapping[str, str]] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get catchup group programs
 
@@ -49,13 +50,13 @@ class Meta:
             catchup_program_filter,
         )
 
-    async def get_catchup_highlight_headings(self) -> Dict[str, Any]:
+    async def get_catchup_highlight_headings(self) -> Optional[Dict[str, Any]]:
         """
         Get catchup highlight headings
         """
         return await self._access.get("meta/static/catchup/highlight_headings")
 
-    async def get_catchup_highlights(self, heading_id: int) -> Dict[str, Any]:
+    async def get_catchup_highlights(self, heading_id: int) -> Optional[Dict[str, Any]]:
         """
         Get catchup highlights
 
@@ -63,7 +64,7 @@ class Meta:
         """
         return await self._access.get(f"meta/static/catchup/highlights/{heading_id}")
 
-    async def get_catchup_home_highlight_headings(self) -> Dict[str, Any]:
+    async def get_catchup_home_highlight_headings(self) -> Optional[Dict[str, Any]]:
         """
         Get catchup home highlight headings
         """
@@ -71,7 +72,7 @@ class Meta:
 
     async def get_catchup_program(
         self, channel_id: int, program_id: int
-    ) -> Dict[str, str]:
+    ) -> Optional[Dict[str, str]]:
         """
         Get catchup program
 
@@ -86,7 +87,7 @@ class Meta:
         self,
         channel_id: int,
         catchup_program_filter: Optional[Mapping[str, str]] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get catchup programs
 
@@ -102,7 +103,7 @@ class Meta:
         self,
         channel_id: int,
         catchup_program_filter: Optional[Mapping[str, str]] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get catchup top program
 
@@ -115,7 +116,7 @@ class Meta:
 
     async def get_meta_diffusions(
         self, diffusions_filter: Optional[Mapping[str, str]] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get meta diffusions
 
@@ -127,7 +128,7 @@ class Meta:
 
     async def get_meta_emission_casting(
         self, emission_id: int
-    ) -> Dict[str, Dict[str, Dict[Any, Any]]]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get meta emission casting
 
@@ -139,7 +140,7 @@ class Meta:
 
     async def get_meta_emission_collections(
         self, filter_emission_id: str
-    ) -> Dict[str, str]:
+    ) -> Optional[Dict[str, str]]:
         """
         Get meta emission collections
 
@@ -152,7 +153,7 @@ class Meta:
 
     async def get_meta_emission_diffusions(
         self, filter_emission_id: str
-    ) -> Dict[str, str]:
+    ) -> Optional[Dict[str, str]]:
         """
         Get meta emission diffusions
 
@@ -165,7 +166,7 @@ class Meta:
 
     async def get_meta_emission_vod_entries(
         self, filter_plurimedia_emission_id: str = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get meta emission vod entries
 
@@ -178,7 +179,7 @@ class Meta:
 
     async def get_meta_emissions(
         self, emissions_filter: Optional[Mapping[str, str]] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get meta emissions
 
@@ -188,15 +189,13 @@ class Meta:
             "meta/static/plurimedia/emissions?limit=20", emissions_filter
         )
 
-    async def get_meta_epg_highlights(self) -> List[Dict[str, Any]]:
+    async def get_meta_epg_highlights(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get meta epg highlights
         """
         return await self._access.get("meta/static/epg/homev7")
 
-    async def get_meta_format(
-        self, format_id: int
-    ) -> Dict[str, Dict[str, Union[int, str, Dict[Any, Any]]]]:
+    async def get_meta_format(self, format_id: int) -> Optional[Dict[str, Any]]:
         """
         Get meta format
 
@@ -204,13 +203,13 @@ class Meta:
         """
         return await self._access.get(f"meta/static/plurimedia/formats/{format_id}")
 
-    async def get_meta_formats(self) -> Dict[str, Any]:
+    async def get_meta_formats(self) -> Optional[Dict[str, Any]]:
         """
         Get meta formats
         """
         return await self._access.get("meta/static/plurimedia/formats")
 
-    async def get_meta_genre(self, genre_id: int) -> Dict[str, Any]:
+    async def get_meta_genre(self, genre_id: int) -> Optional[Dict[str, Any]]:
         """
         Get meta genre
 
@@ -218,7 +217,9 @@ class Meta:
         """
         return await self._access.get(f"meta/static/plurimedia/genres/{genre_id}")
 
-    async def get_meta_tv_channel(self, channel_uuid: str) -> Dict[str, Dict[str, Any]]:
+    async def get_meta_tv_channel(
+        self, channel_uuid: str
+    ) -> Optional[Dict[str, Dict[str, Any]]]:
         """
         Get meta tv channel
 
@@ -228,7 +229,7 @@ class Meta:
 
     async def get_meta_tv_channels(
         self, channel_filter: Optional[Mapping[str, str]] = None
-    ) -> Dict[str, Dict[str, Any]]:
+    ) -> Optional[Dict[str, Dict[str, Any]]]:
         """
         Get meta tv channels
 
@@ -238,7 +239,7 @@ class Meta:
 
     async def get_meta_vod_entry_links(
         self, vod_entry_id: int, model: Optional[str] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get meta vod entry links
 
@@ -252,7 +253,7 @@ class Meta:
             f"meta/static/vod/catalog/entries/{vod_entry_id}/links", query
         )
 
-    async def get_meta_vod_services(self) -> Dict[str, Any]:
+    async def get_meta_vod_services(self) -> Optional[Dict[str, Any]]:
         """
         Get meta vod services
         """
@@ -260,7 +261,7 @@ class Meta:
 
     async def search_catchup(
         self, search_catchup_query: Optional[str] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Search catchup
 
@@ -275,7 +276,7 @@ class Meta:
         self,
         search_emissions_query: str,
         search_emission_filter: Optional[Mapping[str, str]] = None,
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Search meta emissions
 
@@ -293,7 +294,7 @@ class Meta:
 
     async def search_meta_tv_channel(
         self, search_tv_channel_query: Optional[str] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Search meta tv channel
 
