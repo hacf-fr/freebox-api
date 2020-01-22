@@ -1,5 +1,6 @@
-from aiofreepybox.access import Access
 from typing import Any, Dict, List, Mapping, Optional
+
+from aiofreepybox.access import Access
 
 
 class Airmedia:
@@ -22,13 +23,13 @@ class Airmedia:
         "position": 0,
     }
 
-    async def get_airmedia_configuration(self) -> Dict[str, bool]:
+    async def get_airmedia_configuration(self) -> Optional[Dict[str, bool]]:
         """
         Get airmedia configuration
         """
         return await self._access.get("airmedia/config/")
 
-    async def get_airmedia_receivers(self) -> List[Dict[str, Any]]:
+    async def get_airmedia_receivers(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get airmedia receivers
         """
@@ -47,7 +48,7 @@ class Airmedia:
 
     async def set_airmedia_configuration(
         self, airmedia_configuration_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Set airmedia configuration
 
@@ -71,18 +72,15 @@ class Airmedia:
 
         if airmedia_enabled is None and airmedia_password is None:
             return None
-        airmedia_c_enabled: Mapping[str, bool] = (
-            {"enabled": airmedia_enabled} if isinstance(airmedia_enabled, bool) else {}
-        )
-        airmedia_config: Dict[str, Any] = (
-            {**airmedia_c_enabled, "password": airmedia_password}
-            if isinstance(airmedia_password, str)
-            else {**airmedia_c_enabled}
-        )
-
+        else:
+            airmedia_config: Dict[str, Any] = {}
+            if airmedia_enabled is not None:
+                airmedia_config.update({"enabled": airmedia_enabled})
+            if airmedia_password is not None:
+                airmedia_config.update({"password": airmedia_password})
         return await self.set_airmedia_configuration(airmedia_config)
 
-    async def airmedia_switch(self, enabled: Optional[bool] = None) -> bool:
+    async def airmedia_switch(self, enabled: Optional[bool] = None) -> Optional[bool]:
         """
         Airmedia switch
 
@@ -91,6 +89,12 @@ class Airmedia:
         """
 
         if enabled is None:
-            return (await self.get_airmedia_configuration())["enabled"]
-        airmedia_config = {"enabled": enabled}
-        return (await self.set_airmedia_configuration(airmedia_config))["enabled"]
+            config = await self.get_airmedia_configuration()
+            if config is not None:
+                return config["enabled"]
+        else:
+            config = {"enabled": enabled}
+            apply = await self.set_airmedia_configuration(config)
+            if apply is not None:
+                return apply["enabled"]
+        return None
