@@ -1,6 +1,7 @@
 import base64
+from typing import Any, Dict, List, Optional
+
 from aiofreepybox.access import Access
-from typing import Any, Dict, List, Optional, Union
 
 
 class Vm:
@@ -31,7 +32,7 @@ class Vm:
         "os": "ubuntu",
     }
 
-    async def create_vm(self, vm_init_data: Dict[str, Any]):
+    async def create_vm(self, vm_init_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Create a vm
 
@@ -49,7 +50,7 @@ class Vm:
 
     async def edit_vm(
         self, vm_id: int, vm_config_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Edit vm configuration
 
@@ -66,13 +67,13 @@ class Vm:
         return await self._access.wsget(f'vm/{vm_id}/console')
     '''
 
-    async def get_distros(self) -> List[Dict[str, str]]:
+    async def get_distros(self) -> Optional[List[Dict[str, str]]]:
         """
         Get distros
         """
         return await self._access.get("vm/distros/")
 
-    async def get_disk_info(self, disk_path: str) -> Dict[str, Union[int, str]]:
+    async def get_disk_info(self, disk_path: str) -> Optional[Dict[str, Any]]:
         """
         Get disk info
 
@@ -83,7 +84,7 @@ class Vm:
         }
         return await self._access.post("vm/disk/info", disk_info)
 
-    async def get_vms(self) -> List[Dict[str, Any]]:
+    async def get_vms(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get the list of vms
         """
