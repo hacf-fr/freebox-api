@@ -1,5 +1,6 @@
+from typing import Any, Dict, List, Optional
+
 from aiofreepybox.access import Access
-from typing import Any, Dict, List, Optional, Union
 
 _DEFAULT_PLAYER_API_VERSION = "v6"
 
@@ -48,9 +49,19 @@ class Player:
     }
     media_control_data_schema = {"args": media_control_stream_args, "cmd": "pause"}
 
+    async def _get_d_p_id(self) -> Optional[int]:
+        """
+        Get default player id
+        """
+
+        player = await self.get_players()
+        if player is not None:
+            return player[0]["id"]
+        return None
+
     async def get_player_status(
         self, player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get player status
 
@@ -59,14 +70,16 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        return await self._access.get(
-            f"player/{player_id}/api/{self._player_api_version}/status/"
-        )
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            return await self._access.get(
+                f"player/{player_id}/api/{self._player_api_version}/status/"
+            )
+        return None
 
     async def get_player_volume(
         self, player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Get player volume
 
@@ -75,12 +88,14 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        return await self._access.get(
-            f"player/{player_id}/api/{self._player_api_version}/control/volume"
-        )
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            return await self._access.get(
+                f"player/{player_id}/api/{self._player_api_version}/control/volume"
+            )
+        return None
 
-    async def get_players(self) -> List[Dict[str, Any]]:
+    async def get_players(self) -> Optional[List[Dict[str, Any]]]:
         """
         Get players
         """
@@ -88,7 +103,7 @@ class Player:
 
     async def mute_player_switch(
         self, enabled: Optional[bool] = None, player_id: Optional[int] = None
-    ) -> bool:
+    ) -> Optional[bool]:
         """
         Mute switch
 
@@ -99,13 +114,15 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        if enabled is None:
-            return (await self.get_player_volume(player_id))["mute"]
-
-        player_mute_data = {"mute": enabled}
-        await self.set_player_volume(player_mute_data, player_id)
-        return (await self.get_player_volume(player_id))["mute"]
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            if enabled is not None:
+                player_mute_data = {"mute": enabled}
+                await self.set_player_volume(player_mute_data, player_id)
+            player_mute = await self.get_player_volume(player_id)
+            if player_mute is not None:
+                return player_mute["mute"]
+        return None
 
     async def open_player_url(
         self, player_url: str, player_id: Optional[int] = None
@@ -119,9 +136,10 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        player_url_data = {"url": player_url}
-        await self.set_player_url(player_url_data, player_id)
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            player_url_data = {"url": player_url}
+            await self.set_player_url(player_url_data, player_id)
 
     async def send_media_control(
         self, media_control_data: Dict[str, str], player_id: Optional[int] = None
@@ -135,11 +153,12 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        await self._access.post(
-            f"player/{player_id}/api/{self._player_api_version}/control/mediactrl",
-            media_control_data,
-        )
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            await self._access.post(
+                f"player/{player_id}/api/{self._player_api_version}/control/mediactrl",
+                media_control_data,
+            )
 
     async def set_player_url(
         self, player_url_data: Dict[str, str], player_id: Optional[int] = None
@@ -153,11 +172,12 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        await self._access.post(
-            f"player/{player_id}/api/{self._player_api_version}/control/open",
-            player_url_data,
-        )
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            await self._access.post(
+                f"player/{player_id}/api/{self._player_api_version}/control/open",
+                player_url_data,
+            )
 
     async def set_player_volume(
         self, player_volume_data: Dict[str, Any], player_id: Optional[int] = None
@@ -171,11 +191,12 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        await self._access.put(
-            f"player/{player_id}/api/{self._player_api_version}/control/volume",
-            player_volume_data,
-        )
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            await self._access.put(
+                f"player/{player_id}/api/{self._player_api_version}/control/volume",
+                player_volume_data,
+            )
 
     async def update_player_volume(
         self,
@@ -195,14 +216,12 @@ class Player:
         """
 
         if player_id is None:
-            player_id = (await self.get_players())[0]["id"]
-        if mute is None and volume is None:
-            return
-        player_mute_data = {"mute": mute} if isinstance(mute, bool) else {}
-        player_volume_data = (
-            {**player_mute_data, "volume": volume}
-            if isinstance(volume, int)
-            else {**player_mute_data}
-        )
-
-        await self.set_player_volume(player_volume_data, player_id)
+            player_id = await self._get_d_p_id()
+        if player_id is not None:
+            player_data: Dict[str, Any] = {}
+            if mute is not None:
+                player_data.update({"mute": mute})
+            if volume is not None:
+                player_data.update({"volume": volume})
+            await self.set_player_volume(player_data, player_id)
+        return None
