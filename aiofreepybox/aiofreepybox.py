@@ -37,7 +37,7 @@ _APP_DESC = {
     "device_name": socket.gethostname(),
 }
 
-_DATA_DIR = Path(__file__).parent
+_SELF_DIR = Path(__file__).parent
 
 # App defaults
 _DEFAULT_API_VERSION = "v6"
@@ -53,10 +53,10 @@ _DEFAULT_UNKNOWN = "None"
 _LOGGER = logging.getLogger(__name__)
 
 # Db file prefix
-_F_DB_NAME = ".db"
+_F_DB_NAME = ".fbx_db"
 
 # Token file prefix
-_F_TOKEN_NAME = ".app_auth"
+_F_TOKEN_NAME = ".fbx_app_auth"
 
 
 class Freepybox:
@@ -69,6 +69,8 @@ class Freepybox:
         , Default to _APP_DESC
     api_version : `str`, "server" or "v(1-7)" , optional
         , Default to _DEFAULT_API_VERSION
+    data_dir : `str`, optional
+        , Default to _SELF_DIR
     timeout : `int` , optional
         , Default to _DEFAULT_TIMEOUT
     """
@@ -77,12 +79,14 @@ class Freepybox:
         self,
         app_desc: Optional[Dict[str, str]] = None,
         api_version: Optional[str] = None,
+        data_dir: Optional[str] = None,
         timeout: Optional[int] = None,
     ) -> None:
         self.api_version: str = (
             api_version if api_version is not None else _DEFAULT_API_VERSION
         )
         self.app_desc: Dict[str, str] = app_desc if app_desc is not None else _APP_DESC
+        self.data_dir: Path = Path(data_dir) if data_dir is not None else _SELF_DIR
         self.timeout: int = timeout if timeout is not None else _DEFAULT_TIMEOUT
         self._access: Optional[Access] = None
         self._fbx_db: Dict[str, Any] = {}
@@ -147,16 +151,16 @@ class Freepybox:
         if uids is None:
             uids = [
                 base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
-                for x in Path(_DATA_DIR).glob(_F_DB_NAME + "_*")
+                for x in Path(self.data_dir).glob(_F_DB_NAME + "_*")
             ]
         auth = [
             base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
-            for x in Path(_DATA_DIR).glob(_F_TOKEN_NAME + "_*")
+            for x in Path(self.data_dir).glob(_F_TOKEN_NAME + "_*")
         ]
         c = 0
         for uid in uids:
             if uid not in auth or all_:
-                fname = Path(_DATA_DIR).joinpath(
+                fname = Path(self.data_dir).joinpath(
                     _F_DB_NAME
                     + "_"
                     + base64.b64encode(uid.encode("utf-8")).decode("utf-8")
@@ -259,13 +263,13 @@ class Freepybox:
         if uids is None:
             uids = [
                 base64.b64decode(x.name.rsplit("_", 1)[1]).decode("utf-8")
-                for x in Path(_DATA_DIR).glob(_F_DB_NAME + "_*")
+                for x in Path(self.data_dir).glob(_F_DB_NAME + "_*")
             ]
         for uid in uids:
             try:
                 fbx_db.append({uid: self._fbx_db[uid]})
             except KeyError:
-                d = self._readfile_fbx_db(Path(_DATA_DIR), uid)
+                d = self._readfile_fbx_db(Path(self.data_dir), uid)
                 if d is not None:
                     fbx_db.append({uid: d})
 
@@ -327,7 +331,7 @@ class Freepybox:
 
         try:
             self._access = await self._get_app_access(
-                uid, Path(_DATA_DIR), self.app_desc, self.timeout
+                uid, Path(self.data_dir), self.app_desc, self.timeout
             )
         except AuthorizationError:
             _LOGGER.error("Authorization error")
@@ -340,7 +344,7 @@ class Freepybox:
         return list(
             map(
                 lambda t: t[1],
-                pkgutil.iter_modules([str(Path(_DATA_DIR).joinpath("api"))]),
+                pkgutil.iter_modules([str(Path(_SELF_DIR).joinpath("api"))]),
             )
         )
 
@@ -439,7 +443,7 @@ class Freepybox:
     async def _fbx_open_db(self, uid: str) -> str:
         """Open freebox db"""
 
-        db = self._readfile_fbx_db(Path(_DATA_DIR), uid)
+        db = self._readfile_fbx_db(Path(self.data_dir), uid)
         try:
             if db is None:
                 fbx_desc = await self.discover()
@@ -500,7 +504,7 @@ class Freepybox:
         # Connect session
         try:
             if s == "s":
-                cert_path = str(Path(_DATA_DIR).joinpath(_DEFAULT_CERT))
+                cert_path = str(Path(_SELF_DIR).joinpath(_DEFAULT_CERT))
                 ssl_ctx = ssl.create_default_context()
                 ssl_ctx.load_verify_locations(cafile=cert_path)
                 conn = aiohttp.TCPConnector(ssl_context=ssl_ctx)
@@ -576,7 +580,7 @@ class Freepybox:
             fbx_entry = {uid: {"conn": fbx_api_add, "conf": fbx_conf, "desc": fbx_desc}}
             self._fbx_db.update(fbx_entry)
             fbx_conn = self._fbx_db[uid]["conn"]
-            if not self._readfile_fbx_db(Path(_DATA_DIR), uid):
+            if not self._readfile_fbx_db(Path(self.data_dir), uid):
                 write_db = True
 
         if fbx_addict is not None and fbx_addict not in fbx_conn:
@@ -586,7 +590,7 @@ class Freepybox:
 
         if write_db:
             asyncio.create_task(
-                self._writefile_fbx_db(Path(_DATA_DIR), uid, self._fbx_db[uid])
+                self._writefile_fbx_db(Path(self.data_dir), uid, self._fbx_db[uid])
             )
 
         return uid
