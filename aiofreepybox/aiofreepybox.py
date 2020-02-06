@@ -656,13 +656,16 @@ class Freepybox:
             _LOGGER.info(f"Application token file was generated: {tk_file}.")
 
         # Create and return freebox http access module
-        fbx_access = Access(
-            self._session,
-            self._get_db_base_url(uid),
-            app_token,
-            app_desc["app_id"],
-            timeout,
-        )
+        if self._session is None:
+            raise AuthorizationError(f"{_DEFAULT_ERR}Session error")
+        else:
+            fbx_access = Access(
+                self._session,
+                self._get_db_base_url(uid),
+                app_token,
+                app_desc["app_id"],
+                timeout,
+            )
         return fbx_access
 
     async def _get_app_token(
