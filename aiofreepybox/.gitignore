@@ -1,5 +1,4 @@
 /__pycache__/
 *.pyc
 app_auth
-.app_auth*
-.db_*
+.fbx_*
