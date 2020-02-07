@@ -278,7 +278,7 @@ class Freepybox:
         _LOGGER.debug(f"{len(fbx_db)} uid(s) in db")
         return fbx_db
 
-    async def get_permissions(self) -> Optional[dict]:
+    async def get_permissions(self) -> Optional[Dict[str, bool]]:
         """
         Returns the permissions for this app.
 
