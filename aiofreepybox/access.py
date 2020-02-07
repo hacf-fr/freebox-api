@@ -36,7 +36,7 @@ class Access:
         self.app_id = app_id
         self.timeout = http_timeout
         self.session_token: Optional[str] = None
-        self.session_permissions: Optional[str] = None
+        self.session_permissions: Optional[Dict[str, bool]] = None
 
     async def _get_challenge(
         self, base_url: str, timeout: int = _DEFAULT_TIMEOUT
@@ -63,7 +63,7 @@ class Access:
         app_token: str,
         app_id: str,
         timeout: int = _DEFAULT_TIMEOUT,
-    ) -> Tuple[str, str]:
+    ) -> Tuple[str, Dict[str, bool]]:
         """
         Get session token from freebox.
         Returns (session_token, session_permissions)
@@ -182,7 +182,7 @@ class Access:
         data = json.dumps(payload) if payload is not None else None
         return await self._perform_request(self.session.delete, end_url, data=data)
 
-    async def get_permissions(self) -> Optional[str]:
+    async def get_permissions(self) -> Optional[Dict[str, bool]]:
         """
         Returns the permissions for this session/app.
         """
