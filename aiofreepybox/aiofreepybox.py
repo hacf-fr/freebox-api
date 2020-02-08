@@ -82,9 +82,7 @@ class Freepybox:
         data_dir: Optional[str] = None,
         timeout: Optional[int] = None,
     ) -> None:
-        self.api_version: str = (
-            api_version if api_version is not None else _DEFAULT_API_VERSION
-        )
+        self.api_version: str = api_version or _DEFAULT_API_VERSION
         self.app_desc: Dict[str, str] = app_desc if app_desc is not None else _APP_DESC
         self.data_dir: Path = Path(data_dir) if data_dir is not None else _SELF_DIR
         self.timeout: int = timeout if timeout is not None else _DEFAULT_TIMEOUT
