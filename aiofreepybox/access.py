@@ -72,7 +72,7 @@ class Access:
         # Get challenge from API
         challenge = await self._get_challenge(base_url, timeout)
 
-        # Hash app_token with chalenge key to get the password
+        # Hash app_token with challenge key to get the password
         h = hmac.new(app_token.encode(), challenge.encode(), "sha1")
         password = h.hexdigest()
 
@@ -184,7 +184,7 @@ class Access:
 
     async def get_permissions(self) -> Optional[Dict[str, bool]]:
         """
-        Returns the permissions for this session/app.
+        Returns the permissions for this session/app
         """
         if not self.session_permissions:
             await self._refresh_session_token()
