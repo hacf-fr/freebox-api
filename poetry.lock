@@ -160,7 +160,7 @@ python-versions = "*"
 name = "click"
 version = "7.1.2"
 description = "Composable command line interface toolkit"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -1038,7 +1038,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "bfa7854a123ad2c2d942d51cd9891b97be9ba0dfd15aae31effa79d18fa62817"
+content-hash = "e490b88b5e296f3f20e544bf747a6dd27d959dfb5b225328f14e1ee94448869d"
 
 [metadata.files]
 aiohttp = [
