@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "aiofreepybox"
 version = "0.0.8"
-description = "aiofreepybox"
+description = "Provides asynchronous authentication and access to Freebox servers"
 authors = ["stilllman <luc_touraille@yahoo.fr>"]
 license = "MIT"
 readme = "README.rst"
@@ -9,9 +9,16 @@ homepage = "https://github.com/stilllman/aiofreepybox"
 repository = "https://github.com/stilllman/aiofreepybox"
 documentation = "https://aiofreepybox.readthedocs.io"
 classifiers = [
+    "Programming Language :: Python",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: GNU General Public License (GPL)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: Home Automation",
 ]
 
 [tool.poetry.urls]
@@ -20,6 +27,7 @@ Changelog = "https://github.com/stilllman/aiofreepybox/releases"
 [tool.poetry.dependencies]
 python = "^3.6.1"
 click = "^7.0"
+aiohttp = ">=3,<4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.2"
