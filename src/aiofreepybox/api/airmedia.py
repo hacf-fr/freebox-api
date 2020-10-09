@@ -1,4 +1,8 @@
-from typing import Any, Dict, List, Mapping, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Mapping
+from typing import Optional
 
 from aiofreepybox.access import Access
 
@@ -57,7 +61,9 @@ class Airmedia:
         return await self._access.put("airmedia/config/", airmedia_config)
 
     async def update_airmedia_configuration(
-        self, enabled: Optional[bool] = None, password: Optional[str] = None,
+        self,
+        enabled: Optional[bool] = None,
+        password: Optional[str] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         Update AirMedia configuration
