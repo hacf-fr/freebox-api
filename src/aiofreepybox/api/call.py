@@ -25,7 +25,7 @@ class Call:
         """
         Delete calls log
         """
-        await self._access.delete(f"call/log/delete_all/")
+        await self._access.delete("call/log/delete_all/")
 
     async def get_call_log(self, log_id):
         """
@@ -53,9 +53,9 @@ class Call:
         """
         Mark calls log as read
         """
-        return await self._access.get(f"call/log/mark_all_as_read")
+        return await self._access.get("call/log/mark_all_as_read")
 
-    async def update_call_log(self, call_entry):
+    async def update_call_log(self, log_id, call_entry):
         """
         Update call log
         Used to mark call log as read

@@ -1,11 +1,9 @@
 import asyncio
-import ipaddress
 import json
 import logging
 import os
 import socket
 import ssl
-import time
 from urllib.parse import urljoin
 
 import aiohttp
@@ -36,7 +34,9 @@ from aiofreepybox.api.tv import Tv
 from aiofreepybox.api.upnpav import Upnpav
 from aiofreepybox.api.upnpigd import Upnpigd
 from aiofreepybox.api.wifi import Wifi
-from aiofreepybox.exceptions import *
+from aiofreepybox.exceptions import AuthorizationError
+from aiofreepybox.exceptions import InvalidTokenError
+from aiofreepybox.exceptions import NotOpenError
 
 # Token file default location
 token_filename = "app_auth"
@@ -151,7 +151,8 @@ class Freepybox:
         logger.info("Read application authorization file")
         app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
 
-        # If no valid token is stored then request a token to freebox api - Only for LAN connection
+        # If no valid token is stored then request a token to freebox api -
+        # Only for LAN connection
         if app_token is None or file_app_desc != app_desc:
             logger.info("No valid authorization file found")
 

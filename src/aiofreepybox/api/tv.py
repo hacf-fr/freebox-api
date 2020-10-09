@@ -109,22 +109,30 @@ class Tv:
         """
         return await self._access.get(f"tv/epg/programs/{program_id}")
 
-    async def get_tv_program_highlights(self, channel_id, date=int(time.time())):
+    async def get_tv_program_highlights(self, channel_id, date=None):
         """
         Get tv program highlights
         """
+        if date is None:
+            date = int(time.time())
         return await self._access.get(f"tv/epg/highlights/{channel_id}/{date}")
 
-    async def get_tv_programs_by_channel(self, channel_id, date=int(time.time())):
+    async def get_tv_programs_by_channel(self, channel_id, date=None):
         """
         Get tv programs by channel
         """
+        if date is None:
+            date = int(time.time())
+
         return await self._access.get(f"tv/epg/by_channel/{channel_id}/{date}")
 
-    async def get_tv_programs_by_date(self, date=int(time.time())):
+    async def get_tv_programs_by_date(self, date=None):
         """
         Get tv programs by date
         """
+        if date is None:
+            date = int(time.time())
+
         return await self._access.get(f"tv/epg/by_time/{date}")
 
     async def get_tv_records_configuration(self):

@@ -7,5 +7,5 @@ PERMISSION_HOME = "home"  # Manage alarm and connected objects
 PERMISSION_PARENTAL = "parental"  # Access to parental control
 PERMISSION_PLAYER = "player"  # Control freebox player
 PERMISSION_PVR = "pvr"  # Access personal video recorder
-PERMISSION_SETTINGS = "settings"  # Allow modifying the Freebox settings (reading settings is always allowed)
+PERMISSION_SETTINGS = "settings"  # Allow modifying the Freebox settings (reading settings is always allowed) # noqa B950
 PERMISSION_TV = "tv"  # Access tv guide

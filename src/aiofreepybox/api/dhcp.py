@@ -84,7 +84,8 @@ class Dhcp:
         Get the list of DHCP dynamic leases
         """
         logger.warning(
-            "Using deprecated call get_dynamic_dhcp_lease, please use get_dhcp_dynamic_leases instead"
+            "Using deprecated call get_dynamic_dhcp_lease, please use "
+            "get_dhcp_dynamic_leases instead"
         )
         return await self.get_dhcp_dynamic_leases()
 
@@ -94,6 +95,7 @@ class Dhcp:
         Get the list of DHCP static leases
         """
         logger.warning(
-            "Using deprecated call get_static_dhcp_lease, please use get_dhcp_static_leases instead"
+            "Using deprecated call get_static_dhcp_lease, please use "
+            "get_dhcp_static_leases instead"
         )
         return await self.get_dhcp_static_leases()

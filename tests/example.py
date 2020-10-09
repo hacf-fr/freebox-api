@@ -25,12 +25,12 @@ async def demo():
 
     if fbx.api_version == "v6":
         # Get a jpg snapshot from a camera
-        fbx_cam_jpg = await fbx.home.get_camera_snapshot()
+        fbx_cam_jpg = await fbx.home.get_camera_snapshot()  # noqa F841
 
         # Get a TS stream from a camera
         r = await fbx.home.get_camera_stream_m3u8()
         m3u8_obj = m3u8.loads(await r.text())
-        fbx_ts = await fbx.home.get_camera_ts(m3u8_obj.files[0])
+        fbx_ts = await fbx.home.get_camera_ts(m3u8_obj.files[0])  # noqa F841
 
     # Dump freebox configuration using system API
     # Extract temperature and mac address
@@ -45,7 +45,8 @@ async def demo():
     # Modify ip_range configuration
     fbx_dhcp_config["ip_range_start"] = "192.168.0.10"
     fbx_dhcp_config["ip_range_end"] = "192.168.0.50"
-    # Send new configuration to the freebox. This line is commented to avoid any disaster.
+    # Send new configuration to the freebox. This line is commented to
+    # avoid any disaster.
     # await fbx.dhcp.set_config(fbx_dhcp_config)
 
     # Get the call list and print the last call entry

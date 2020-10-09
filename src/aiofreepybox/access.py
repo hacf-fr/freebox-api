@@ -3,7 +3,9 @@ import json
 import logging
 from urllib.parse import urljoin
 
-from aiofreepybox.exceptions import *
+from aiofreepybox.exceptions import AuthorizationError
+from aiofreepybox.exceptions import HttpRequestError
+from aiofreepybox.exceptions import InsufficientPermissionsError
 
 logger = logging.getLogger(__name__)
 
@@ -105,11 +107,11 @@ class Access:
                 resp = await r.json()
 
             if not resp["success"]:
-                errMsg = "Request failed (APIResponse: {})".format(json.dumps(resp))
+                err_msg = "Request failed (APIResponse: {})".format(json.dumps(resp))
                 if resp.get("error_code") == "insufficient_rights":
-                    raise InsufficientPermissionsError(errMsg)
+                    raise InsufficientPermissionsError(err_msg)
                 else:
-                    raise HttpRequestError(errMsg)
+                    raise HttpRequestError(err_msg)
 
             return resp["result"] if "result" in resp else None
 
