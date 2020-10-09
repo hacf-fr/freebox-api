@@ -1,0 +1,10 @@
+{
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "stilllman",
+  "email": "luc_touraille@yahoo.fr",
+  "friendly_name": "aiofreepybox",
+  "github_user": "stilllman",
+  "package_name": "aiofreepybox",
+  "project_name": "aiofreepybox",
+  "version": "0.0.8"
+}
