@@ -10,7 +10,7 @@ from nox.sessions import Session
 
 
 package = "aiofreepybox"
-python_versions = ["3.8", "3.7", "3.6"]
+python_versions = ["3.9", "3.8", "3.7"]
 # mypy and typgaurd temporarily deactivated by default as type hint needs rework.
 nox.options.sessions = (
     "pre-commit",

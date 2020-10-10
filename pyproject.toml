@@ -13,8 +13,9 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: GNU General Public License (GPL)",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
@@ -25,7 +26,7 @@ classifiers = [
 Changelog = "https://github.com/hacf-fr/aiofreepybox/releases"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.7.1"
 aiohttp = ">=3,<4"
 
 [tool.poetry.dev-dependencies]
