@@ -2,7 +2,7 @@ Contributor Guide
 =================
 
 Thank you for your interest in improving this project.
-This project is open-source under the `MIT license`_ and
+This project is open-source under the `GNU GPL v3`_ and
 welcomes contributions in the form of bug reports, feature requests, and pull requests.
 
 Here is a list of important resources for contributors:
@@ -12,10 +12,10 @@ Here is a list of important resources for contributors:
 - `Issue Tracker`_
 - `Code of Conduct`_
 
-.. _MIT license: https://opensource.org/licenses/MIT
-.. _Source Code: https://github.com/stilllman/aiofreepybox
+.. _GNU GPL v3: https://opensource.org/licenses/GPL-3.0
+.. _Source Code: https://github.com/hacf-fr/aiofreepybox
 .. _Documentation: https://aiofreepybox.readthedocs.io/
-.. _Issue Tracker: https://github.com/stilllman/aiofreepybox/issues
+.. _Issue Tracker: https://github.com/hacf-fr/aiofreepybox/issues
 
 How to report a bug
 -------------------
@@ -116,6 +116,6 @@ To run linting and code formatting checks before commiting your change, you can 
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
-.. _pull request: https://github.com/stilllman/aiofreepybox/pulls
+.. _pull request: https://github.com/hacf-fr/aiofreepybox/pulls
 .. github-only
 .. _Code of Conduct: CODE_OF_CONDUCT.rst

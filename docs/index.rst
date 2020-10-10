@@ -11,4 +11,4 @@
    contributing
    Code of Conduct <codeofconduct>
    License <license>
-   Changelog <https://github.com/stilllman/aiofreepybox/releases>
+   Changelog <https://github.com/hacf-fr/aiofreepybox/releases>

@@ -573,6 +573,8 @@ to the start of each source file to most effectively state the exclusion of warr
 and each file should have at least the "copyright" line and a pointer to
 where the full notice is found.
 
+.. code:: text
+
     <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) <year>  <name of author>
 
@@ -593,6 +595,8 @@ Also add information on how to contact you by electronic and paper mail.
 
 If the program does terminal interaction, make it output a short notice like this
 when it starts in an interactive mode:
+
+.. code:: text
 
     <program>  Copyright (C) <year>  <name of author>
     This program comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.

@@ -14,16 +14,16 @@ aiofreepybox
    :target: https://pypi.org/project/aiofreepybox
    :alt: Python Version
 .. |License| image:: https://img.shields.io/pypi/l/aiofreepybox
-   :target: https://opensource.org/licenses/MIT
+   :target: https://opensource.org/licenses/GPL-3.0
    :alt: License
 .. |Read the Docs| image:: https://img.shields.io/readthedocs/aiofreepybox/latest.svg?label=Read%20the%20Docs
    :target: https://aiofreepybox.readthedocs.io/
    :alt: Read the documentation at https://aiofreepybox.readthedocs.io/
-.. |Tests| image:: https://github.com/stilllman/aiofreepybox/workflows/Tests/badge.svg
-   :target: https://github.com/stilllman/aiofreepybox/actions?workflow=Tests
+.. |Tests| image:: https://github.com/hacf-fr/aiofreepybox/workflows/Tests/badge.svg
+   :target: https://github.com/hacf-fr/aiofreepybox/actions?workflow=Tests
    :alt: Tests
-.. |Codecov| image:: https://codecov.io/gh/stilllman/aiofreepybox/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/stilllman/aiofreepybox
+.. |Codecov| image:: https://codecov.io/gh/hacf-fr/aiofreepybox/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/hacf-fr/aiofreepybox
    :alt: Codecov
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
@@ -61,9 +61,9 @@ You can install *aiofreepybox* via pip_ from PyPI_:
 
 Or manually download the last version from github and install it with Poetry_
 
-. code:: console
+.. code:: console
 
-   $ git clone https://github.com/stilllman/aiofreepybox.git
+   $ git clone https://github.com/hacf-fr/aiofreepybox.git
    $ python poetry install
 
 .. _Poetry: https://python-poetry.org/
@@ -73,7 +73,7 @@ Or manually download the last version from github and install it with Poetry_
 Usage
 -----
 
-. code:: python
+.. code:: python
 
    # Import the aiofreepybox package.
    from aiofreepybox import Freepybox
@@ -94,7 +94,7 @@ Usage
 
 Have a look at the example.py_ for a more complete overview.
 
-.. _example.py: example.py
+.. _example.py: tests/example.py
 
 Notes on HTTPS
 --------------
@@ -122,7 +122,7 @@ To learn more, see the `Contributor Guide`_.
 License
 -------
 
-Distributed under the terms of the `GNU GPL v3` license,
+Distributed under the terms of the `GNU GPL v3`_ license,
 *aiofreepybox* is free and open source software.
 
 
@@ -144,7 +144,7 @@ This project was generated from `@cjolowicz`_'s `Hypermodern Python Cookiecutter
 .. _GNU GPL v3: https://opensource.org/licenses/GPL-3.0
 .. _PyPI: https://pypi.org/
 .. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-.. _file an issue: https://github.com/stilllman/aiofreepybox/issues
+.. _file an issue: https://github.com/hacf-fr/aiofreepybox/issues
 .. _pip: https://pip.pypa.io/
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst

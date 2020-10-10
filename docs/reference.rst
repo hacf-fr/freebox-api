@@ -6,8 +6,8 @@ Reference
     :backlinks: none
 
 
-aiofreepybox.__main__
+aiofreepybox.__init__
 ---------------------
 
-.. automodule:: aiofreepybox.__main__
+.. automodule:: aiofreepybox.__init__
    :members:
