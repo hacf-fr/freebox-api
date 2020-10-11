@@ -21,6 +21,7 @@ classifiers = [
     "Intended Audience :: System Administrators",
     "Topic :: Home Automation",
 ]
+keywords=['freebox', 'async']
 
 [tool.poetry.urls]
 Changelog = "https://github.com/hacf-fr/aiofreepybox/releases"
