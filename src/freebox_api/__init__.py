@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 """
 Provides authentification and access to Freebox using Freebox OS developer API.
 Freebox API documentation : http://dev.freebox.fr/sdk/os/
