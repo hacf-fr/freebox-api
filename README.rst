@@ -1,5 +1,5 @@
-aiofreepybox
-============
+freebox-api
+===========
 
 |PyPI| |Python Version| |License|
 
@@ -7,23 +7,35 @@ aiofreepybox
 
 |pre-commit| |Black|
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/aiofreepybox.svg
-   :target: https://pypi.org/project/aiofreepybox/
+.. |PyPI| image:: https://img.shields.io/pypi/v/freebox-api
+.svg
+   :target: https://pypi.org/project/freebox-api
+/
    :alt: PyPI
-.. |Python Version| image:: https://img.shields.io/pypi/pyversions/aiofreepybox
-   :target: https://pypi.org/project/aiofreepybox
+.. |Python Version| image:: https://img.shields.io/pypi/pyversions/freebox-api
+
+   :target: https://pypi.org/project/freebox-api
+
    :alt: Python Version
-.. |License| image:: https://img.shields.io/pypi/l/aiofreepybox
+.. |License| image:: https://img.shields.io/pypi/l/freebox-api
+
    :target: https://opensource.org/licenses/GPL-3.0
    :alt: License
-.. |Read the Docs| image:: https://img.shields.io/readthedocs/aiofreepybox/latest.svg?label=Read%20the%20Docs
-   :target: https://aiofreepybox.readthedocs.io/
-   :alt: Read the documentation at https://aiofreepybox.readthedocs.io/
-.. |Tests| image:: https://github.com/hacf-fr/aiofreepybox/workflows/Tests/badge.svg
-   :target: https://github.com/hacf-fr/aiofreepybox/actions?workflow=Tests
+.. |Read the Docs| image:: https://img.shields.io/readthedocs/freebox-api
+/latest.svg?label=Read%20the%20Docs
+   :target: https://freebox-api
+.readthedocs.io/
+   :alt: Read the documentation at https://freebox-api
+.readthedocs.io/
+.. |Tests| image:: https://github.com/hacf-fr/freebox-api
+/workflows/Tests/badge.svg
+   :target: https://github.com/hacf-fr/freebox-api
+/actions?workflow=Tests
    :alt: Tests
-.. |Codecov| image:: https://codecov.io/gh/hacf-fr/aiofreepybox/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/hacf-fr/aiofreepybox
+.. |Codecov| image:: https://codecov.io/gh/hacf-fr/freebox-api
+/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/hacf-fr/freebox-api
+
    :alt: Codecov
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
@@ -39,9 +51,9 @@ Features
 Easily manage your freebox in Python using the Freebox OS API.
 Check your calls, manage your contacts, configure your dhcp, disable your wifi, monitor your LAN activity and many others, on LAN or remotely.
 
-aiofreepybox is a python library implementing the freebox OS API. It handles the authentication process and provides a raw access to the freebox API in an asynchronous manner.
+freebox-api is a python library implementing the freebox OS API. It handles the authentication process and provides a raw access to the freebox API in an asynchronous manner.
 
-This project is based on fstercq/freepybox, which provides the same features as aiofreepybox in a synchronous manner.
+This project is based on fstercq/freepybox, which provides the same features as freebox-api in a synchronous manner.
 
 
 Requirements
@@ -53,17 +65,17 @@ Requirements
 Installation
 ------------
 
-You can install *aiofreepybox* via pip_ from PyPI_:
+You can install *freebox-api* via pip_ from PyPI_:
 
 .. code:: console
 
-   $ pip install aiofreepybox
+   $ pip install freebox-api
 
 Or manually download the last version from github and install it with Poetry_
 
 .. code:: console
 
-   $ git clone https://github.com/hacf-fr/aiofreepybox.git
+   $ git clone https://github.com/hacf-fr/freebox-api.git
    $ python poetry install
 
 .. _Poetry: https://python-poetry.org/
@@ -75,8 +87,8 @@ Usage
 
 .. code:: python
 
-   # Import the aiofreepybox package.
-   from aiofreepybox import Freepybox
+   # Import the freebox-api package.
+   from freebox_api import Freepybox
 
    async def reboot()
       # Instantiate the Freepybox class using default options.
@@ -123,7 +135,7 @@ License
 -------
 
 Distributed under the terms of the `GNU GPL v3`_ license,
-*aiofreepybox* is free and open source software.
+*freebox-api* is free and open source software.
 
 
 Issues
@@ -144,7 +156,7 @@ This project was generated from `@cjolowicz`_'s `Hypermodern Python Cookiecutter
 .. _GNU GPL v3: https://opensource.org/licenses/GPL-3.0
 .. _PyPI: https://pypi.org/
 .. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-.. _file an issue: https://github.com/hacf-fr/aiofreepybox/issues
+.. _file an issue: https://github.com/hacf-fr/freebox-api/issues
 .. _pip: https://pip.pypa.io/
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst

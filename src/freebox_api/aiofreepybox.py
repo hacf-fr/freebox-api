@@ -8,35 +8,35 @@ from urllib.parse import urljoin
 
 import aiohttp
 
-import aiofreepybox
-from aiofreepybox.access import Access
-from aiofreepybox.api.airmedia import Airmedia
-from aiofreepybox.api.call import Call
-from aiofreepybox.api.connection import Connection
-from aiofreepybox.api.dhcp import Dhcp
-from aiofreepybox.api.freeplug import Freeplug
-from aiofreepybox.api.fs import Fs
-from aiofreepybox.api.ftp import Ftp
-from aiofreepybox.api.fw import Fw
-from aiofreepybox.api.home import Home
-from aiofreepybox.api.lan import Lan
-from aiofreepybox.api.lcd import Lcd
-from aiofreepybox.api.netshare import Netshare
-from aiofreepybox.api.notifications import Notifications
-from aiofreepybox.api.parental import Parental
-from aiofreepybox.api.phone import Phone
-from aiofreepybox.api.player import Player
-from aiofreepybox.api.rrd import Rrd
-from aiofreepybox.api.storage import Storage
-from aiofreepybox.api.switch import Switch
-from aiofreepybox.api.system import System
-from aiofreepybox.api.tv import Tv
-from aiofreepybox.api.upnpav import Upnpav
-from aiofreepybox.api.upnpigd import Upnpigd
-from aiofreepybox.api.wifi import Wifi
-from aiofreepybox.exceptions import AuthorizationError
-from aiofreepybox.exceptions import InvalidTokenError
-from aiofreepybox.exceptions import NotOpenError
+import freebox_api
+from freebox_api.access import Access
+from freebox_api.api.airmedia import Airmedia
+from freebox_api.api.call import Call
+from freebox_api.api.connection import Connection
+from freebox_api.api.dhcp import Dhcp
+from freebox_api.api.freeplug import Freeplug
+from freebox_api.api.fs import Fs
+from freebox_api.api.ftp import Ftp
+from freebox_api.api.fw import Fw
+from freebox_api.api.home import Home
+from freebox_api.api.lan import Lan
+from freebox_api.api.lcd import Lcd
+from freebox_api.api.netshare import Netshare
+from freebox_api.api.notifications import Notifications
+from freebox_api.api.parental import Parental
+from freebox_api.api.phone import Phone
+from freebox_api.api.player import Player
+from freebox_api.api.rrd import Rrd
+from freebox_api.api.storage import Storage
+from freebox_api.api.switch import Switch
+from freebox_api.api.system import System
+from freebox_api.api.tv import Tv
+from freebox_api.api.upnpav import Upnpav
+from freebox_api.api.upnpigd import Upnpigd
+from freebox_api.api.wifi import Wifi
+from freebox_api.exceptions import AuthorizationError
+from freebox_api.exceptions import InvalidTokenError
+from freebox_api.exceptions import NotOpenError
 
 # Token file default location
 token_filename = "app_auth"
@@ -46,8 +46,8 @@ token_file = os.path.join(token_dir, token_filename)
 # Default application descriptor
 app_desc = {
     "app_id": "aiofpbx",
-    "app_name": "aiofreepybox",
-    "app_version": aiofreepybox.__version__,
+    "app_name": "freebox-api",
+    "app_version": freebox_api.__version__,
     "device_name": socket.gethostname(),
 }
 

@@ -1,1 +1,1 @@
-"""Test suite for the aiofreepybox package."""
+"""Test suite for the freebox-api package."""

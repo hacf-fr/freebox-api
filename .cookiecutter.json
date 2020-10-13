@@ -2,9 +2,9 @@
   "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
   "author": "stilllman",
   "email": "luc_touraille@yahoo.fr",
-  "friendly_name": "aiofreepybox",
+  "friendly_name": "freebox-api",
   "github_user": "hacf-fr",
-  "package_name": "aiofreepybox",
-  "project_name": "aiofreepybox",
+  "package_name": "freebox_api",
+  "project_name": "freebox-api",
   "version": "0.0.8"
 }

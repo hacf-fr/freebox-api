@@ -13,9 +13,9 @@ Here is a list of important resources for contributors:
 - `Code of Conduct`_
 
 .. _GNU GPL v3: https://opensource.org/licenses/GPL-3.0
-.. _Source Code: https://github.com/hacf-fr/aiofreepybox
-.. _Documentation: https://aiofreepybox.readthedocs.io/
-.. _Issue Tracker: https://github.com/hacf-fr/aiofreepybox/issues
+.. _Source Code: https://github.com/hacf-fr/freebox-api
+.. _Documentation: https://freebox-api.readthedocs.io/
+.. _Issue Tracker: https://github.com/hacf-fr/freebox-api/issues
 
 How to report a bug
 -------------------
@@ -54,13 +54,11 @@ Install the package with development requirements:
 
    $ poetry install
 
-You can now run an interactive Python session,
-or the command-line interface:
+You can now run an interactive Python session:
 
 .. code:: console
 
    $ poetry run python
-   $ poetry run aiofreepybox
 
 .. _Poetry: https://python-poetry.org/
 .. _Nox: https://nox.thea.codes/
@@ -116,6 +114,6 @@ To run linting and code formatting checks before commiting your change, you can 
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
-.. _pull request: https://github.com/hacf-fr/aiofreepybox/pulls
+.. _pull request: https://github.com/hacf-fr/freebox-api/pulls
 .. github-only
 .. _Code of Conduct: CODE_OF_CONDUCT.rst

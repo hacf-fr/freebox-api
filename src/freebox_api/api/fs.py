@@ -2,7 +2,7 @@ import base64
 import logging
 import os
 
-import aiofreepybox.exceptions
+import freebox_api.exceptions
 
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class Fs:
         try:
             await self.get_file_info(os.path.join(self._path, path))
             return True
-        except aiofreepybox.exceptions.HttpRequestError:
+        except freebox_api.exceptions.HttpRequestError:
             logger.debug(
                 "{} path does not exist".format(os.path.join(self._path, path))
             )

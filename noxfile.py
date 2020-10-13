@@ -9,7 +9,7 @@ import nox
 from nox.sessions import Session
 
 
-package = "aiofreepybox"
+package = "freebox_api"
 python_versions = ["3.9", "3.8", "3.7"]
 # mypy and typgaurd temporarily deactivated by default as type hint needs rework.
 nox.options.sessions = (

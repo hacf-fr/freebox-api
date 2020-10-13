@@ -17,6 +17,6 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 
-from aiofreepybox.aiofreepybox import Freepybox
+from freebox_api.aiofreepybox import Freepybox
 
 __all__ = ["Freepybox"]

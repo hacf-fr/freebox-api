@@ -3,9 +3,9 @@ import json
 import logging
 from urllib.parse import urljoin
 
-from aiofreepybox.exceptions import AuthorizationError
-from aiofreepybox.exceptions import HttpRequestError
-from aiofreepybox.exceptions import InsufficientPermissionsError
+from freebox_api.exceptions import AuthorizationError
+from freebox_api.exceptions import HttpRequestError
+from freebox_api.exceptions import InsufficientPermissionsError
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ Reference
     :backlinks: none
 
 
-aiofreepybox.__init__
+freebox_api.__init__
 ---------------------
 
 .. automodule:: aiofreepybox.__init__

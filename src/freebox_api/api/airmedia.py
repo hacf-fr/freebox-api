@@ -3,7 +3,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from aiofreepybox.access import Access
+from freebox_api.access import Access
 
 
 class Airmedia:

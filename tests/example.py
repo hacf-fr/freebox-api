@@ -7,7 +7,7 @@ import asyncio
 
 import m3u8
 
-from aiofreepybox import Freepybox
+from freebox_api import Freepybox
 
 
 async def demo():

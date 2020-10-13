@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "aiofreepybox"
+name = "freebox-api"
 version = "0.0.8"
 description = "Provides asynchronous authentication and access to Freebox servers"
-authors = ["stilllman <luc_touraille@yahoo.fr>", ]
+authors = ["stilllman <luc_touraille@yahoo.fr>", "quentame <polletquentin74@me.com>"]
 license = "GNU GPL v3"
 readme = "README.rst"
-homepage = "https://github.com/hacf-fr/aiofreepybox"
-repository = "https://github.com/hacf-fr/aiofreepybox"
-documentation = "https://aiofreepybox.readthedocs.io"
+homepage = "https://github.com/hacf-fr/freebox-api"
+repository = "https://github.com/hacf-fr/freebox-api"
+documentation = "https://freebox-api.readthedocs.io"
 classifiers = [
     "Programming Language :: Python",
     "Development Status :: 3 - Alpha",
@@ -24,7 +24,7 @@ classifiers = [
 keywords=['freebox', 'async']
 
 [tool.poetry.urls]
-Changelog = "https://github.com/hacf-fr/aiofreepybox/releases"
+Changelog = "https://github.com/hacf-fr/freebox-api/releases"
 
 [tool.poetry.dependencies]
 python = "^3.7.0"
@@ -53,14 +53,14 @@ reorder-python-imports = "^2.3.5"
 pre-commit-hooks = "^3.2.0"
 
 [tool.poetry.scripts]
-aiofreepybox = "aiofreepybox.__main__:main"
+freebox_api = "freebox_api.__main__:main"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
 
 [tool.coverage.run]
 branch = true
-source = ["aiofreepybox"]
+source = ["freebox_api"]
 
 [tool.coverage.report]
 show_missing = true
