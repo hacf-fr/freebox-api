@@ -2,7 +2,7 @@
 from datetime import datetime
 
 
-project = "aiofreepybox"
+project = "freebox-api"
 author = "HACF"
 copyright = f"{datetime.now().year}, {author}"
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.napoleon"]
