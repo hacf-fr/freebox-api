@@ -7,35 +7,23 @@ freebox-api
 
 |pre-commit| |Black|
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/freebox-api
-.svg
-   :target: https://pypi.org/project/freebox-api
-/
+.. |PyPI| image:: https://img.shields.io/pypi/v/freebox-api.svg
+   :target: https://pypi.org/project/freebox-api/
    :alt: PyPI
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/freebox-api
-
    :target: https://pypi.org/project/freebox-api
-
    :alt: Python Version
 .. |License| image:: https://img.shields.io/pypi/l/freebox-api
-
    :target: https://opensource.org/licenses/GPL-3.0
    :alt: License
-.. |Read the Docs| image:: https://img.shields.io/readthedocs/freebox-api
-/latest.svg?label=Read%20the%20Docs
-   :target: https://freebox-api
-.readthedocs.io/
-   :alt: Read the documentation at https://freebox-api
-.readthedocs.io/
-.. |Tests| image:: https://github.com/hacf-fr/freebox-api
-/workflows/Tests/badge.svg
-   :target: https://github.com/hacf-fr/freebox-api
-/actions?workflow=Tests
+.. |Read the Docs| image:: https://img.shields.io/readthedocs/freebox-api/latest.svg?label=Read%20the%20Docs
+   :target: https://freebox-api.readthedocs.io/
+   :alt: Read the documentation at https://freebox-api.readthedocs.io/
+.. |Tests| image:: https://github.com/hacf-fr/freebox-api/workflows/Tests/badge.svg
+   :target: https://github.com/hacf-fr/freebox-api/actions?workflow=Tests
    :alt: Tests
-.. |Codecov| image:: https://codecov.io/gh/hacf-fr/freebox-api
-/branch/master/graph/badge.svg
+.. |Codecov| image:: https://codecov.io/gh/hacf-fr/freebox-api/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/hacf-fr/freebox-api
-
    :alt: Codecov
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
