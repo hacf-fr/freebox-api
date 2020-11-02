@@ -49,13 +49,13 @@ class Fw:
         '''	
         Get a specific port forwarding	
         '''	
-        return await self._access.get('fw/redir/{0}'.format(redir_id))	
+        return await self._access.get(f'fw/redir/{redir_id})	
 
     async def edit_port_forwarding(self, redir_id, port_forwarding_config):	
         '''	
         Update a port forwarding	
         '''	
-        return await self._access.put('fw/redir/{0}'.format(redir_id), port_forwarding_config)
+        return await self._access.put('fw/redir/{redir_id}', port_forwarding_config)
 
     async def edit_incoming_port_configuration(self, port_id, incoming_port_configuration_data):
         """
