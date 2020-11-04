@@ -29,13 +29,13 @@ class Fw:
         """
         return await self._access.post("fw/redir/", port_forwarding_config)
 
-    async def delete_port_forwarding_configuration(self, redir_id):
+    async def delete_port_forwarding_configuration(self, config_id):
         """
         Delete port forwarding configuration
 
         config_id : `int`
         """
-        await self._access.delete(f"fw/redir/{redir_id}")
+        await self._access.delete(f"fw/redir/{config_id}")
 
     async def get_port_forwarding_configuration(self, redir_id):
         """
@@ -59,7 +59,13 @@ class Fw:
             f"fw/redir/{redir_id}", port_forwarding_config
         )
 
-    async def get_incoming_ports_configuration(self):
+    async def get_incoming_port_configuration(self, port_id):
+        """
+        Get incoming ports configuration
+        """
+        return await self._access.get(f"fw/incoming/{port_id}")
+
+    async def get_all_incoming_port_configuration(self):
         """
         Get incoming ports configuration
         """
