@@ -19,9 +19,7 @@ class Fw:
 
     dmz_configuration_schema = {"enabled": False, "ip": ""}
 
-    async def create_port_forwarding_configuration(
-        self, port_forwarding_config
-    ):
+    async def create_port_forwarding_configuration(self, port_forwarding_config):
         """
         Create port forwarding configuration
 
@@ -55,9 +53,7 @@ class Fw:
         """
         Update a port forwarding
         """
-        return await self._access.put(
-            f"fw/redir/{redir_id}", port_forwarding_config
-        )
+        return await self._access.put(f"fw/redir/{redir_id}", port_forwarding_config)
 
     async def get_incoming_port_configuration(self, port_id):
         """
