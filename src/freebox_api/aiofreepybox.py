@@ -39,7 +39,7 @@ from freebox_api.exceptions import InvalidTokenError
 from freebox_api.exceptions import NotOpenError
 
 # Token file default location
-token_filename = "app_auth"
+token_filename = "app_auth"  # noqa S105
 token_dir = os.path.dirname(os.path.abspath(__file__))
 token_file = os.path.join(token_dir, token_filename)
 
