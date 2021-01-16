@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "freebox-api"
-version = "0.0.8"
+version = "0.0.9"
 description = "Provides asynchronous authentication and access to Freebox servers"
 authors = ["stilllman <luc_touraille@yahoo.fr>", "quentame <polletquentin74@me.com>", "HACF <contact@hacf.fr>"]
 license = "GNU GPL v3"
