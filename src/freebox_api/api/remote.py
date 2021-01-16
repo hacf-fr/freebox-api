@@ -1,6 +1,9 @@
 import asyncio
 from asyncio import TimeoutError as Timeout
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from aiohttp import client_exceptions as cl_ex
 
@@ -128,14 +131,14 @@ class Remote:
         code: Optional[str] = None,
         delay: float = _DEFAULT_DELAY,
     ) -> bool:
-        """
-        Send macro
+        """Send macro.
 
-        keys_data : `list[key]`
-        code : `str`, optional
-            Default to None
-        delay : `float`, optional
-            Default to _DEFAULT_DELAY
+        Args:
+            eys_data: `list[key]`
+            code: `str`, optional
+                Default to None
+            delay: `float`, optional
+                Default to _DEFAULT_DELAY
         """
 
         for key_data in keys_data:
@@ -159,9 +162,9 @@ class Remote:
         Returns `True` if the key was accepted or `False` if an error occurred
         """
 
-        if code is not None and (not "code" in key_data or key_data["code"] != code):
+        if code is not None and ("code" not in key_data or key_data["code"] != code):
             key_data["code"] = code
-        elif not "code" in key_data:
+        elif "code" not in key_data:
             return False
 
         try:
@@ -209,7 +212,11 @@ class Remote:
 
         self.access_mode = _DEFAULT_ACCESS_MODE if not access_m else access_m
         if self.access_mode == "fbxhd":
-            self.player_host = f"{_PL_HOST}{_DEFAULT_PL_ID if not player_id else player_id}{_PL_DOMAIN}"
+            self.player_host = (
+                f"{_PL_HOST}"
+                f"{_DEFAULT_PL_ID if not player_id else player_id}"
+                f"{_PL_DOMAIN}"
+            )
         elif self.access_mode == "host" and host is not None:
             self.player_host = host
         else:
