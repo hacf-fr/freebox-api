@@ -3,7 +3,10 @@
 # select = B,B9,C,D,DAR,E,F,N,RST,S,W
 # remove D, DAR as docstrings needs rework.
 select = B,B9,C,E,F,N,RST,S,W
-ignore = E203,E501,RST203,RST301,W503
+ignore = E203,E501,W503
+extend-ignore =
+    # Google Python style is not RST until after processed by Napoleon
+    RST201,RST203,RST301,
 max-line-length = 80
 max-complexity = 10
 docstring-convention = google
