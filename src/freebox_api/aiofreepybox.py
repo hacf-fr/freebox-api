@@ -26,6 +26,7 @@ from freebox_api.api.notifications import Notifications
 from freebox_api.api.parental import Parental
 from freebox_api.api.phone import Phone
 from freebox_api.api.player import Player
+from freebox_api.api.remote import Remote
 from freebox_api.api.rrd import Rrd
 from freebox_api.api.storage import Storage
 from freebox_api.api.switch import Switch
@@ -105,6 +106,7 @@ class Freepybox:
         self.parental = Parental(self._access)
         self.netshare = Netshare(self._access)
         self.notifications = Notifications(self._access)
+        self.remote = Remote(self._access)
         self.rrd = Rrd(self._access)
         self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
