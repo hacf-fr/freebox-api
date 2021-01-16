@@ -1,15 +1,18 @@
 freebox-api
 ===========
 
-|PyPI| |Python Version| |License|
+|PyPI| |GitHub Release| |Python Version| |License|
 
-|Read the Docs| |Tests| |Codecov|
+|Read the Docs| |Tests| |Codecov| |GitHub Activity|
 
 |pre-commit| |Black|
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/freebox-api.svg
    :target: https://pypi.org/project/freebox-api/
    :alt: PyPI
+.. |GitHub Release| image:: https://img.shields.io/github/release/hacf-fr/freebox-api.svg
+   :target: https://github.com/hacf-fr/freebox-api/releases
+   :alt: GitHub Release
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/freebox-api
    :target: https://pypi.org/project/freebox-api
    :alt: Python Version
@@ -31,6 +34,9 @@ freebox-api
 .. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: Black
+.. |GitHub Activity| image:: https://img.shields.io/github/commit-activity/y/hacf-fr/freebox-api.svg
+   :target: https://github.com/hacf-fr/freebox-api/commits/master
+   :alt: GitHub Activity
 
 
 Features
