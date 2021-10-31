@@ -1,9 +1,11 @@
+from freebox_api.access import Access
+
 class Ftp:
     """
-    Ftp
+    FTP
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     ftp_configuration_schema = {
