@@ -1,6 +1,13 @@
 # Home structure : adapter > node > endpoint
+from freebox_api.access import Access
+
+
 class Home:
-    def __init__(self, access):
+    """
+    Home
+    """
+
+    def __init__(self, access: Access):
         self._access = access
 
     home_endpoint_value_schema = {"value": None}
