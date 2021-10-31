@@ -1,5 +1,11 @@
+from freebox_api.access import Access
+
 class Lan:
-    def __init__(self, access):
+    """
+    LAN
+    """
+
+    def __init__(self, access: Access):
         self._access = access
 
     host_type = [
