@@ -2,7 +2,7 @@ from freebox_api.access import Access
 
 class Lan:
     """
-    LAN
+    Lan
     """
 
     def __init__(self, access: Access):
