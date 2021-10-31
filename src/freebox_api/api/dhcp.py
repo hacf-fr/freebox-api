@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class Dhcp:
     """
-    DHCP
+    Dhcp
     """
 
     def __init__(self, access: Access):
