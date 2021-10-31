@@ -20,6 +20,7 @@ from freebox_api.api.airmedia import Airmedia
 from freebox_api.api.call import Call
 from freebox_api.api.connection import Connection
 from freebox_api.api.dhcp import Dhcp
+from freebox_api.api.downloads import Downloads
 from freebox_api.api.freeplug import Freeplug
 from freebox_api.api.fs import Fs
 from freebox_api.api.ftp import Ftp
