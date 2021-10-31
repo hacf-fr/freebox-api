@@ -1,5 +1,6 @@
 from freebox_api.access import Access
 
+
 class Ftp:
     """
     Ftp
