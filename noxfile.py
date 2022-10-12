@@ -10,7 +10,7 @@ from nox.sessions import Session
 
 
 package = "freebox_api"
-python_versions = ["3.7", "3.8", "3.9"]
+python_versions = ["3.10", "3.9", "3.8", "3.7"]
 # mypy and typgaurd temporarily deactivated by default as type hint needs rework.
 nox.options.sessions = (
     "pre-commit",
@@ -73,7 +73,7 @@ def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
         hook.write_text("\n".join(lines))
 
 
-@nox.session(name="pre-commit", python="3.9")
+@nox.session(name="pre-commit", python="3.10")
 def precommit(session: Session) -> None:
     """Lint using pre-commit."""
     args = session.posargs or ["run", "--all-files", "--show-diff-on-failure"]
@@ -95,7 +95,7 @@ def precommit(session: Session) -> None:
         activate_virtualenv_in_precommit_hooks(session)
 
 
-@nox.session(python="3.9")
+@nox.session(python="3.10")
 def safety(session: Session) -> None:
     """Scan dependencies for insecure packages."""
     requirements = nox_poetry.export_requirements(session)

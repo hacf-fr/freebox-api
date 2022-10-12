@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
@@ -27,31 +28,31 @@ keywords=['freebox', 'async']
 Changelog = "https://github.com/hacf-fr/freebox-api/releases"
 
 [tool.poetry.dependencies]
-python = "^3.7.0"
+python = "^3.7.4"
 urllib3 = "^1.26.6"
 aiohttp = ">=3,<4"
 importlib-metadata = {version = "^3.3.0", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.1"
-coverage = {extras = ["toml"], version = "^5.3"}
-safety = "^1.10.0"
-mypy = "^0.812"
-typeguard = "^2.11.1"
-xdoctest = "^0.15.0"
-sphinx = "^4.1.2"
+pytest = "^6.2.5"
+coverage = {extras = ["toml"], version = "^6.0"}
+safety = "^2.3.1"
+mypy = "^0.910"
+typeguard = "^2.13.0"
+xdoctest = {extras = ["colors"], version = "^0.15.10"}
+sphinx = "^4.2.0"
 sphinx-autobuild = "^2021.3.14"
-pre-commit = "^2.11.1"
-flake8 = "^3.9.0"
-black = "^20.8b1"
-flake8-bandit = "^2.1.2"
-flake8-bugbear = "^21.3.2"
+pre-commit = "^2.15.0"
+flake8 = "^5.0.4"
+black = "^22.1.0"
+flake8-bandit = "^4.1.1"
+flake8-bugbear = "^22.9.23"
 flake8-docstrings = "^1.6.0"
-flake8-rst-docstrings = "^0.2.3"
-pep8-naming = "^0.11.1"
-darglint = "^1.7.0"
-reorder-python-imports = "^2.4.0"
-pre-commit-hooks = "^3.4.0"
+flake8-rst-docstrings = "^0.2.7"
+pep8-naming = "^0.12.1"
+darglint = "^1.8.1"
+reorder-python-imports = "^2.5.0"
+pre-commit-hooks = "^4.0.1"
 
 [tool.poetry.scripts]
 freebox_api = "freebox_api.__main__:main"
