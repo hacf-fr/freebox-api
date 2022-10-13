@@ -31,7 +31,7 @@ Changelog = "https://github.com/hacf-fr/freebox-api/releases"
 python = "^3.7.4"
 urllib3 = "^1.26.6"
 aiohttp = ">=3,<4"
-importlib-metadata = {version = "^3.3.0", python = "<3.8"}
+importlib-metadata = {version = ">=3.3,<5.0", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.3"
