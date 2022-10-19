@@ -53,7 +53,7 @@ class Call:
         """
         Mark calls log as read
         """
-        return await self._access.get("call/log/mark_all_as_read")
+        return await self._access.post("call/log/mark_all_as_read/")
 
     async def update_call_log(self, log_id, call_entry):
         """
