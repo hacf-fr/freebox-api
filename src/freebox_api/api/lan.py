@@ -29,7 +29,7 @@ class Lan:
         "other",
     ]
 
-    lan_host_data_schema = {"id": "", "primaryName": "", "hostType": host_type[0]}
+    lan_host_data_schema = {"id": "", "primary_name": "", "hostType": host_type[0]}
 
     wol_schema = {"mac": "", "password": ""}
 
