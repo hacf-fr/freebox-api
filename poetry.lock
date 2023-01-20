@@ -1115,14 +1115,14 @@ virtualenv = ">=20.0.8"
 
 [[package]]
 name = "pre-commit-hooks"
-version = "4.3.0"
+version = "4.4.0"
 description = "Some out-of-the-box hooks for pre-commit."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pre_commit_hooks-4.3.0-py2.py3-none-any.whl", hash = "sha256:9ccaf7c98794659d345080ee1ea0256a55ae059675045eebdbbc17c0be8c7e4b"},
-    {file = "pre_commit_hooks-4.3.0.tar.gz", hash = "sha256:fda598a4c834d030727e6a615722718b47510f4bed72df4c949f95ba9f5aaf88"},
+    {file = "pre_commit_hooks-4.4.0-py2.py3-none-any.whl", hash = "sha256:fc8837335476221ccccda3d176ed6ae29fe58753ce7e8b7863f5d0f987328fc6"},
+    {file = "pre_commit_hooks-4.4.0.tar.gz", hash = "sha256:7011eed8e1a25cde94693da009cba76392194cecc2f3f06c51a44ea6ad6c2af9"},
 ]
 
 [package.dependencies]
@@ -1909,4 +1909,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.4"
-content-hash = "62ccd0532f0770b62181a115c54ee557769fb5c015c8318d4092aba80c425213"
+content-hash = "b6de7772ca2428c69e203925f8f2c9cff9b498f9699daf53b542ecd632aaba15"

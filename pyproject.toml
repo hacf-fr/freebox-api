@@ -52,7 +52,7 @@ flake8-rst-docstrings = "^0.3.0"
 pep8-naming = "^0.13.2"
 darglint = "^1.8.1"
 reorder-python-imports = "^3.9.0"
-pre-commit-hooks = "^4.0.1"
+pre-commit-hooks = "^4.4.0"
 
 [tool.poetry.scripts]
 freebox_api = "freebox_api.__main__:main"
