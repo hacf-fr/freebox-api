@@ -39,7 +39,7 @@ coverage = {extras = ["toml"], version = "^6.0"}
 safety = "^2.3.5"
 mypy = "^0.991"
 typeguard = "^2.13.0"
-xdoctest = {extras = ["colors"], version = "^1.1.0"}
+xdoctest = {extras = ["colors"], version = "^1.1.1"}
 sphinx = "^4.2.0"
 sphinx-autobuild = "^2021.3.14"
 pre-commit = "^2.21.0"
