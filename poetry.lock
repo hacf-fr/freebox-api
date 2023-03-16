@@ -1844,19 +1844,23 @@ files = [
 
 [[package]]
 name = "typeguard"
-version = "2.13.3"
+version = "3.0.1"
 description = "Run-time type checker for Python"
 category = "dev"
 optional = false
-python-versions = ">=3.5.3"
+python-versions = ">=3.7.4"
 files = [
-    {file = "typeguard-2.13.3-py3-none-any.whl", hash = "sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"},
-    {file = "typeguard-2.13.3.tar.gz", hash = "sha256:00edaa8da3a133674796cf5ea87d9f4b4c367d77476e185e80251cc13dfbb8c4"},
+    {file = "typeguard-3.0.1-py3-none-any.whl", hash = "sha256:15628045c830abf68533247afd2cb04683b5ce6f4e30d5401a5ef6f5182280de"},
+    {file = "typeguard-3.0.1.tar.gz", hash = "sha256:beb0e67c5dc76eea4a6d00a6606d444d899589908362960769d0c4a1d32bca70"},
 ]
 
+[package.dependencies]
+importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
+typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.11\""}
+
 [package.extras]
-doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["mypy", "pytest", "typing-extensions"]
+doc = ["packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
+test = ["mypy (>=0.991)", "pytest (>=7)"]
 
 [[package]]
 name = "typing-extensions"
@@ -2047,4 +2051,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.4"
-content-hash = "98c9b382ffaf3d293b4a38306297e58794131591aed0316233ef0005c3ae4f05"
+content-hash = "d4b41bb41ba4833877131cb44d820f520c05732314dec96d893270fb8f278c96"
