@@ -8,12 +8,12 @@ readme = "README.rst"
 homepage = "https://github.com/hacf-fr/freebox-api"
 repository = "https://github.com/hacf-fr/freebox-api"
 documentation = "https://freebox-api.readthedocs.io"
+keywords=["freebox"]
 classifiers = [
-    "Programming Language :: Python",
-    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: GNU General Public License (GPL)",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -23,16 +23,15 @@ classifiers = [
     "Intended Audience :: System Administrators",
     "Topic :: Home Automation",
 ]
-keywords=['freebox', 'async']
 
 [tool.poetry.urls]
 Changelog = "https://github.com/hacf-fr/freebox-api/releases"
 
 [tool.poetry.dependencies]
-python = "^3.7.4"
-urllib3 = "^1.26.6"
+python = "^3.8.18"
+urllib3 = "^1.26.17"
 aiohttp = ">=3,<4"
-importlib-metadata = {version = ">=3.3,<5.0", python = "<3.8"}
+importlib-metadata = {version = ">=3.3,<5.0", python = "<3.12"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.2"
@@ -70,6 +69,13 @@ show_missing = true
 # fail_under = 100 reduce targetwaiting for tests creation
 fail_under = 40
 
+[tool.mypy]
+strict = true
+pretty = true
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
