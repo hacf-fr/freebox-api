@@ -1,3 +1,6 @@
+"""Notification API."""
+from typing import Dict
+
 from freebox_api.access import Access
 
 
@@ -25,11 +28,11 @@ class Notifications:
         """
         return await self._access.post("notif/targets/", notification_target_data)
 
-    async def delete_notification_target(self, target_id):
+    async def delete_notification_target(self, target_id: str) -> Dict[str, bool]:
         """
         Delete notification target
         """
-        await self._access.delete(f"notif/targets/{target_id}")
+        return await self._access.delete(f"notif/targets/{target_id}")  # type: ignore
 
     async def edit_notification_target(self, target_id, notification_target_data):
         """

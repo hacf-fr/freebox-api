@@ -1,3 +1,5 @@
+from typing import Dict
+
 from freebox_api.access import Access
 
 
@@ -5,11 +7,11 @@ class Upnpigd:
     def __init__(self, access: Access):
         self._access = access
 
-    async def delete_redir(self, id):
+    async def delete_redir(self, id: str) -> Dict[str, bool]:
         """
         Deletes the given upnpigd redirection
         """
-        return await self._access.delete(f"upnpigd/redir/{id}")
+        return await self._access.delete(f"upnpigd/redir/{id}")  # type: ignore
 
     async def get_configuration(self):
         """

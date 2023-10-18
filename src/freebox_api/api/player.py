@@ -51,7 +51,7 @@ class Player:
         """
         Get players
         """
-        return await self._access.get("player")
+        return await self._access.get("player")  # type: ignore
 
     async def _get_default_player_id(self) -> int:
         """
@@ -72,7 +72,7 @@ class Player:
         if player_id is None:
             player_id = await self._get_default_player_id()
 
-        return await self._access.get(
+        return await self._access.get(  # type: ignore
             f"player/{player_id}/api/{self._player_api_version}/status/"
         )
 
@@ -87,7 +87,7 @@ class Player:
         if player_id is None:
             player_id = await self._get_default_player_id()
 
-        return await self._access.get(
+        return await self._access.get(  # type: ignore
             f"player/{player_id}/api/{self._player_api_version}/control/volume"
         )
 

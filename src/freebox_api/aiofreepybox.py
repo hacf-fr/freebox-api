@@ -6,6 +6,7 @@ import socket
 import ssl
 from typing import Any
 from typing import Dict
+from typing import Tuple
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
@@ -153,7 +154,7 @@ class Freepybox:
         port: str,
         api_version: str,
         token_file: str,
-        app_desc,
+        app_desc: Dict[str, str],
         timeout: int = 10,
     ) -> Access:
         """
@@ -214,7 +215,7 @@ class Freepybox:
 
     async def _get_authorization_status(
         self, base_url: str, track_id: int, timeout: int
-    ):
+    ) -> str:
         """
         Get authorization status of the application token
 
@@ -226,13 +227,13 @@ class Freepybox:
             denied: the user denied the authorization request
         """
         url = urljoin(base_url, f"login/authorize/{track_id}")
-        r = await self._session.get(url, timeout=timeout)
-        resp = await r.json()
-        return resp["result"]["status"]
+        resp = await self._session.get(url, timeout=timeout)
+        resp_data = await resp.json()
+        return str(resp_data["result"]["status"])
 
     async def _get_app_token(
         self, base_url: str, app_desc: Dict[str, str], timeout: int = 10
-    ) -> (str, int):
+    ) -> Tuple[str, int]:
         """
         Get the application token from the freebox
         Returns (app_token, track_id)
@@ -240,40 +241,44 @@ class Freepybox:
         # Get authentification token
         url = urljoin(base_url, "login/authorize/")
         data = json.dumps(app_desc)
-        r = await self._session.post(url, data=data, timeout=timeout)
-        resp = await r.json()
+        resp = await self._session.post(url, data=data, timeout=timeout)
+        resp_data = await resp.json()
 
         # raise exception if resp.success != True
-        if not resp.get("success"):
+        if not resp_data.get("success"):
             raise AuthorizationError(
-                "Authorization failed (APIResponse: {0})".format(json.dumps(resp))
+                "Authorization failed (APIResponse: {0})".format(json.dumps(resp_data))
             )
 
-        app_token: str = resp["result"]["app_token"]
-        track_id: int = resp["result"]["track_id"]
+        app_token: str = resp_data["result"]["app_token"]
+        track_id: int = resp_data["result"]["track_id"]
 
         return (app_token, track_id)
 
     def _writefile_app_token(
-        self, app_token: str, track_id: int, app_desc: Dict[str, str], file
-    ):
+        self, app_token: str, track_id: int, app_desc: Dict[str, str], token_file: str
+    ) -> None:
         """
         Store the application token in g_app_auth_file file
         """
-        d = {**app_desc, "app_token": app_token, "track_id": track_id}
+        file_content: Dict[str, str | int] = {
+            **app_desc,
+            "app_token": app_token,
+            "track_id": track_id,
+        }
 
-        with open(file, "w") as f:
-            json.dump(d, f)
+        with open(token_file, "w") as f:
+            json.dump(file_content, f)
 
     def _readfile_app_token(
-        self, file: str
-    ) -> (str, int, Dict[str, Any]) | (None, None, None):
+        self, token_file: str
+    ) -> Tuple[str, int, Dict[str, Any]] | Tuple[None, None, None]:
         """
         Read the application token in the authentication file.
         Returns (app_token, track_id, app_desc)
         """
         try:
-            with open(file, "r") as f:
+            with open(token_file, "r") as f:
                 d = json.load(f)
                 app_token: str = d["app_token"]
                 track_id: int = d["track_id"]

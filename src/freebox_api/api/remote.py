@@ -168,10 +168,10 @@ class Remote:
             resp = await self._access.session.get(
                 f"http://{self.player_host}{_REMOTE_CONTROL}",
                 params=self.build_key(
-                    code=key_data.get("code"),
-                    key=key_data.get("key"),
-                    long_press=key_data.get("long"),
-                    repeat=key_data.get("repeat"),
+                    code=key_data.get("code"),  # type: ignore
+                    key=key_data.get("key"),  # type: ignore
+                    long_press=key_data.get("long"),  # type: ignore
+                    repeat=key_data.get("repeat"),  # type: ignore
                 ),
                 timeout=_DEFAULT_TIMEOUT,
                 skip_auto_headers=[

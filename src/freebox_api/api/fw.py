@@ -1,3 +1,6 @@
+"""Port Forwarding API."""
+from typing import Dict
+
 from freebox_api.access import Access
 
 
@@ -30,13 +33,15 @@ class Fw:
         """
         return await self._access.post("fw/redir/", port_forwarding_config)
 
-    async def delete_port_forwarding_configuration(self, config_id):
+    async def delete_port_forwarding_configuration(
+        self, config_id: int
+    ) -> Dict[str, bool]:
         """
         Delete port forwarding configuration
 
         config_id : `int`
         """
-        await self._access.delete(f"fw/redir/{config_id}")
+        return await self._access.delete(f"fw/redir/{config_id}")  # type: ignore
 
     async def get_port_forwarding_configuration(self, redir_id):
         """

@@ -1,4 +1,5 @@
 import logging
+from typing import Dict
 
 from freebox_api.access import Access
 
@@ -36,11 +37,11 @@ class Dhcp:
         """
         return await self._access.post("dhcp/static_lease/", static_lease)
 
-    async def delete_dhcp_static_lease(self, lease_id):
+    async def delete_dhcp_static_lease(self, lease_id: str) -> Dict[str, bool]:
         """
         Delete dhcp static lease
         """
-        await self._access.delete(f"dhcp/static_lease/{lease_id}")
+        return await self._access.delete(f"dhcp/static_lease/{lease_id}")  # type: ignore
 
     async def edit_dhcp_static_lease(self, lease_id, static_lease):
         """
@@ -83,25 +84,3 @@ class Dhcp:
         Get the list of DHCP static leases
         """
         return await self._access.get("dhcp/static_lease/")
-
-    # TODO: remove
-    async def get_dynamic_dhcp_lease(self):
-        """
-        Get the list of DHCP dynamic leases
-        """
-        logger.warning(
-            "Using deprecated call get_dynamic_dhcp_lease, please use "
-            "get_dhcp_dynamic_leases instead"
-        )
-        return await self.get_dhcp_dynamic_leases()
-
-    # TODO: remove
-    async def get_static_dhcp_lease(self):
-        """
-        Get the list of DHCP static leases
-        """
-        logger.warning(
-            "Using deprecated call get_static_dhcp_lease, please use "
-            "get_dhcp_static_leases instead"
-        )
-        return await self.get_dhcp_static_leases()

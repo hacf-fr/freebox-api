@@ -1,3 +1,4 @@
+"""AirMedia API."""
 from typing import Any
 from typing import Dict
 from typing import List
@@ -29,7 +30,7 @@ class Airmedia:
         """
         Get AirMedia receivers
         """
-        return await self._access.get("airmedia/receivers/")
+        return await self._access.get("airmedia/receivers/")  # type: ignore
 
     async def send_airmedia(
         self, receiver_name: str, airmedia_data: Dict[str, Any]
@@ -46,7 +47,7 @@ class Airmedia:
         """
         Get AirMedia configuration
         """
-        return await self._access.get("airmedia/config/")
+        return await self._access.get("airmedia/config/")  # type: ignore
 
     async def set_airmedia_configuration(
         self, airmedia_config: Dict[str, Any]

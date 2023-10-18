@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+from typing import Dict
 
 import freebox_api.exceptions
 from freebox_api.access import Access
@@ -83,11 +84,11 @@ class Fs:
         """
         return await self._access.post("fs/copy/", copy)
 
-    async def delete_file_task(self, task_id):
+    async def delete_file_task(self, task_id: int) -> Dict[str, bool]:
         """
         Delete file task
         """
-        return await self._access.delete(f"fs/tasks/{task_id}")
+        return await self._access.delete(f"fs/tasks/{task_id}")  # type: ignore
 
     async def extract_archive(self, extract):
         """

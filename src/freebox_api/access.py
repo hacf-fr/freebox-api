@@ -5,6 +5,8 @@ from typing import Any
 from typing import Dict
 from urllib.parse import urljoin
 
+from aiohttp import ClientSession
+
 from freebox_api.exceptions import AuthorizationError
 from freebox_api.exceptions import HttpRequestError
 from freebox_api.exceptions import InsufficientPermissionsError
@@ -13,7 +15,14 @@ logger = logging.getLogger(__name__)
 
 
 class Access:
-    def __init__(self, session, base_url, app_token, app_id, http_timeout):
+    def __init__(
+        self,
+        session: ClientSession,
+        base_url: str,
+        app_token: str,
+        app_id: str,
+        http_timeout: int,
+    ):
         self.session = session
         self.base_url = base_url
         self.app_token = app_token
@@ -27,16 +36,18 @@ class Access:
         Return challenge from freebox API
         """
         url = urljoin(base_url, "login")
-        r = await self.session.get(url, timeout=timeout)
-        resp = await r.json()
+        resp = await self.session.get(url, timeout=timeout)
+        resp_data = await resp.json()
 
         # raise exception if resp.success != True
-        if not resp.get("success"):
+        if not resp_data.get("success"):
             raise AuthorizationError(
-                "Getting challenge failed (APIResponse: {})".format(json.dumps(resp))
+                "Getting challenge failed (APIResponse: {})".format(
+                    json.dumps(resp_data)
+                )
             )
 
-        return resp["result"]["challenge"]
+        return resp_data["result"]["challenge"]
 
     async def _get_session_token(self, base_url, app_token, app_id, timeout=10):
         """
@@ -52,17 +63,19 @@ class Access:
 
         url = urljoin(base_url, "login/session/")
         data = json.dumps({"app_id": app_id, "password": password})
-        r = await self.session.post(url, data=data, timeout=timeout)
-        resp = await r.json()
+        resp = await self.session.post(url, data=data, timeout=timeout)
+        resp_data = await resp.json()
 
         # raise exception if resp.success != True
-        if not resp.get("success"):
+        if not resp_data.get("success"):
             raise AuthorizationError(
-                "Starting session failed (APIResponse: {})".format(json.dumps(resp))
+                "Starting session failed (APIResponse: {})".format(
+                    json.dumps(resp_data)
+                )
             )
 
-        session_token = resp["result"].get("session_token")
-        session_permissions = resp["result"].get("permissions")
+        session_token = resp_data["result"].get("session_token")
+        session_permissions = resp_data["result"].get("permissions")
 
         return (session_token, session_permissions)
 
@@ -93,54 +106,60 @@ class Access:
             "headers": self._get_headers(),
             "timeout": self.timeout,
         }
-        r = await verb(url, **request_params)
+        resp = await verb(url, **request_params)
 
         # Return response if content is not json
-        if r.content_type != "application/json":
-            return r
+        if resp.content_type != "application/json":
+            return resp
 
-        resp = await r.json()
-        if resp.get("error_code") in ["auth_required", "invalid_session"]:
+        resp_data = await resp.json()
+        if resp_data.get("error_code") in ["auth_required", "invalid_session"]:
             logger.debug("Invalid session")
             await self._refresh_session_token()
             request_params["headers"] = self._get_headers()
-            r = await verb(url, **request_params)
-            resp = await r.json()
+            resp = await verb(url, **request_params)
+            resp_data = await resp.json()
 
-        if not resp["success"]:
-            err_msg = "Request failed (APIResponse: {})".format(json.dumps(resp))
-            if resp.get("error_code") == "insufficient_rights":
+        if not resp_data["success"]:
+            err_msg = "Request failed (APIResponse: {})".format(json.dumps(resp_data))
+            if resp_data.get("error_code") == "insufficient_rights":
                 raise InsufficientPermissionsError(err_msg)
             raise HttpRequestError(err_msg)
 
-        return resp["result"] if "result" in resp else None
+        return resp_data.get("result")
 
-    async def get(self, end_url: str) -> Dict[str, Any]:
+    async def get(self, end_url: str) -> Any:  # Dict[str, Any] | List[Dict[str, Any]]:
         """
         Send get request and return results
         """
         return await self._perform_request(self.session.get, end_url)
 
-    async def post(self, end_url: str, payload=None) -> Dict[str, Any]:
+    async def post(
+        self, end_url: str, payload: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
         """
         Send post request and return results
         """
         data = json.dumps(payload) if payload else None
-        return await self._perform_request(self.session.post, end_url, data=data)
+        return await self._perform_request(self.session.post, end_url, data=data)  # type: ignore
 
-    async def put(self, end_url: str, payload=None) -> Dict[str, Any]:
+    async def put(
+        self, end_url: str, payload: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
         """
         Send post request and return results
         """
         data = json.dumps(payload) if payload else None
-        return await self._perform_request(self.session.put, end_url, data=data)
+        return await self._perform_request(self.session.put, end_url, data=data)  # type: ignore
 
-    async def delete(self, end_url: str, payload=None):
+    async def delete(
+        self, end_url: str, payload: Dict[str, Any] | None = None
+    ) -> Dict[str, bool] | None:
         """
         Send delete request and return results
         """
         data = json.dumps(payload) if payload else None
-        return await self._perform_request(self.session.delete, end_url, data=data)
+        return await self._perform_request(self.session.delete, end_url, data=data)  # type: ignore
 
     async def get_permissions(self) -> Dict[str, bool] | None:
         """

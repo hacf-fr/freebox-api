@@ -43,11 +43,11 @@ class Connection:
         """
         return await self._access.get("connection/xdsl/")
 
-    async def remove_connection_logs(self):
+    async def remove_connection_logs(self) -> None:
         """
         Remove connection logs
         """
-        return await self._access.delete("connection/logs/")
+        return await self._access.delete("connection/logs/")  # type: ignore
 
     async def set_config(self, connection_configuration):
         """

@@ -1,3 +1,4 @@
+"""Parental filters API."""
 from freebox_api.access import Access
 
 

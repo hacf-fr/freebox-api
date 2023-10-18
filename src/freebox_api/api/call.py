@@ -1,8 +1,7 @@
-import logging
+"""Call API."""
+from typing import Dict
 
 from freebox_api.access import Access
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class Call:
@@ -15,19 +14,19 @@ class Call:
 
     mark_call_log_as_read_data_schema = {"new": False}
 
-    async def delete_call_log(self, log_id):
+    async def delete_call_log(self, log_id: int) -> Dict[str, bool]:
         """
         Delete call log
 
         log_id : `int`
         """
-        await self._access.delete(f"call/log/{log_id}")
+        return await self._access.delete(f"call/log/{log_id}")  # type: ignore
 
-    async def delete_calls_log(self):
+    async def delete_calls_log(self) -> None:
         """
         Delete calls log
         """
-        await self._access.delete("call/log/delete_all/")
+        return await self._access.delete("call/log/delete_all/")  # type: ignore
 
     async def get_call_log(self, log_id):
         """
@@ -40,16 +39,6 @@ class Call:
         Get calls logs
         """
         return await self._access.get("call/log/")
-
-    # TODO: remove
-    async def get_call_list(self):
-        """
-        Returns the collection of all call entries
-        """
-        _LOGGER.warning(
-            "Using deprecated get_call_list, please use get_calls_log instead"
-        )
-        return await self.get_calls_log()
 
     async def mark_calls_log_as_read(self):
         """

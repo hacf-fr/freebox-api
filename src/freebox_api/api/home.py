@@ -1,7 +1,10 @@
-# Home structure : adapter > node > endpoint
+"""Home API."""
+from typing import Dict
+
 from freebox_api.access import Access
 
 
+# Home structure : adapter > node > endpoint
 class Home:
     """
     Home
@@ -145,11 +148,11 @@ class Home:
         """
         return await self._access.get("home/links")
 
-    async def del_home_node(self, node_id):
+    async def del_home_node(self, node_id: int) -> Dict[str, bool]:
         """
         Delete home node id
         """
-        return await self._access.delete(f"home/nodes/{node_id}")
+        return await self._access.delete(f"home/nodes/{node_id}")  # type: ignore
 
     async def get_home_node(self, node_id):
         """

@@ -1,3 +1,5 @@
+from typing import Dict
+
 from freebox_api.access import Access
 
 
@@ -44,23 +46,23 @@ class Wifi:
         """
         return await self._access.post("wifi/mac_filter/", wifi_mac_filter)
 
-    async def delete_wifi_custom_key(self, key_id):
+    async def delete_wifi_custom_key(self, key_id: int) -> Dict[str, bool]:
         """
         Delete wifi custom key
         """
-        return await self._access.delete(f"wifi/custom_key/{key_id}")
+        return await self._access.delete(f"wifi/custom_key/{key_id}")  # type: ignore
 
-    async def delete_wifi_mac_filter(self, filter_id):
+    async def delete_wifi_mac_filter(self, filter_id: str) -> Dict[str, bool]:
         """
         Delete wifi mac filter
         """
-        return await self._access.delete(f"wifi/mac_filter/{filter_id}")
+        return await self._access.delete(f"wifi/mac_filter/{filter_id}")  # type: ignore
 
-    async def delete_wps_sessions(self):
+    async def delete_wps_sessions(self) -> Dict[str, bool]:
         """
         Delete wps sessions
         """
-        return await self._access.delete("wifi/wps/sessions")
+        return await self._access.delete("wifi/wps/sessions")  # type: ignore
 
     async def edit_wifi_access_point(self, ap_id, wifi_ap_configuration_data):
         """
