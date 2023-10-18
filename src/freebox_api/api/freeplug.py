@@ -1,5 +1,8 @@
+from freebox_api.access import Access
+
+
 class Freeplug:
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     async def get_freeplug_networks(self):

@@ -1,8 +1,10 @@
 import time
 
+from freebox_api.access import Access
+
 
 class Rrd:
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     db = ["net", "temp", "dsl", "switch"]

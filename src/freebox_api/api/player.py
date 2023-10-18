@@ -52,7 +52,7 @@ class Player:
     }
     media_control_data_schema = {"args": media_control_stream_args, "cmd": "pause"}
 
-    async def get_players(self) -> Optional[List[Dict[str, Any]]]:
+    async def get_players(self) -> List[Dict[str, Any]]:
         """
         Get players
         """
@@ -64,7 +64,7 @@ class Player:
         """
 
         players = await self.get_players()
-        return players[0]["id"]
+        return int(players[0]["id"])
 
     async def get_player_status(
         self, player_id: Optional[int] = None

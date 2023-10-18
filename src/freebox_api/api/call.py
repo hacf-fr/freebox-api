@@ -1,5 +1,7 @@
 import logging
 
+from freebox_api.access import Access
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -8,7 +10,7 @@ class Call:
     Call
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     mark_call_log_as_read_data_schema = {"new": False}

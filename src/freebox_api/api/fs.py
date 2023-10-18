@@ -3,7 +3,7 @@ import logging
 import os
 
 import freebox_api.exceptions
-
+from freebox_api.access import Access
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class Fs:
     Fs
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
         self._path = "/"
 
@@ -150,7 +150,7 @@ class Fs:
         """
         List directory
         """
-        return [i["name"] for i in await self.list_file(self._path)]
+        return [i["name"] for i in await self.list_files(self._path)]
 
     async def mkdir(self, create_directory=create_directory_schema):
         """

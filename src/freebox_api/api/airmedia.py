@@ -26,7 +26,7 @@ class Airmedia:
         "position": 0,
     }
 
-    async def get_airmedia_receivers(self) -> Optional[List[Dict[str, Any]]]:
+    async def get_airmedia_receivers(self) -> List[Dict[str, Any]]:
         """
         Get AirMedia receivers
         """
@@ -43,7 +43,7 @@ class Airmedia:
         """
         await self._access.post(f"airmedia/receivers/{receiver_name}/", airmedia_data)
 
-    async def get_airmedia_configuration(self) -> Optional[Dict[str, bool]]:
+    async def get_airmedia_configuration(self) -> Dict[str, bool]:
         """
         Get AirMedia configuration
         """
@@ -51,7 +51,7 @@ class Airmedia:
 
     async def set_airmedia_configuration(
         self, airmedia_config: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """
         Set AirMedia configuration
 
@@ -61,9 +61,9 @@ class Airmedia:
 
     async def update_airmedia_configuration(
         self,
-        enabled: Optional[bool] = None,
-        password: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+        enabled: bool | None = None,
+        password: str | None = None,
+    ) -> Dict[str, Any] | None:
         """
         Update AirMedia configuration
 
@@ -79,6 +79,7 @@ class Airmedia:
         config: Dict[str, Any] = {}
         if enabled is not None:
             config.update({"enabled": enabled})
-        if password is not None:
+        if password:
             config.update({"password": password})
+
         return await self.set_airmedia_configuration(config)

@@ -1,5 +1,8 @@
+from freebox_api.access import Access
+
+
 class System:
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     async def get_config(self):

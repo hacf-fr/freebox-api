@@ -1,5 +1,8 @@
+from freebox_api.access import Access
+
+
 class Wifi:
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     # accessType can be full or net_only

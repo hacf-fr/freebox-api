@@ -6,13 +6,13 @@ Freebox API documentation : http://dev.freebox.fr/sdk/os/
 # importlib.metadata available from Python 3.8 use importlib_metadata for
 # earlier versions.
 try:
-    from importlib.metadata import version, PackageNotFoundError  # type: ignore
+    from importlib.metadata import version, PackageNotFoundError
 except ImportError:  # pragma: no cover
     from importlib_metadata import version, PackageNotFoundError  # type: ignore
 
 
 try:
-    __version__ = version(__name__)
+    __version__: str = version(__name__)
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 

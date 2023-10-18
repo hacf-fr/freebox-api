@@ -1,5 +1,8 @@
+from freebox_api.access import Access
+
+
 class Fw:
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     ip_proto = ["tcp", "udp"]

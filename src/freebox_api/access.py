@@ -1,6 +1,8 @@
 import hmac
 import json
 import logging
+from typing import Any
+from typing import Dict
 from urllib.parse import urljoin
 
 from freebox_api.exceptions import AuthorizationError
@@ -17,8 +19,8 @@ class Access:
         self.app_token = app_token
         self.app_id = app_id
         self.timeout = http_timeout
-        self.session_token = None
-        self.session_permissions = None
+        self.session_token: str | None = None
+        self.session_permissions: Dict[str, bool] | None = None
 
     async def _get_challenge(self, base_url, timeout=10):
         """
@@ -59,8 +61,8 @@ class Access:
                 "Starting session failed (APIResponse: {})".format(json.dumps(resp))
             )
 
-        session_token = resp.get("result").get("session_token")
-        session_permissions = resp.get("result").get("permissions")
+        session_token = resp["result"].get("session_token")
+        session_permissions = resp["result"].get("permissions")
 
         return (session_token, session_permissions)
 
@@ -75,7 +77,7 @@ class Access:
         self.session_token = session_token
         self.session_permissions = session_permissions
 
-    def _get_headers(self):
+    def _get_headers(self) -> Dict[str, str | None]:
         return {"X-Fbx-App-Auth": self.session_token}
 
     async def _perform_request(self, verb, end_url, **kwargs):
@@ -96,53 +98,51 @@ class Access:
         # Return response if content is not json
         if r.content_type != "application/json":
             return r
-        else:
+
+        resp = await r.json()
+        if resp.get("error_code") in ["auth_required", "invalid_session"]:
+            logger.debug("Invalid session")
+            await self._refresh_session_token()
+            request_params["headers"] = self._get_headers()
+            r = await verb(url, **request_params)
             resp = await r.json()
 
-            if resp.get("error_code") in ["auth_required", "invalid_session"]:
-                logger.debug("Invalid session")
-                await self._refresh_session_token()
-                request_params["headers"] = self._get_headers()
-                r = await verb(url, **request_params)
-                resp = await r.json()
+        if not resp["success"]:
+            err_msg = "Request failed (APIResponse: {})".format(json.dumps(resp))
+            if resp.get("error_code") == "insufficient_rights":
+                raise InsufficientPermissionsError(err_msg)
+            raise HttpRequestError(err_msg)
 
-            if not resp["success"]:
-                err_msg = "Request failed (APIResponse: {})".format(json.dumps(resp))
-                if resp.get("error_code") == "insufficient_rights":
-                    raise InsufficientPermissionsError(err_msg)
-                else:
-                    raise HttpRequestError(err_msg)
+        return resp["result"] if "result" in resp else None
 
-            return resp["result"] if "result" in resp else None
-
-    async def get(self, end_url):
+    async def get(self, end_url: str) -> Dict[str, Any]:
         """
         Send get request and return results
         """
         return await self._perform_request(self.session.get, end_url)
 
-    async def post(self, end_url, payload=None):
+    async def post(self, end_url: str, payload=None) -> Dict[str, Any]:
         """
         Send post request and return results
         """
-        data = json.dumps(payload) if payload is not None else None
+        data = json.dumps(payload) if payload else None
         return await self._perform_request(self.session.post, end_url, data=data)
 
-    async def put(self, end_url, payload=None):
+    async def put(self, end_url: str, payload=None) -> Dict[str, Any]:
         """
         Send post request and return results
         """
-        data = json.dumps(payload) if payload is not None else None
+        data = json.dumps(payload) if payload else None
         return await self._perform_request(self.session.put, end_url, data=data)
 
-    async def delete(self, end_url, payload=None):
+    async def delete(self, end_url: str, payload=None):
         """
         Send delete request and return results
         """
-        data = json.dumps(payload) if payload is not None else None
+        data = json.dumps(payload) if payload else None
         return await self._perform_request(self.session.delete, end_url, data=data)
 
-    async def get_permissions(self):
+    async def get_permissions(self) -> Dict[str, bool] | None:
         """
         Returns the permissions for this session/app.
         """

@@ -1,8 +1,10 @@
 import time
 
+from freebox_api.access import Access
+
 
 class Tv:
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     async def archive_tv_record(self, record_id):

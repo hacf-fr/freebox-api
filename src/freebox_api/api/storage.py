@@ -1,9 +1,12 @@
+from freebox_api.access import Access
+
+
 class Storage:
     """
     Storage
     """
 
-    def __init__(self, access):
+    def __init__(self, access: Access):
         self._access = access
 
     eject_schema = {"state": "disabled"}
