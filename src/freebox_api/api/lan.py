@@ -1,9 +1,13 @@
+"""
+LAN API.
+https://dev.freebox.fr/sdk/os/lan/
+"""
 from freebox_api.access import Access
 
 
 class Lan:
     """
-    Lan
+    LAN
     """
 
     def __init__(self, access: Access):
@@ -32,12 +36,6 @@ class Lan:
     lan_host_data_schema = {"id": "", "primary_name": "", "hostType": host_type[0]}
 
     wol_schema = {"mac": "", "password": ""}
-
-    async def delete_lan_host(self, host_id, interface="pub"):
-        """
-        Delete lan host
-        """
-        await self._access.delete(f"lan/browser/{interface}/{host_id}/")
 
     async def get_config(self):
         """
@@ -68,6 +66,12 @@ class Lan:
         Get specific host informations on a given interface
         """
         return await self._access.get(f"lan/browser/{interface}/{host_id}")
+
+    async def delete_lan_host(self, host_id, interface="pub"):
+        """
+        Delete lan host
+        """
+        await self._access.delete(f"lan/browser/{interface}/{host_id}/")
 
     async def set_host_information(
         self, host_id, lan_host_data=lan_host_data_schema, interface="pub"

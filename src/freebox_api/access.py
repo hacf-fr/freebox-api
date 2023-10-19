@@ -3,6 +3,7 @@ import json
 import logging
 from typing import Any
 from typing import Dict
+from typing import Optional
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
@@ -28,8 +29,8 @@ class Access:
         self.app_token = app_token
         self.app_id = app_id
         self.timeout = http_timeout
-        self.session_token: str | None = None
-        self.session_permissions: Dict[str, bool] | None = None
+        self.session_token: Optional[str] = None
+        self.session_permissions: Optional[Dict[str, bool]] = None
 
     async def _get_challenge(self, base_url, timeout=10):
         """
@@ -90,7 +91,7 @@ class Access:
         self.session_token = session_token
         self.session_permissions = session_permissions
 
-    def _get_headers(self) -> Dict[str, str | None]:
+    def _get_headers(self) -> Dict[str, Optional[str]]:
         return {"X-Fbx-App-Auth": self.session_token}
 
     async def _perform_request(self, verb, end_url, **kwargs):
@@ -128,14 +129,16 @@ class Access:
 
         return resp_data.get("result")
 
-    async def get(self, end_url: str) -> Any:  # Dict[str, Any] | List[Dict[str, Any]]:
+    async def get(
+        self, end_url: str
+    ) -> Any:  # Union[Dict[str, Any], List[Dict[str, Any]]]:
         """
         Send get request and return results
         """
         return await self._perform_request(self.session.get, end_url)
 
     async def post(
-        self, end_url: str, payload: Dict[str, Any] | None = None
+        self, end_url: str, payload: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Send post request and return results
@@ -144,7 +147,7 @@ class Access:
         return await self._perform_request(self.session.post, end_url, data=data)  # type: ignore
 
     async def put(
-        self, end_url: str, payload: Dict[str, Any] | None = None
+        self, end_url: str, payload: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Send post request and return results
@@ -153,15 +156,15 @@ class Access:
         return await self._perform_request(self.session.put, end_url, data=data)  # type: ignore
 
     async def delete(
-        self, end_url: str, payload: Dict[str, Any] | None = None
-    ) -> Dict[str, bool] | None:
+        self, end_url: str, payload: Optional[Dict[str, Any]] = None
+    ) -> Optional[Dict[str, bool]]:
         """
         Send delete request and return results
         """
         data = json.dumps(payload) if payload else None
         return await self._perform_request(self.session.delete, end_url, data=data)  # type: ignore
 
-    async def get_permissions(self) -> Dict[str, bool] | None:
+    async def get_permissions(self) -> Optional[Dict[str, bool]]:
         """
         Returns the permissions for this session/app.
         """

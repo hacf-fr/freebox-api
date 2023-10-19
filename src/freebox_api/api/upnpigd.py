@@ -1,9 +1,17 @@
+"""
+UPnP IGD API.
+https://dev.freebox.fr/sdk/os/igd/
+"""
 from typing import Dict
 
 from freebox_api.access import Access
 
 
 class Upnpigd:
+    """
+    UPnP IGD
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

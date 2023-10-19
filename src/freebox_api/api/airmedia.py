@@ -1,7 +1,11 @@
-"""AirMedia API."""
+"""
+AirMedia API.
+https://dev.freebox.fr/sdk/os/airmedia/
+"""
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Optional
 
 from freebox_api.access import Access
 
@@ -61,9 +65,9 @@ class Airmedia:
 
     async def update_airmedia_configuration(
         self,
-        enabled: bool | None = None,
-        password: str | None = None,
-    ) -> Dict[str, Any] | None:
+        enabled: Optional[bool] = None,
+        password: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
         """
         Update AirMedia configuration
 

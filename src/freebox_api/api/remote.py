@@ -1,8 +1,13 @@
+"""
+Remote API.
+No public documentation available yet.
+"""
 import asyncio
 from asyncio import TimeoutError as Timeout
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Optional
 
 from aiohttp import ServerDisconnectedError
 
@@ -26,7 +31,7 @@ class Remote:
     Remote
     """
 
-    def __init__(self, access: Access, access_m: str | None = None) -> None:
+    def __init__(self, access: Access, access_m: Optional[str] = None) -> None:
         self._access = access
         self.set_player_host(access_m)
 
@@ -127,7 +132,7 @@ class Remote:
     async def send_macro(
         self,
         keys_data: List[Dict[str, Any]],
-        code: str | None = None,
+        code: Optional[str] = None,
         delay: float = _DEFAULT_DELAY,
     ) -> bool:
         """Send macro.
@@ -148,7 +153,9 @@ class Remote:
 
         return True
 
-    async def set_key(self, key_data: Dict[str, Any], code: str | None = None) -> bool:
+    async def set_key(
+        self, key_data: Dict[str, Any], code: Optional[str] = None
+    ) -> bool:
         """
         Set Key
 
@@ -192,9 +199,9 @@ class Remote:
 
     def set_player_host(
         self,
-        access_m: str | None = None,
-        host: str | None = None,
-        player_id: int | None = None,
+        access_m: Optional[str] = None,
+        host: Optional[str] = None,
+        player_id: Optional[int] = None,
     ) -> None:
         """
         Set player host

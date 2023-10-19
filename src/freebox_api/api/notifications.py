@@ -1,10 +1,17 @@
-"""Notification API."""
+"""
+Notification API.
+No public documentation available yet.
+"""
 from typing import Dict
 
 from freebox_api.access import Access
 
 
 class Notifications:
+    """
+    Notification
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

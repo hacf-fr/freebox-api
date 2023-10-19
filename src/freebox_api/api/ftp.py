@@ -1,9 +1,13 @@
+"""
+FTP API.
+https://dev.freebox.fr/sdk/os/ftp/
+"""
 from freebox_api.access import Access
 
 
 class Ftp:
     """
-    Ftp
+    FTP
     """
 
     def __init__(self, access: Access):

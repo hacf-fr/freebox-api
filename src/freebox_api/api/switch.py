@@ -1,7 +1,15 @@
+"""
+Switch API.
+https://dev.freebox.fr/sdk/os/switch/
+"""
 from freebox_api.access import Access
 
 
 class Switch:
+    """
+    Switch
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

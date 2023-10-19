@@ -1,7 +1,15 @@
+"""
+Freeplug API.
+https://dev.freebox.fr/sdk/os/freeplug/
+"""
 from freebox_api.access import Access
 
 
 class Freeplug:
+    """
+    Freeplug
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

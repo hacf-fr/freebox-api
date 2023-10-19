@@ -1,3 +1,7 @@
+"""
+DHCP API.
+https://dev.freebox.fr/sdk/os/dhcp/
+"""
 import logging
 from typing import Dict
 
@@ -8,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class Dhcp:
     """
-    Dhcp
+    DHCP
     """
 
     def __init__(self, access: Access):

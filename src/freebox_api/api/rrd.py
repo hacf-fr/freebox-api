@@ -1,9 +1,17 @@
+"""
+RRD API [UNSTABLE].
+https://dev.freebox.fr/sdk/os/rrd/
+"""
 import time
 
 from freebox_api.access import Access
 
 
 class Rrd:
+    """
+    RRD
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

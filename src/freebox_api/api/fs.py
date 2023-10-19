@@ -1,3 +1,7 @@
+"""
+File System API.
+https://dev.freebox.fr/sdk/os/fs/
+"""
 import base64
 import logging
 import os
@@ -11,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class Fs:
     """
-    Fs
+    File System
     """
 
     def __init__(self, access: Access):

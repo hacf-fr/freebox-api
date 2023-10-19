@@ -1,4 +1,8 @@
-"""PVR API (unstable)."""
+"""
+PVR API [UNSTABLE].
+PVR = Program Video Recording ?
+https://dev.freebox.fr/sdk/os/pvr/
+"""
 import time
 from typing import Dict
 
@@ -6,6 +10,10 @@ from freebox_api.access import Access
 
 
 class Tv:
+    """
+    TV
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

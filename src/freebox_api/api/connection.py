@@ -1,7 +1,15 @@
+"""
+Connection API.
+https://dev.freebox.fr/sdk/os/connection/
+"""
 from freebox_api.access import Access
 
 
 class Connection:
+    """
+    Connection
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

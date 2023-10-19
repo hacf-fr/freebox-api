@@ -1,7 +1,15 @@
+"""
+Phone API.
+No public documentation available yet.
+"""
 from freebox_api.access import Access
 
 
 class Phone:
+    """
+    Phone
+    """
+
     def __init__(self, access: Access):
         self._access = access
 

@@ -6,7 +6,9 @@ import socket
 import ssl
 from typing import Any
 from typing import Dict
+from typing import Optional
 from typing import Tuple
+from typing import Union
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
@@ -130,7 +132,7 @@ class Freepybox:
         await self._access.post("login/logout")
         await self._session.close()
 
-    async def get_permissions(self) -> Dict[str, bool] | None:
+    async def get_permissions(self) -> Optional[Dict[str, bool]]:
         """
         Returns the permissions for this app.
 
@@ -177,7 +179,7 @@ class Freepybox:
 
             # Check the authorization status
             out_msg_flag = False
-            status: str | None = None
+            status: Optional[str] = None
             while status != "granted":
                 status = await self._get_authorization_status(
                     base_url, track_id, timeout
@@ -261,7 +263,7 @@ class Freepybox:
         """
         Store the application token in g_app_auth_file file
         """
-        file_content: Dict[str, str | int] = {
+        file_content: Dict[str, Union[str, int]] = {
             **app_desc,
             "app_token": app_token,
             "track_id": track_id,
@@ -272,7 +274,7 @@ class Freepybox:
 
     def _readfile_app_token(
         self, token_file: str
-    ) -> Tuple[str, int, Dict[str, Any]] | Tuple[None, None, None]:
+    ) -> Union[Tuple[str, int, Dict[str, Any]], Tuple[None, None, None]]:
         """
         Read the application token in the authentication file.
         Returns (app_token, track_id, app_desc)

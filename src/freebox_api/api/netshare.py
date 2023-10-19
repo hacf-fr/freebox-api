@@ -1,9 +1,13 @@
+"""
+Network Share API.
+https://dev.freebox.fr/sdk/os/network_share/
+"""
 from freebox_api.access import Access
 
 
 class Netshare:
     """
-    Netshare
+    Network Share
     """
 
     def __init__(self, access: Access):
