@@ -5,6 +5,7 @@ https://dev.freebox.fr/sdk/os/download/
 import base64
 from typing import Any
 from typing import Dict
+from typing import Optional
 
 from freebox_api.access import Access
 
@@ -55,7 +56,7 @@ class Download:
         """
         Get downloads
         """
-        return await self._access.get("downloads/")
+        return await self._access.get("downloads/")  # type: ignore
 
     async def get_download_task(self, download_id: int) -> Dict[str, Any]:
         """
@@ -63,7 +64,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}")
+        return await self._access.get(f"downloads/{download_id}")  # type: ignore
 
     async def delete_download_task(self, download_id: int) -> None:
         """
@@ -98,7 +99,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/log/")
+        return await self._access.get(f"downloads/{download_id}/log/")  # type: ignore
 
     async def add_download_task_from_url(self, download_url: Dict[str, Any]) ->  Dict[str, Any]:
         """
@@ -106,7 +107,7 @@ class Download:
 
         download_url : `str`
         """
-        await self._access.post("downloads/add/", {download_url: download_url})
+        return await self._access.post("downloads/add/", download_url)
 
     async def add_download_task_from_file(self, download_file: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -114,7 +115,7 @@ class Download:
 
         download_file : `dict`
         """
-        await self._access.post("downloads/add/", download_file)
+        return await self._access.post("downloads/add/", download_file)
 
     # Download Stats
 
@@ -122,7 +123,7 @@ class Download:
         """
         Get download stats
         """
-        return await self._access.get("downloads/stats/")
+        return await self._access.get("downloads/stats/")  # type: ignore
 
     # Download Files
 
@@ -132,7 +133,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/files/")
+        return await self._access.get(f"downloads/{download_id}/files/")  # type: ignore
 
     async def update_download_file(
         self, download_id: int, file_id: int, download_file_data: Dict[str, Any]
@@ -156,7 +157,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/trackers/")
+        return await self._access.get(f"downloads/{download_id}/trackers/")  # type: ignore
 
     async def create_download_tracker(
         self, download_id: int, new_download_tracker_data: Dict[str, Any]
@@ -207,7 +208,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/peers/")
+        return await self._access.get(f"downloads/{download_id}/peers/")  # type: ignore
 
     # Download Pieces
 
@@ -217,7 +218,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/pieces/")
+        return await self._access.get(f"downloads/{download_id}/pieces/")# type: ignore
 
     # Download Blacklist [UNSTABLE]
 
@@ -229,7 +230,7 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/blacklist/")
+        return await self._access.get(f"downloads/{download_id}/blacklist/")# type: ignore
 
     async def empty_download_blacklist(self, download_id: int) -> None:
         """
@@ -255,7 +256,7 @@ class Download:
 
         download_blacklist_data : `dict`
         """
-        await self._access.post("downloads/blacklist/", download_blacklist_data)
+        return await self._access.post("downloads/blacklist/", download_blacklist_data)
 
 
     # Download Feeds
@@ -265,7 +266,7 @@ class Download:
         """
         Get download feeds
         """
-        return await self._access.get("downloads/feeds/")
+        return await self._access.get("downloads/feeds/")  # type: ignore
 
     async def get_download_feed(self, feed_id: int) -> Dict[str, Any]:
         """
@@ -273,7 +274,7 @@ class Download:
 
         feed_id : `int`
         """
-        return await self._access.get(f"downloads/feeds/{feed_id}/")
+        return await self._access.get(f"downloads/feeds/{feed_id}/")  # type: ignore
 
     async def create_download_feed(
         self, rss_url: str
@@ -326,10 +327,10 @@ class Download:
 
         feed_id : `int`
         """
-        return await self._access.get(f"downloads/feeds/{feed_id}/items/")
+        return await self._access.get(f"downloads/feeds/{feed_id}/items/")  # type: ignore
 
     async def mark_download_item_as_read(
-        self, feed_id: int, item_id: int, mark_item_as_read: Dict[str, Any] = None
+        self, feed_id: int, item_id: int, mark_item_as_read: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         Mark download feed item as read
@@ -369,11 +370,11 @@ class Download:
         """
         Get downloads configuration
         """
-        return await self._access.get("downloads/config/")
+        return await self._access.get("downloads/config/")  # type: ignore
 
     async def set_downloads_configuration(
         self, downloads_configuration: Dict[str, Any]
-    ):
+    ) -> Dict[str, Any]:
         """
         Set downloads configuration
 
@@ -391,4 +392,4 @@ class Download:
         file_path : `str`
         """
         path_b64 = base64.b64encode(file_path.encode("utf-8")).decode("utf-8")
-        return await self._access.get(f"dl/{path_b64}")
+        return await self._access.get(f"dl/{path_b64}")  # type: ignore
