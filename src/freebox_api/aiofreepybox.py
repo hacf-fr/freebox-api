@@ -20,7 +20,7 @@ from freebox_api.api.airmedia import Airmedia
 from freebox_api.api.call import Call
 from freebox_api.api.connection import Connection
 from freebox_api.api.dhcp import Dhcp
-from freebox_api.api.downloads import Downloads
+from freebox_api.api.download import Download
 from freebox_api.api.freeplug import Freeplug
 from freebox_api.api.fs import Fs
 from freebox_api.api.ftp import Ftp
@@ -114,6 +114,7 @@ class Freepybox:
         self.freeplug = Freeplug(self._access)
         self.call = Call(self._access)
         self.connection = Connection(self._access)
+        self.download = Download(self._access)
         self.home = Home(self._access)
         self.parental = Parental(self._access)
         self.netshare = Netshare(self._access)
