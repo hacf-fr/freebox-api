@@ -101,7 +101,9 @@ class Download:
         """
         return await self._access.get(f"downloads/{download_id}/log/")  # type: ignore
 
-    async def add_download_task_from_url(self, download_url: Dict[str, Any]) ->  Dict[str, Any]:
+    async def add_download_task_from_url(
+        self, download_url: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Add download from url
 
@@ -109,7 +111,9 @@ class Download:
         """
         return await self._access.post("downloads/add/", download_url)
 
-    async def add_download_task_from_file(self, download_file: Dict[str, Any]) -> Dict[str, Any]:
+    async def add_download_task_from_file(
+        self, download_file: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Add download from file
 
@@ -218,19 +222,17 @@ class Download:
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/pieces/")# type: ignore
+        return await self._access.get(f"downloads/{download_id}/pieces/")  # type: ignore
 
     # Download Blacklist [UNSTABLE]
 
-    async def get_download_blacklist(
-        self, download_id: int
-    ) -> Dict[str, Any]:
+    async def get_download_blacklist(self, download_id: int) -> Dict[str, Any]:
         """
         Get download blacklist
 
         download_id : `int`
         """
-        return await self._access.get(f"downloads/{download_id}/blacklist/")# type: ignore
+        return await self._access.get(f"downloads/{download_id}/blacklist/")  # type: ignore
 
     async def empty_download_blacklist(self, download_id: int) -> None:
         """
@@ -258,7 +260,6 @@ class Download:
         """
         return await self._access.post("downloads/blacklist/", download_blacklist_data)
 
-
     # Download Feeds
     # https://dev.freebox.fr/sdk/os/download_feeds/
 
@@ -276,9 +277,7 @@ class Download:
         """
         return await self._access.get(f"downloads/feeds/{feed_id}/")  # type: ignore
 
-    async def create_download_feed(
-        self, rss_url: str
-    ) -> Dict[str, Any]:
+    async def create_download_feed(self, rss_url: str) -> Dict[str, Any]:
         """
         Create download feed
 
@@ -303,9 +302,9 @@ class Download:
         feed_id : `int`
         auto_download : `bool`
         """
-        return await self._access.post(f"downloads/feeds/{feed_id}/", {
-            "auto_download": auto_download
-        })
+        return await self._access.post(
+            f"downloads/feeds/{feed_id}/", {"auto_download": auto_download}
+        )
 
     async def fetch_download_feed(self, feed_id: int) -> None:
         """
@@ -330,7 +329,10 @@ class Download:
         return await self._access.get(f"downloads/feeds/{feed_id}/items/")  # type: ignore
 
     async def mark_download_item_as_read(
-        self, feed_id: int, item_id: int, mark_item_as_read: Optional[Dict[str, Any]] = None
+        self,
+        feed_id: int,
+        item_id: int,
+        mark_item_as_read: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Mark download feed item as read
@@ -361,7 +363,6 @@ class Download:
         feed_id : `int`
         """
         await self._access.post(f"downloads/feeds/{feed_id}/mark_all_as_read/")
-
 
     # Download Configuration
     # https://dev.freebox.fr/sdk/os/download_config/
