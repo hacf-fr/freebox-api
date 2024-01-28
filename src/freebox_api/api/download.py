@@ -108,9 +108,9 @@ class Download:
         """
         Add download from url
 
-        download_url : `str`
+        download_url : `dict`
         """
-        return await self._access.post("downloads/add/", download_url)
+        return await self._access.post("downloads/add/", download_url, False)
 
     async def add_download_task_from_file(
         self, download_file: Dict[str, Any]
