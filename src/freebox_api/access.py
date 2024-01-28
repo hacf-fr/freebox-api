@@ -143,6 +143,7 @@ class Access:
         """
         Send post request and return results
         """
+        data: Optional[str|Any] = None
         if json_transform:
             data = json.dumps(payload) if payload else None
         else:
