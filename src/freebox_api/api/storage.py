@@ -2,6 +2,7 @@
 Storage API [UNSTABLE].
 https://dev.freebox.fr/sdk/os/storage/
 """
+
 from freebox_api.access import Access
 
 

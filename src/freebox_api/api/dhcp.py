@@ -2,6 +2,7 @@
 DHCP API.
 https://dev.freebox.fr/sdk/os/dhcp/
 """
+
 import logging
 from typing import Dict
 

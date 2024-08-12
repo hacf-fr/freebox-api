@@ -2,6 +2,7 @@
 Wi-Fi API.
 https://dev.freebox.fr/sdk/os/wifi/
 """
+
 from typing import Dict
 
 from freebox_api.access import Access

@@ -2,6 +2,7 @@
 AirMedia API.
 https://dev.freebox.fr/sdk/os/airmedia/
 """
+
 from typing import Any
 from typing import Dict
 from typing import List
