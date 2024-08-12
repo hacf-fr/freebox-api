@@ -2,6 +2,7 @@
 LCD API.
 https://dev.freebox.fr/sdk/os/lcd/
 """
+
 from freebox_api.access import Access
 
 

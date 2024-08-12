@@ -2,6 +2,7 @@
 Switch API.
 https://dev.freebox.fr/sdk/os/switch/
 """
+
 from freebox_api.access import Access
 
 

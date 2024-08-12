@@ -7,7 +7,7 @@ ignore = E203,E501,W503
 extend-ignore =
     # Google Python style is not RST until after processed by Napoleon
     RST201,RST203,RST301,
-max-line-length = 80
+max-line-length = 88
 max-complexity = 10
 docstring-convention = google
 per-file-ignores = tests/*:S101

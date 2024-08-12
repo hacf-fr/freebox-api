@@ -2,6 +2,7 @@
 Call API.
 https://dev.freebox.fr/sdk/os/call/
 """
+
 from typing import Dict
 
 from freebox_api.access import Access

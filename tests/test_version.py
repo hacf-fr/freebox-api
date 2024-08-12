@@ -1,4 +1,5 @@
 """Test the single source version in pyproject.toml"""
+
 from packaging.version import Version
 
 import freebox_api
