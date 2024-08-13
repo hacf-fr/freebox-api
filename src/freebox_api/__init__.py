@@ -2,6 +2,7 @@
 Provides authentification and access to Freebox using Freebox OS developer API.
 Freebox API documentation : http://dev.freebox.fr/sdk/os/
 """
+
 # __version__ need to be declare before import to avoid circular import
 # importlib.metadata available from Python 3.8 use importlib_metadata for
 # earlier versions.

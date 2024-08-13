@@ -2,6 +2,7 @@
 Download API.
 https://dev.freebox.fr/sdk/os/download/
 """
+
 import base64
 from typing import Any
 from typing import Dict
