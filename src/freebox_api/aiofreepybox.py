@@ -11,7 +11,7 @@ from typing import Tuple
 from typing import Union
 from urllib.parse import urljoin
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientTimeout
 from aiohttp import TCPConnector
 
 import freebox_api
@@ -59,6 +59,8 @@ DEFAULT_APP_DESC: Dict[str, str] = {
     "device_name": socket.gethostname(),
 }
 
+DEFAULT_TIMEOUT = 10
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +70,7 @@ class Freepybox:
         app_desc: Dict[str, str] = DEFAULT_APP_DESC,
         token_file: str = DEFAULT_TOKEN_FILE,
         api_version: str = "v3",
-        timeout: int = 10,
+        timeout: int = DEFAULT_TIMEOUT,
     ):
         self.app_desc: Dict[str, str] = app_desc
         self.token_file: str = token_file
@@ -159,7 +161,7 @@ class Freepybox:
         api_version: str,
         token_file: str,
         app_desc: Dict[str, str],
-        timeout: int = 10,
+        timeout: int = DEFAULT_TIMEOUT,
     ) -> Access:
         """
         Returns an access object used for HTTP requests.
@@ -231,12 +233,12 @@ class Freepybox:
             denied: the user denied the authorization request
         """
         url = urljoin(base_url, f"login/authorize/{track_id}")
-        resp = await self._session.get(url, timeout=timeout)
+        resp = await self._session.get(url, timeout=ClientTimeout(total=timeout))
         resp_data = await resp.json()
         return str(resp_data["result"]["status"])
 
     async def _get_app_token(
-        self, base_url: str, app_desc: Dict[str, str], timeout: int = 10
+        self, base_url: str, app_desc: Dict[str, str], timeout: int = DEFAULT_TIMEOUT
     ) -> Tuple[str, int]:
         """
         Get the application token from the freebox
@@ -245,7 +247,9 @@ class Freepybox:
         # Get authentification token
         url = urljoin(base_url, "login/authorize/")
         data = json.dumps(app_desc)
-        resp = await self._session.post(url, data=data, timeout=timeout)
+        resp = await self._session.post(
+            url, data=data, timeout=ClientTimeout(total=timeout)
+        )
         resp_data = await resp.json()
 
         # raise exception if resp.success != True
