@@ -4,7 +4,8 @@ https://dev.freebox.fr/sdk/os/download/
 """
 
 import base64
-from typing import Any, Required, TypedDict
+from typing_extensions import Required
+from typing import Any, TypedDict, Union
 from typing import Dict
 from typing import Optional
 
@@ -166,7 +167,7 @@ class Download:
         return await self._access.get(f"downloads/{download_id}/log/")  # type: ignore
 
     async def add_download_task(
-        self, download_params: DownloadAddURL | DownloadAddFile
+        self, download_params: Union[DownloadAddURL, DownloadAddFile]
     ) -> Dict[str, Any]:
         """
         Add download from params
