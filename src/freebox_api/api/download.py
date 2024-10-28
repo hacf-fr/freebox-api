@@ -4,14 +4,14 @@ https://dev.freebox.fr/sdk/os/download/
 """
 
 import base64
-from typing import Any, TypedDict
+from typing import Any, Required, TypedDict
 from typing import Dict
 from typing import Optional
 
 from freebox_api.access import Access
 
 
-class DownloadAddURL(TypedDict):
+class _DownloadAddURL(TypedDict, total=False):
     """
     Add download by URL parameters data structure.
 
@@ -30,17 +30,27 @@ class DownloadAddURL(TypedDict):
     cookies : `str` – The http cookies (to be able to pass session cookies along with url)
     """
 
-    download_url: str
-    download_url_list: str
-    download_dir: Optional[str]
+    download_dir: str
     recursive: bool
-    username: Optional[str]
-    password: Optional[str]
+    username: str
+    password: str
     archive_password: str
     cookies: str
 
 
-class DownloadAddFile(TypedDict):
+class DownloadAddURL(_DownloadAddURL):
+    """Add download by URL parameters data structure."""
+
+    download_url: Required[str]
+
+
+class DownloadAddURLList(_DownloadAddURL):
+    """Add download by URL list parameters data structure."""
+
+    download_url_list: Required[str]
+
+
+class DownloadAddFile(TypedDict, total=False):
     """
     Add download by file upload parameters data structure.
 
@@ -53,8 +63,8 @@ class DownloadAddFile(TypedDict):
     (only relevant for nzb)
     """
 
-    download_file: str
-    download_dir: Optional[str]
+    download_file: Required[str]
+    download_dir: str
     archive_password: str
 
 
@@ -66,8 +76,14 @@ class Download:
     def __init__(self, access: Access) -> None:
         self._access = access
 
-    download_url_schema = {
+    download_url_schema: DownloadAddURL = {
         "download_url": "",
+        "username": "",
+        "password": "",
+        "recursive": False,
+        "download_dir": "",
+    }
+    download_url_list_schema: DownloadAddURLList = {
         "download_url_list": "",  # items separated by /n
         "username": "",
         "password": "",
@@ -169,8 +185,9 @@ class Download:
         """
         download_params: DownloadAddURL = {
             "download_url": download_url,
-            "download_dir": download_dir,
         }
+        if download_dir:
+            download_params["download_dir"] = download_dir
         return await self.add_download_task(download_params)
 
     async def add_download_task_from_file(
@@ -183,8 +200,9 @@ class Download:
         """
         download_params: DownloadAddFile = {
             "download_file": download_file,
-            "download_dir": download_dir,
         }
+        if download_dir:
+            download_params["download_dir"] = download_dir
         return await self.add_download_task(download_params)
 
     # Download Stats

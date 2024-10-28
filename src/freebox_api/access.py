@@ -1,7 +1,7 @@
 import hmac
 import json
 import logging
-from typing import Any
+from typing import Any, Mapping
 from typing import Dict
 from typing import Optional
 from urllib.parse import urljoin
@@ -138,7 +138,7 @@ class Access:
         return await self._perform_request(self.session.get, end_url)
 
     async def post(
-        self, end_url: str, payload: Optional[Dict[str, Any]] = None
+        self, end_url: str, payload: Optional[Mapping[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Send post request and return results
