@@ -143,11 +143,9 @@ class Access:
         """
         Send post request and return results
         """
-        data: Optional[str|Any] = None
-        if json_transform:
-            data = json.dumps(payload) if payload else None
-        else:
-            data = payload if payload else None
+        data: Optional[str|Dict[str, Any]] = payload
+        if payload and json_transform:
+            data = json.dumps(payload)
         return await self._perform_request(self.session.post, end_url, data=data)  # type: ignore
 
     async def put(
