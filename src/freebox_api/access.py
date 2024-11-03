@@ -34,7 +34,7 @@ class Access:
 
     async def _get_challenge(self, base_url, timeout=10):
         """
-        Return challenge from freebox API
+        Return challenge from Freebox API
         """
         url = urljoin(base_url, "login")
         resp = await self.session.get(url, timeout=timeout)
@@ -43,16 +43,14 @@ class Access:
         # raise exception if resp.success != True
         if not resp_data.get("success"):
             raise AuthorizationError(
-                "Getting challenge failed (APIResponse: {})".format(
-                    json.dumps(resp_data)
-                )
+                f"Getting challenge failed (APIResponse: {json.dumps(resp_data)})"
             )
 
         return resp_data["result"]["challenge"]
 
     async def _get_session_token(self, base_url, app_token, app_id, timeout=10):
         """
-        Get session token from freebox.
+        Get session token from Freebox.
         Returns (session_token, session_permissions)
         """
         # Get challenge from API
@@ -70,9 +68,7 @@ class Access:
         # raise exception if resp.success != True
         if not resp_data.get("success"):
             raise AuthorizationError(
-                "Starting session failed (APIResponse: {})".format(
-                    json.dumps(resp_data)
-                )
+                f"Starting session failed (APIResponse: {json.dumps(resp_data)})"
             )
 
         session_token = resp_data["result"].get("session_token")
@@ -122,7 +118,7 @@ class Access:
             resp_data = await resp.json()
 
         if not resp_data["success"]:
-            err_msg = "Request failed (APIResponse: {})".format(json.dumps(resp_data))
+            err_msg = f"Request failed (APIResponse: {json.dumps(resp_data)})"
             if resp_data.get("error_code") == "insufficient_rights":
                 raise InsufficientPermissionsError(err_msg)
             raise HttpRequestError(err_msg)

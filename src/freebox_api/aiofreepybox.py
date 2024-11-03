@@ -210,7 +210,7 @@ class Freepybox:
 
             # Store application token in file
             self._writefile_app_token(app_token, track_id, app_desc, token_file)
-            logger.info("Application token file was generated: {0}".format(token_file))
+            logger.info("Application token file was generated: %s", token_file)
 
         # Create freebox http access module
         fbx_access = Access(
@@ -255,7 +255,7 @@ class Freepybox:
         # raise exception if resp.success != True
         if not resp_data.get("success"):
             raise AuthorizationError(
-                "Authorization failed (APIResponse: {0})".format(json.dumps(resp_data))
+                f"Authorization failed (APIResponse: {json.dumps(resp_data)})"
             )
 
         app_token: str = resp_data["result"]["app_token"]
