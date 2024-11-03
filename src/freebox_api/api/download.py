@@ -173,7 +173,8 @@ class Download:
         return await self._access.get(f"downloads/{download_id}/log/")  # type: ignore
 
     async def add_download_task(
-        self, download_params: Union[DownloadAddURL, DownloadAddFile]
+        self,
+        download_params: Union[DownloadAddURL, DownloadAddURLList, DownloadAddFile],
     ) -> Dict[str, Any]:
         """
         Add download from params
