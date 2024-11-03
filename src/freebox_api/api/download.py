@@ -184,7 +184,10 @@ class Download:
         return await self._access.post("downloads/add/", download_params)
 
     async def add_download_task_from_url(
-        self, download_url: str, download_dir: Optional[str] = None
+        self,
+        download_url: str,
+        download_dir: Optional[str] = None,
+        archive_password: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Add download from url
@@ -192,16 +195,23 @@ class Download:
         download_url : `str`
         download_dir : `str`, optional
             Default to None
+        archive_password : `str`, optional
+            Default to None
         """
         download_params: DownloadAddURL = {
             "download_url": download_url,
         }
         if download_dir:
             download_params["download_dir"] = download_dir
+        if archive_password:
+            download_params["archive_password"] = archive_password
         return await self.add_download_task(download_params)
 
     async def add_download_task_from_urls(
-        self, download_urls: List[str], download_dir: Optional[str] = None
+        self,
+        download_urls: List[str],
+        download_dir: Optional[str] = None,
+        archive_password: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Add download from url
@@ -209,16 +219,23 @@ class Download:
         download_urls : `list[str]`
         download_dir : `str`, optional
             Default to None
+        archive_password : `str`, optional
+            Default to None
         """
         download_params: DownloadAddURLList = {
             "download_url_list": "/n".join(download_urls),
         }
         if download_dir:
             download_params["download_dir"] = download_dir
+        if archive_password:
+            download_params["archive_password"] = archive_password
         return await self.add_download_task(download_params)
 
     async def add_download_task_from_file(
-        self, download_file: str, download_dir: Optional[str] = None
+        self,
+        download_file: str,
+        download_dir: Optional[str] = None,
+        archive_password: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Add download from file
@@ -226,12 +243,16 @@ class Download:
         download_file : `str`
         download_dir : `str`, optional
             Default to None
+        archive_password : `str`, optional
+            Default to None
         """
         download_params: DownloadAddFile = {
             "download_file": download_file,
         }
         if download_dir:
             download_params["download_dir"] = download_dir
+        if archive_password:
+            download_params["archive_password"] = archive_password
         return await self.add_download_task(download_params)
 
     # Download Stats
