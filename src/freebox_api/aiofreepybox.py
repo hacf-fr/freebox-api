@@ -79,6 +79,34 @@ class Freepybox:
         self._session: ClientSession
         self._access: Access
 
+        # Define modules
+        self.tv: Tv
+        self.system: System
+        self.dhcp: Dhcp
+        self.airmedia: Airmedia
+        self.player: Player
+        self.switch: Switch
+        self.lan: Lan
+        self.storage: Storage
+        self.lcd: Lcd
+        self.wifi: Wifi
+        self.phone: Phone
+        self.ftp: Ftp
+        self.fs: Fs
+        self.fw: Fw
+        self.freeplug: Freeplug
+        self.call: Call
+        self.connection: Connection
+        self.download: Download
+        self.home: Home
+        self.parental: Parental
+        self.netshare: Netshare
+        self.notifications: Notifications
+        self.remote: Remote
+        self.rrd: Rrd
+        self.upnpav: Upnpav
+        self.upnpigd: Upnpigd
+
     async def open(self, host: str, port: str) -> None:
         """
         Open a session to the freebox, get a valid access module
