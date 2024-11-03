@@ -190,6 +190,8 @@ class Download:
         Add download from url
 
         download_url : `str`
+        download_dir : `str`, optional
+            Default to None
         """
         download_params: DownloadAddURL = {
             "download_url": download_url,
@@ -205,6 +207,8 @@ class Download:
         Add download from url
 
         download_urls : `list[str]`
+        download_dir : `str`, optional
+            Default to None
         """
         download_params: DownloadAddURLList = {
             "download_url_list": "/n".join(download_urls),
@@ -220,6 +224,8 @@ class Download:
         Add download from file
 
         download_file : `str`
+        download_dir : `str`, optional
+            Default to None
         """
         download_params: DownloadAddFile = {
             "download_file": download_file,
