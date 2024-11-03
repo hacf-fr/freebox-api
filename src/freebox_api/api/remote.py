@@ -139,7 +139,7 @@ class Remote:
         """Send macro.
 
         Args:
-            eys_data: `list[key]`
+            keys_data: `list[key]`
             code: `str`, optional
                 Default to None
             delay: `float`, optional

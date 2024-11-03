@@ -11,7 +11,7 @@ if sys.version_info < (3, 12):
     from typing_extensions import Required
 else:
     from typing import Required
-from typing import Any, TypedDict, Union
+from typing import Any, TypedDict, Union, List
 from typing import Dict
 from typing import Optional
 
@@ -193,6 +193,21 @@ class Download:
         """
         download_params: DownloadAddURL = {
             "download_url": download_url,
+        }
+        if download_dir:
+            download_params["download_dir"] = download_dir
+        return await self.add_download_task(download_params)
+
+    async def add_download_task_from_urls(
+        self, download_urls: List[str], download_dir: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Add download from url
+
+        download_urls : `list[str]`
+        """
+        download_params: DownloadAddURLList = {
+            "download_url_list": "/n".join(download_urls),
         }
         if download_dir:
             download_params["download_dir"] = download_dir
