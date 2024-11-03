@@ -4,7 +4,13 @@ https://dev.freebox.fr/sdk/os/download/
 """
 
 import base64
-from typing_extensions import Required
+
+import sys
+
+if sys.version_info < (3, 12):
+    from typing_extensions import Required
+else:
+    from typing import Required
 from typing import Any, TypedDict, Union
 from typing import Dict
 from typing import Optional
