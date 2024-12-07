@@ -15,7 +15,7 @@ from typing import Any, TypedDict, Union, List
 from typing import Dict
 from typing import Optional
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class _DownloadAddURL(TypedDict, total=False):

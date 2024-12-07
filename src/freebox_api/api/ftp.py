@@ -3,7 +3,7 @@ FTP API.
 https://dev.freebox.fr/sdk/os/ftp/
 """
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class Ftp:

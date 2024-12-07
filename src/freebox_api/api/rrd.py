@@ -5,7 +5,7 @@ https://dev.freebox.fr/sdk/os/rrd/
 
 import time
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class Rrd:

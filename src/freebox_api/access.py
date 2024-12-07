@@ -8,9 +8,9 @@ from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 
-from freebox_api.exceptions import AuthorizationError
-from freebox_api.exceptions import HttpRequestError
-from freebox_api.exceptions import InsufficientPermissionsError
+from .exceptions import AuthorizationError
+from .exceptions import HttpRequestError
+from .exceptions import InsufficientPermissionsError
 
 logger = logging.getLogger(__name__)
 

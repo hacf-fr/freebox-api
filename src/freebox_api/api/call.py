@@ -5,7 +5,7 @@ https://dev.freebox.fr/sdk/os/call/
 
 from typing import Dict
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class Call:

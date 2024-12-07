@@ -4,47 +4,39 @@ import logging
 import os
 import socket
 import ssl
-from typing import Any
-from typing import Dict
-from typing import Optional
-from typing import Tuple
-from typing import Union
+from typing import Any, Dict, Optional, Tuple, Union
 from urllib.parse import urljoin
 
-from aiohttp import ClientSession, ClientTimeout
-from aiohttp import TCPConnector
+from aiohttp import ClientSession, ClientTimeout, TCPConnector
 
-import freebox_api
-from freebox_api.access import Access
-from freebox_api.api.airmedia import Airmedia
-from freebox_api.api.call import Call
-from freebox_api.api.connection import Connection
-from freebox_api.api.dhcp import Dhcp
-from freebox_api.api.download import Download
-from freebox_api.api.freeplug import Freeplug
-from freebox_api.api.fs import Fs
-from freebox_api.api.ftp import Ftp
-from freebox_api.api.fw import Fw
-from freebox_api.api.home import Home
-from freebox_api.api.lan import Lan
-from freebox_api.api.lcd import Lcd
-from freebox_api.api.netshare import Netshare
-from freebox_api.api.notifications import Notifications
-from freebox_api.api.parental import Parental
-from freebox_api.api.phone import Phone
-from freebox_api.api.player import Player
-from freebox_api.api.remote import Remote
-from freebox_api.api.rrd import Rrd
-from freebox_api.api.storage import Storage
-from freebox_api.api.switch import Switch
-from freebox_api.api.system import System
-from freebox_api.api.tv import Tv
-from freebox_api.api.upnpav import Upnpav
-from freebox_api.api.upnpigd import Upnpigd
-from freebox_api.api.wifi import Wifi
-from freebox_api.exceptions import AuthorizationError
-from freebox_api.exceptions import InvalidTokenError
-from freebox_api.exceptions import NotOpenError
+from .access import Access
+from .api.airmedia import Airmedia
+from .api.call import Call
+from .api.connection import Connection
+from .api.dhcp import Dhcp
+from .api.download import Download
+from .api.freeplug import Freeplug
+from .api.fs import Fs
+from .api.ftp import Ftp
+from .api.fw import Fw
+from .api.home import Home
+from .api.lan import Lan
+from .api.lcd import Lcd
+from .api.netshare import Netshare
+from .api.notifications import Notifications
+from .api.parental import Parental
+from .api.phone import Phone
+from .api.player import Player
+from .api.remote import Remote
+from .api.rrd import Rrd
+from .api.storage import Storage
+from .api.switch import Switch
+from .api.system import System
+from .api.tv import Tv
+from .api.upnpav import Upnpav
+from .api.upnpigd import Upnpigd
+from .api.wifi import Wifi
+from .exceptions import AuthorizationError, InvalidTokenError, NotOpenError
 
 # Token file default location
 DEFAULT_TOKEN_FILENAME = "app_auth"  # noqa S105
@@ -55,7 +47,7 @@ DEFAULT_TOKEN_FILE = os.path.join(DEFAULT_TOKEN_DIRECTORY, DEFAULT_TOKEN_FILENAM
 DEFAULT_APP_DESC: Dict[str, str] = {
     "app_id": "aiofpbx",
     "app_name": "freebox-api",
-    "app_version": freebox_api.__version__,
+    "app_version": 0,
     "device_name": socket.gethostname(),
 }
 
