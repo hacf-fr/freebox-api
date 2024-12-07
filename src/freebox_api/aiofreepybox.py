@@ -118,6 +118,8 @@ class Freepybox:
         cert_path = os.path.join(os.path.dirname(__file__), "freebox_certificates.pem")
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cafile=cert_path)
+        # Disable strict validating introduced in Python 3.13, which doesn't work with default Freebox certificates
+        ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
 
         conn = TCPConnector(ssl_context=ssl_ctx)
         self._session = ClientSession(connector=conn)
