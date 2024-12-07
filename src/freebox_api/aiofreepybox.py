@@ -54,8 +54,6 @@ DEFAULT_API = "v3"
 DEFAULT_DEVICE_NAME = socket.gethostname()
 DEFAULT_VERSION = "1.0"
 
-StrOrPath = Union[str, "PathLike[str]"]  # type TypeAlias but issues with <= py3.9
-
 logger = logging.getLogger(__name__)
 
 
@@ -73,12 +71,25 @@ class Freepybox:
         device_name: str = DEFAULT_DEVICE_NAME,
         api_version: str = DEFAULT_API,
         timeout: int = DEFAULT_TIMEOUT,
+        use_tls: bool = True,
         verify_ssl: bool = True,
     ):
         self.app_id = app_id
+        self.api_version = api_version
         self._timeout = timeout
-        self._session: ClientSession
-        self._access: Access
+        self.verify_ssl = verify_ssl
+
+        self._session = ClientSession
+        self._access = Access
+
+        scheme = "https" if use_tls else "http"
+        self.base_url = f"{scheme}://{host}:{port}/api/{api_version}/"
+        self.app_desc = {
+            "app_id": app_id,
+            "app_name": app_name,
+            "app_version": app_version,
+            "device_name": device_name,
+        }
 
         self.api_version = api_version
         self.verify_ssl = verify_ssl
@@ -124,7 +135,6 @@ class Freepybox:
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
         """
-
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cadata=FREEBOX_CA)
         conn = (
