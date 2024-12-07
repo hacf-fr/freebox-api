@@ -1,16 +1,16 @@
 import hmac
 import json
 import logging
-from typing import Any, Mapping
-from typing import Dict
-from typing import Optional
+from typing import Any, Dict, Mapping, Optional
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 
-from .exceptions import AuthorizationError
-from .exceptions import HttpRequestError
-from .exceptions import InsufficientPermissionsError
+from .exceptions import (
+    AuthorizationError,
+    HttpRequestError,
+    InsufficientPermissionsError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class Access:
         app_token: str,
         app_id: str,
         http_timeout: int,
+        verify_ssl: bool,
     ):
         self.session = session
         self.base_url = base_url
@@ -31,13 +32,14 @@ class Access:
         self.timeout = http_timeout
         self.session_token: Optional[str] = None
         self.session_permissions: Optional[Dict[str, bool]] = None
+        self.verify_ssl = verify_ssl
 
     async def _get_challenge(self, base_url, timeout=10):
         """
         Return challenge from Freebox API
         """
         url = urljoin(base_url, "login")
-        resp = await self.session.get(url, timeout=timeout)
+        resp = await self.session.get(url, timeout=timeout, verify_ssl=self.verify_ssl)
         resp_data = await resp.json()
 
         # raise exception if resp.success != True
@@ -62,7 +64,9 @@ class Access:
 
         url = urljoin(base_url, "login/session/")
         data = json.dumps({"app_id": app_id, "password": password})
-        resp = await self.session.post(url, data=data, timeout=timeout)
+        resp = await self.session.post(
+            url, data=data, timeout=timeout, verify_ssl=self.verify_ssl
+        )
         resp_data = await resp.json()
 
         # raise exception if resp.success != True
@@ -102,6 +106,7 @@ class Access:
             **kwargs,
             "headers": self._get_headers(),
             "timeout": self.timeout,
+            "verify_ssl": self.verify_ssl,
         }
         resp = await verb(url, **request_params)
 
