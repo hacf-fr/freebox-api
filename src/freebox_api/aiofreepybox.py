@@ -71,19 +71,15 @@ class Freepybox:
         device_name: str = DEFAULT_DEVICE_NAME,
         api_version: str = DEFAULT_API,
         timeout: int = DEFAULT_TIMEOUT,
-        use_tls: bool = True,
         verify_ssl: bool = True,
     ):
         self.app_id = app_id
-        self.api_version = api_version
         self._timeout = timeout
-        self.verify_ssl = verify_ssl
 
         self._session = ClientSession
         self._access = Access
 
-        scheme = "https" if use_tls else "http"
-        self.base_url = f"{scheme}://{host}:{port}/api/{api_version}/"
+        self.base_url = f"https://{host}:{port}/api/{api_version}/"
         self.app_desc = {
             "app_id": app_id,
             "app_name": app_name,
