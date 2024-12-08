@@ -2,10 +2,11 @@ import asyncio
 import json
 import logging
 import socket
+import ssl
 from typing import Dict, Optional, Tuple
 from urllib.parse import urljoin
 
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientSession, TCPConnector
 
 from .access import Access
 from .api.airmedia import Airmedia
@@ -34,6 +35,7 @@ from .api.tv import Tv
 from .api.upnpav import Upnpav
 from .api.upnpigd import Upnpigd
 from .api.wifi import Wifi
+from .constants import FREEBOX_CA
 from .exceptions import (
     AuthorizationError,
     HttpRequestError,
@@ -58,7 +60,6 @@ class Freepybox:
         self,
         host: str = DEFAULT_HOSTNAME,
         port: int = DEFAULT_PORT,
-        session: ClientSession | None = None,
         *,
         app_id: str = DEFAULT_APP_ID,
         app_name: str = DEFAULT_APP_NAME,
@@ -66,24 +67,27 @@ class Freepybox:
         device_name: str = DEFAULT_DEVICE_NAME,
         api_version: str = DEFAULT_API,
         timeout: int = DEFAULT_TIMEOUT,
-        use_tls: bool = True,
         verify_ssl: bool = True,
     ):
         self.app_id = app_id
-        self._session = session or ClientSession()
         self._timeout = timeout
-        self.verify_ssl = verify_ssl
 
         self.api_version = api_version
 
-        scheme = "https" if use_tls else "http"
-        self.base_url = f"{scheme}://{host}:{port}/api/{api_version}/"
+        self.base_url = f"https://{host}:{port}/api/{api_version}/"
         self.app_desc = {
             "app_id": app_id,
             "app_name": app_name,
             "app_version": app_version,
             "device_name": device_name,
         }
+
+        ssl_ctx = ssl.create_default_context()
+        ssl_ctx.load_verify_locations(cadata=FREEBOX_CA)
+        conn = TCPConnector(ssl_context=ssl_ctx)
+        if verify_ssl is False:
+            conn = TCPConnector(verify_ssl=verify_ssl)
+        self._session = ClientSession(connector=conn)
 
         # Define modules
         self.tv: Tv
@@ -189,9 +193,7 @@ class Freepybox:
             url = urljoin(self.base_url, f"login/authorize/{track_id}")
             try:
                 async with asyncio.timeout(self._timeout):
-                    resp = await self._session.request(
-                        "get", url, verify_ssl=self.verify_ssl
-                    )
+                    resp = await self._session.request("get", url)
                     resp.raise_for_status()
                     resp_data = await resp.json()
 
@@ -234,12 +236,7 @@ class Freepybox:
 
         # Create freebox http access module
         return Access(
-            self._session,
-            self.base_url,
-            app_token,
-            self.app_id,
-            self._timeout,
-            self.verify_ssl,
+            self._session, self.base_url, app_token, self.app_id, self._timeout
         )
 
     async def _get_app_token(self) -> Tuple[str, int]:
@@ -250,9 +247,7 @@ class Freepybox:
         try:
             async with asyncio.timeout(self._timeout):
                 url = urljoin(self.base_url, "login/authorize/")
-                resp = await self._session.request(
-                    "post", url, json=self.app_desc, verify_ssl=self.verify_ssl
-                )
+                resp = await self._session.request("post", url, json=self.app_desc)
 
             resp.raise_for_status()
             resp_data = await resp.json()
