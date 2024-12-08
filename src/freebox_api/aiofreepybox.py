@@ -84,9 +84,11 @@ class Freepybox:
 
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cadata=FREEBOX_CA)
-        conn = TCPConnector(ssl_context=ssl_ctx)
-        if verify_ssl is False:
-            conn = TCPConnector(verify_ssl=verify_ssl)
+        conn = (
+            TCPConnector(ssl_context=ssl_ctx)
+            if verify_ssl
+            else TCPConnector(verify_ssl=verify_ssl)
+        )
         self._session = ClientSession(connector=conn)
 
         # Define modules
