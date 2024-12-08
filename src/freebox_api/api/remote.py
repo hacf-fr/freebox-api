@@ -12,7 +12,7 @@ from typing import Optional
 
 from aiohttp import ClientTimeout, ServerDisconnectedError
 
-from freebox_api.access import Access
+from ..access import Access
 
 _PL_LOCAL = "Freebox-Player.local"
 _PL_HOST = "freeboxhd"

@@ -6,7 +6,7 @@ https://dev.freebox.fr/sdk/os/dhcp/
 import logging
 from typing import Dict
 
-from freebox_api.access import Access
+from ..access import Access
 
 logger = logging.getLogger(__name__)
 

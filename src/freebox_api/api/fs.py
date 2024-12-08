@@ -8,8 +8,8 @@ import logging
 import os
 from typing import Dict
 
-import freebox_api.exceptions
-from freebox_api.access import Access
+from ..access import Access
+from ..exceptions import HttpRequestError
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,7 @@ class Fs:
         try:
             await self.get_file_info(os.path.join(self._path, path))
             return True
-        except freebox_api.exceptions.HttpRequestError:
+        except HttpRequestError:
             logger.debug("%s path does not exist", os.path.join(self._path, path))
             return False
 

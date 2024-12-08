@@ -3,7 +3,7 @@ System API.
 https://dev.freebox.fr/sdk/os/system/
 """
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class System:
