@@ -199,7 +199,8 @@ class Freepybox:
 
         # Read stored application token
         logger.info("Read application authorization file")
-        app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
+        loop = asyncio.get_running_loop()
+        app_token, track_id, file_app_desc = await loop.run_in_executor(None, self._readfile_app_token, token_file)
 
         # If no valid token is stored then request a token to freebox api -
         # Only for LAN connection
@@ -237,7 +238,8 @@ class Freepybox:
             logger.info("Application authorization granted")
 
             # Store application token in file
-            self._writefile_app_token(app_token, track_id, app_desc, token_file)
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, self._writefile_app_token, app_token, track_id, app_desc, token_file)
             logger.info("Application token file was generated: %s", token_file)
 
         # Create freebox http access module
