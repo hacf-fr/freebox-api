@@ -3,7 +3,7 @@ Freeplug API.
 https://dev.freebox.fr/sdk/os/freeplug/
 """
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class Freeplug:

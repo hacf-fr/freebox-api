@@ -1,16 +1,16 @@
 import hmac
 import json
 import logging
-from typing import Any, Mapping
-from typing import Dict
-from typing import Optional
+from typing import Any, Dict, Mapping, Optional
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 
-from freebox_api.exceptions import AuthorizationError
-from freebox_api.exceptions import HttpRequestError
-from freebox_api.exceptions import InsufficientPermissionsError
+from .exceptions import (
+    AuthorizationError,
+    HttpRequestError,
+    InsufficientPermissionsError,
+)
 
 logger = logging.getLogger(__name__)
 
