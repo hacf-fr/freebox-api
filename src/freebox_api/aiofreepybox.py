@@ -1,7 +1,8 @@
 import asyncio
 import json
 import logging
-import os
+from os import path
+from os import PathLike
 import socket
 import ssl
 from typing import Any
@@ -48,8 +49,8 @@ from freebox_api.exceptions import NotOpenError
 
 # Token file default location
 DEFAULT_TOKEN_FILENAME = "app_auth"  # noqa S105
-DEFAULT_TOKEN_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_TOKEN_FILE = os.path.join(DEFAULT_TOKEN_DIRECTORY, DEFAULT_TOKEN_FILENAME)
+DEFAULT_TOKEN_DIRECTORY = path.dirname(path.abspath(__file__))
+DEFAULT_TOKEN_FILE = path.join(DEFAULT_TOKEN_DIRECTORY, DEFAULT_TOKEN_FILENAME)
 
 # Default application descriptor
 DEFAULT_APP_DESC: Dict[str, str] = {
@@ -65,15 +66,16 @@ logger = logging.getLogger(__name__)
 
 
 class Freepybox:
+
     def __init__(
         self,
         app_desc: Dict[str, str] = DEFAULT_APP_DESC,
-        token_file: str = DEFAULT_TOKEN_FILE,
+        token_file: str | PathLike[str] = DEFAULT_TOKEN_FILE,
         api_version: str = "v3",
         timeout: int = DEFAULT_TIMEOUT,
     ):
         self.app_desc: Dict[str, str] = app_desc
-        self.token_file: str = token_file
+        self.token_file: str | PathLike[str] = token_file
         self.api_version: str = api_version
         self.timeout: int = timeout
         self._session: ClientSession
@@ -115,7 +117,7 @@ class Freepybox:
         if not self._is_app_desc_valid(self.app_desc):
             raise InvalidTokenError("Invalid application descriptor")
 
-        cert_path = os.path.join(os.path.dirname(__file__), "freebox_certificates.pem")
+        cert_path = path.join(path.dirname(__file__), "freebox_certificates.pem")
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cafile=cert_path)
         if ".fbxos.fr" in host or "mafreebox.freebox.fr" in host:
@@ -191,7 +193,7 @@ class Freepybox:
         host: str,
         port: str,
         api_version: str,
-        token_file: str,
+        token_file: str | PathLike[str],
         app_desc: Dict[str, str],
         timeout: int = DEFAULT_TIMEOUT,
     ) -> Access:
@@ -296,7 +298,7 @@ class Freepybox:
         return (app_token, track_id)
 
     def _writefile_app_token(
-        self, app_token: str, track_id: int, app_desc: Dict[str, str], token_file: str
+        self, app_token: str, track_id: int, app_desc: Dict[str, str], token_file: str | PathLike[str]
     ) -> None:
         """
         Store the application token in g_app_auth_file file
@@ -311,7 +313,7 @@ class Freepybox:
             json.dump(file_content, f)
 
     def _readfile_app_token(
-        self, token_file: str
+        self, token_file: str | PathLike[str]
     ) -> Union[Tuple[str, int, Dict[str, Any]], Tuple[None, None, None]]:
         """
         Read the application token in the authentication file.
