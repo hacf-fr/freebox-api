@@ -18,8 +18,15 @@ class Lcd:
         "orientation": 0,
         "brightness": 100,
         "orientation_forced": False,
-        "available_led_strip_animations": ["organic", "static", "breathing", "rain", "trail", "wave"],
-        "led_strip_brightness":56,
+        "available_led_strip_animations": [
+            "organic",
+            "static",
+            "breathing",
+            "rain",
+            "trail",
+            "wave",
+        ],
+        "led_strip_brightness": 56,
         "led_strip_animation": "breathing",
         "led_strip_enabled": True,
     }
