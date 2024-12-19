@@ -298,7 +298,11 @@ class Freepybox:
         return (app_token, track_id)
 
     def _writefile_app_token(
-        self, app_token: str, track_id: int, app_desc: Dict[str, str], token_file: str | PathLike[str]
+        self,
+        app_token: str,
+        track_id: int,
+        app_desc: Dict[str, str],
+        token_file: str | PathLike[str],
     ) -> None:
         """
         Store the application token in g_app_auth_file file
