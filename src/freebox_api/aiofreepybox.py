@@ -9,11 +9,6 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Tuple
-
-try:
-    from typing import TypeAlias
-except Exception:  # pylint: disable=broad-exception-caught
-    from typing_extensions import TypeAlias
 from typing import Union
 from urllib.parse import urljoin
 
@@ -67,7 +62,7 @@ DEFAULT_APP_DESC: Dict[str, str] = {
 
 DEFAULT_TIMEOUT = 10
 
-StrOrPath: TypeAlias = Union[str, "PathLike[str]"]
+StrOrPath = Union[str, "PathLike[str]"]  # type TypeAlias but issues with <= py3.9
 
 logger = logging.getLogger(__name__)
 
