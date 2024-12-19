@@ -54,6 +54,8 @@ DEFAULT_API = "v3"
 DEFAULT_DEVICE_NAME = socket.gethostname()
 DEFAULT_VERSION = "1.0"
 
+StrOrPath = Union[str, "PathLike[str]"]  # type TypeAlias but issues with <= py3.9
+
 logger = logging.getLogger(__name__)
 
 

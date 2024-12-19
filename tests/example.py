@@ -6,13 +6,19 @@ import asyncio
 
 # import m3u8
 
+# from pathlib import Path
+
 from freebox_api import Freepybox
+
+# from freebox_api.aiofreepybox import DEFAULT_TOKEN_FILE
 
 
 async def demo():
     # Instantiate Freepybox class using default application descriptor
     # and default token_file location
     fbx = Freepybox(api_version="latest")
+    # fbx = Freepybox(token_file=DEFAULT_TOKEN_FILE, api_version="latest")
+    # fbx = Freepybox(token_file=Path(DEFAULT_TOKEN_FILE), api_version="latest")
 
     # To find out the HTTPS host and port of your Freebox, go to
     # http://mafreebox.freebox.fr/api_version
