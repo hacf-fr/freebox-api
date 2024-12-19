@@ -12,7 +12,7 @@ from typing import Tuple
 
 try:
     from typing import TypeAlias
-except ImportError:  # pragma: no cover
+except AttributeError:  # pragma: no cover
     from typing_extensions import TypeAlias
 from typing import Union
 from urllib.parse import urljoin
