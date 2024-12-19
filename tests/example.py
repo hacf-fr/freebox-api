@@ -6,10 +6,10 @@ import asyncio
 
 # import m3u8
 
-from pathlib import Path
+# from pathlib import Path
 
 from freebox_api import Freepybox
-from freebox_api.aiofreepybox import DEFAULT_TOKEN_FILE
+# from freebox_api.aiofreepybox import DEFAULT_TOKEN_FILE
 
 
 async def demo():
