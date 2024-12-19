@@ -70,12 +70,12 @@ class Freepybox:
     def __init__(
         self,
         app_desc: Dict[str, str] = DEFAULT_APP_DESC,
-        token_file: str | PathLike[str] = DEFAULT_TOKEN_FILE,
+        token_file: Union[str | PathLike[str]] = DEFAULT_TOKEN_FILE,
         api_version: str = "v3",
         timeout: int = DEFAULT_TIMEOUT,
     ):
         self.app_desc: Dict[str, str] = app_desc
-        self.token_file: str | PathLike[str] = token_file
+        self.token_file: Union[str | PathLike[str]] = token_file
         self.api_version: str = api_version
         self.timeout: int = timeout
         self._session: ClientSession
@@ -193,7 +193,7 @@ class Freepybox:
         host: str,
         port: str,
         api_version: str,
-        token_file: str | PathLike[str],
+        token_file: Union[str | PathLike[str]],
         app_desc: Dict[str, str],
         timeout: int = DEFAULT_TIMEOUT,
     ) -> Access:
@@ -302,7 +302,7 @@ class Freepybox:
         app_token: str,
         track_id: int,
         app_desc: Dict[str, str],
-        token_file: str | PathLike[str],
+        token_file: Union[str | PathLike[str]],
     ) -> None:
         """
         Store the application token in g_app_auth_file file
@@ -317,7 +317,7 @@ class Freepybox:
             json.dump(file_content, f)
 
     def _readfile_app_token(
-        self, token_file: str | PathLike[str]
+        self, token_file: Union[str | PathLike[str]]
     ) -> Union[Tuple[str, int, Dict[str, Any]], Tuple[None, None, None]]:
         """
         Read the application token in the authentication file.
