@@ -9,6 +9,7 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Tuple
+from typing import TypeAlias
 from typing import Union
 from urllib.parse import urljoin
 
@@ -48,9 +49,9 @@ from freebox_api.exceptions import InvalidTokenError
 from freebox_api.exceptions import NotOpenError
 
 # Token file default location
-DEFAULT_TOKEN_FILENAME = "app_auth"  # noqa S105
+DEFAULT_TOKEN_FILENAME: str = "app_auth"  # noqa S105
 DEFAULT_TOKEN_DIRECTORY = path.dirname(path.abspath(__file__))
-DEFAULT_TOKEN_FILE = path.join(DEFAULT_TOKEN_DIRECTORY, DEFAULT_TOKEN_FILENAME)
+DEFAULT_TOKEN_FILE: str = path.join(DEFAULT_TOKEN_DIRECTORY, DEFAULT_TOKEN_FILENAME)
 
 # Default application descriptor
 DEFAULT_APP_DESC: Dict[str, str] = {
@@ -62,6 +63,8 @@ DEFAULT_APP_DESC: Dict[str, str] = {
 
 DEFAULT_TIMEOUT = 10
 
+StrOrPath: TypeAlias = Union[str, PathLike[str]]
+
 logger = logging.getLogger(__name__)
 
 
@@ -70,12 +73,12 @@ class Freepybox:
     def __init__(
         self,
         app_desc: Dict[str, str] = DEFAULT_APP_DESC,
-        token_file: Union[str, PathLike[str]] = DEFAULT_TOKEN_FILE,
+        token_file: StrOrPath = DEFAULT_TOKEN_FILE,
         api_version: str = "v3",
         timeout: int = DEFAULT_TIMEOUT,
     ):
         self.app_desc: Dict[str, str] = app_desc
-        self.token_file: Union[str, PathLike[str]] = token_file
+        self.token_file: StrOrPath = token_file
         self.api_version: str = api_version
         self.timeout: int = timeout
         self._session: ClientSession
@@ -193,7 +196,7 @@ class Freepybox:
         host: str,
         port: str,
         api_version: str,
-        token_file: Union[str, PathLike[str]],
+        token_file: StrOrPath,
         app_desc: Dict[str, str],
         timeout: int = DEFAULT_TIMEOUT,
     ) -> Access:
@@ -302,7 +305,7 @@ class Freepybox:
         app_token: str,
         track_id: int,
         app_desc: Dict[str, str],
-        token_file: Union[str, PathLike[str]],
+        token_file: StrOrPath,
     ) -> None:
         """
         Store the application token in g_app_auth_file file
@@ -317,7 +320,7 @@ class Freepybox:
             json.dump(file_content, f)
 
     def _readfile_app_token(
-        self, token_file: Union[str, PathLike[str]]
+        self, token_file: StrOrPath
     ) -> Union[Tuple[str, int, Dict[str, Any]], Tuple[None, None, None]]:
         """
         Read the application token in the authentication file.
