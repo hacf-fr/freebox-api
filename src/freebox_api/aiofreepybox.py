@@ -9,7 +9,11 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 from typing import Tuple
-from typing import TypeAlias
+
+try:
+    from typing import TypeAlias
+except ImportError:  # pragma: no cover
+    from typing_extensions import TypeAlias
 from typing import Union
 from urllib.parse import urljoin
 
@@ -63,7 +67,7 @@ DEFAULT_APP_DESC: Dict[str, str] = {
 
 DEFAULT_TIMEOUT = 10
 
-StrOrPath: TypeAlias = Union[str, PathLike[str]]
+StrOrPath: TypeAlias = Union[str, "PathLike[str]"]
 
 logger = logging.getLogger(__name__)
 
