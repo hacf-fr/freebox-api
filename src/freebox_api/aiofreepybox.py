@@ -108,16 +108,16 @@ class Freepybox:
         self.download: Download
         self.home: Home
         self.parental: Parental
-		self.profile: Profile
+        self.profile: Profile
         self.netshare: Netshare
         self.notifications: Notifications
         self.remote: Remote
         self.rrd: Rrd
         self.upnpav: Upnpav
         self.upnpigd: Upnpigd
-		self.contact: Contact
-		self.vm: Vm
-		self.vpn: Vpn
+        self.contact: Contact
+        self.vm: Vm
+        self.vpn: Vpn
 
     async def open(self, host: str, port: str) -> None:
         """
