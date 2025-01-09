@@ -122,10 +122,9 @@ class Freepybox:
         cert_path = path.join(path.dirname(__file__), "freebox_certificates.pem")
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cafile=cert_path)
-        if ".fbxos.fr" in host or "mafreebox.freebox.fr" in host:
-            # Disable strict validating introduced in Python 3.13, which doesn't
-            # work with default Freebox certificates
-            ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
+        # Disable strict validation introduced in Python 3.13, which doesn't
+        # work with Freebox/iliadbox self-signed gateway certificates
+        ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
 
         conn = TCPConnector(ssl_context=ssl_ctx)
         self._session = ClientSession(connector=conn)
