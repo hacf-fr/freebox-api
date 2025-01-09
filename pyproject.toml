@@ -8,7 +8,7 @@ readme = "README.rst"
 homepage = "https://github.com/hacf-fr/freebox-api"
 repository = "https://github.com/hacf-fr/freebox-api"
 documentation = "https://freebox-api.readthedocs.io"
-keywords=["freebox"]
+keywords=["freebox", "iliadbox"]
 classifiers = [
     "Operating System :: OS Independent",
     "Development Status :: 5 - Production/Stable",
