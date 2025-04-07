@@ -91,3 +91,12 @@ class Storage:
         Get raids list
         """
         return await self._access.get("storage/raid/")
+
+    async def format_disk(self, id, format_data):
+        """
+        Format partition
+
+        id : `int`
+        format_data : `dict`
+        """
+        return await self._access.put(f"storage/disk/{id}/format", format_data)
