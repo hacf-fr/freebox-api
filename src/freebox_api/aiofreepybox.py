@@ -5,6 +5,7 @@ from os import path
 from os import PathLike
 import socket
 import ssl
+from functools import partial
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -120,7 +121,9 @@ class Freepybox:
             raise InvalidTokenError("Invalid application descriptor")
 
         cert_path = path.join(path.dirname(__file__), "freebox_certificates.pem")
-        ssl_ctx = ssl.create_default_context()
+        ssl_ctx = await asyncio.get_running_loop().run_in_executor(
+            None, partial(ssl.create_default_context, cafile=cert_path)
+        )
         ssl_ctx.load_verify_locations(cafile=cert_path)
         # Disable strict validation introduced in Python 3.13, which doesn't
         # work with Freebox/iliadbox self-signed gateway certificates
@@ -203,10 +206,11 @@ class Freepybox:
         """
 
         base_url: str = self._get_base_url(host, port, api_version)
+        loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
         # Read stored application token
         logger.info("Read application authorization file")
-        app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
+        app_token, track_id, file_app_desc = await loop.run_in_executor(None, self._readfile_app_token, token_file)
 
         # If no valid token is stored then request a token to freebox api -
         # Only for LAN connection
@@ -244,7 +248,7 @@ class Freepybox:
             logger.info("Application authorization granted")
 
             # Store application token in file
-            self._writefile_app_token(app_token, track_id, app_desc, token_file)
+            await loop.run_in_executor(None, self._writefile_app_token, app_token, track_id, app_desc, token_file)
             logger.info("Application token file was generated: %s", token_file)
 
         # Create freebox http access module
