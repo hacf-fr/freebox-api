@@ -1,3 +1,5 @@
+"""Access method for Freebox."""
+
 import hmac
 import json
 import logging
@@ -16,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class Access:
+    """Acces class."""
+
     def __init__(
         self,
         session: ClientSession,
@@ -24,6 +28,7 @@ class Access:
         app_id: str,
         http_timeout: int,
     ):
+        """Initialize."""
         self.session = session
         self.base_url = base_url
         self.app_token = app_token
@@ -77,17 +82,19 @@ class Access:
         return (session_token, session_permissions)
 
     async def _refresh_session_token(self):
+        """Refresh session token."""
         # Get token for the current session
         session_token, session_permissions = await self._get_session_token(
             self.base_url, self.app_token, self.app_id, self.timeout
         )
 
         logger.info("Session opened")
-        logger.info("Permissions: " + str(session_permissions))
+        logger.info("Permissions: %s", session_permissions)
         self.session_token = session_token
         self.session_permissions = session_permissions
 
     def _get_headers(self) -> Dict[str, Optional[str]]:
+        """Get Freebox application header."""
         return {"X-Fbx-App-Auth": self.session_token}
 
     async def _perform_request(self, verb, end_url, **kwargs):
