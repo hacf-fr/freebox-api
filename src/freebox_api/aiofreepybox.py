@@ -5,8 +5,7 @@ import json
 import logging
 import socket
 import ssl
-import types
-from typing import Dict, Optional, Self, Tuple, Type
+from typing import Dict, Optional, Tuple
 from urllib.parse import urljoin
 
 from aiohttp import ClientError, ClientSession, TCPConnector
@@ -41,6 +40,7 @@ from .api.wifi import Wifi
 from .constants import FREEBOX_CA
 from .exceptions import (
     AuthorizationError,
+    FreeboxException,
     HttpRequestError,
     NotOpenError,
 )
@@ -79,8 +79,8 @@ class Freepybox:
         self._timeout = timeout
         self.verify_ssl = verify_ssl
 
-        self._session: ClientSession
-        self._access: Access
+        self._session: ClientSession | None = None
+        self._access: Access | None = None
 
         self.base_url = f"https://{host}:{port}/api/{api_version}/"
         self.app_desc = {
@@ -123,7 +123,8 @@ class Freepybox:
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
         """
-        await self._async_create_session()
+        if not self._session:
+            await self._async_create_session()
 
         self._access = await self._get_access(app_token)
 
@@ -185,7 +186,9 @@ class Freepybox:
 
     async def register_app(self) -> str | None:
         """Register freebox app."""
-        await self._async_create_session()
+
+        if not self._session:
+            await self._async_create_session()
 
         out_msg_flag = False
         status = None
@@ -281,16 +284,3 @@ class Freepybox:
             resp_data["result"].get("app_token"),
             resp_data["result"].get("track_id"),
         )
-
-    async def __aexit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[types.TracebackType],
-    ) -> bool:
-        """Async exit."""
-        await self.close()
-
-    async def __aenter__(self) -> Self:
-        """Context Manager."""
-        return self
