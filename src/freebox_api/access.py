@@ -47,6 +47,7 @@ class Access:
 
         # raise exception if resp.success != True
         if not resp_data.get("success"):
+            await self.session.close()
             raise AuthorizationError(
                 f"Getting challenge failed (APIResponse: {json.dumps(resp_data)})"
             )
@@ -74,6 +75,7 @@ class Access:
 
         # raise exception if resp.success != True
         if not resp_data.get("success"):
+            await self.session.close()
             raise AuthorizationError(
                 f"Starting session failed (APIResponse: {json.dumps(resp_data)})"
             )
