@@ -1,3 +1,5 @@
+"""Freebox API."""
+
 import asyncio
 import json
 import logging
@@ -56,6 +58,8 @@ logger = logging.getLogger(__name__)
 
 
 class Freepybox:
+    """Freebox."""
+
     def __init__(
         self,
         host: str = DEFAULT_HOSTNAME,
