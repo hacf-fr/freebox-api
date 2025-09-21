@@ -3,7 +3,7 @@ import json
 import logging
 import socket
 import ssl
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Self, Tuple
 from urllib.parse import urljoin
 
 from aiohttp import ClientError, ClientSession, TCPConnector
@@ -71,8 +71,11 @@ class Freepybox:
     ):
         self.app_id = app_id
         self._timeout = timeout
+        self._session: ClientSession
+        self._access: Access
 
         self.api_version = api_version
+        self.verify_ssl = verify_ssl
 
         self.base_url = f"https://{host}:{port}/api/{api_version}/"
         self.app_desc = {
@@ -81,15 +84,6 @@ class Freepybox:
             "app_version": app_version,
             "device_name": device_name,
         }
-
-        ssl_ctx = ssl.create_default_context()
-        ssl_ctx.load_verify_locations(cadata=FREEBOX_CA)
-        conn = (
-            TCPConnector(ssl_context=ssl_ctx)
-            if verify_ssl
-            else TCPConnector(verify_ssl=verify_ssl)
-        )
-        self._session = ClientSession(connector=conn)
 
         # Define modules
         self.tv: Tv
@@ -124,6 +118,15 @@ class Freepybox:
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
         """
+
+        ssl_ctx = ssl.create_default_context()
+        ssl_ctx.load_verify_locations(cadata=FREEBOX_CA)
+        conn = (
+            TCPConnector(ssl_context=ssl_ctx)
+            if self.verify_ssl
+            else TCPConnector(verify_ssl=self.verify_ssl)
+        )
+        self._session = ClientSession(connector=conn)
 
         self._access = await self._get_access(app_token)
 
@@ -269,6 +272,10 @@ class Freepybox:
             resp_data["result"].get("track_id"),
         )
 
-    async def __aexit__(self, *_exc_info: object) -> None:
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         """Async exit."""
         await self.close()
+
+    async def __aenter__(self) -> Self:
+        """Context Manager."""
+        return self
