@@ -18,6 +18,17 @@ except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 
 from .aiofreepybox import Freepybox
-from .exceptions import FreeboxException
+from .exceptions import (
+    AuthorizationError,
+    FreeboxException,
+    HttpRequestError,
+    InsufficientPermissionsError,
+)
 
-__all__ = ["Freepybox", "FreeboxException"]
+__all__ = [
+    "Freepybox",
+    "FreeboxException",
+    "AuthorizationError",
+    "HttpRequestError",
+    "InsufficientPermissionsError",
+]
