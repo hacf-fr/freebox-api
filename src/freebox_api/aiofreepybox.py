@@ -124,7 +124,7 @@ class Freepybox:
         and instantiate freebox modules
         """
         if not self._session:
-            await self._async_create_session()
+            await self._create_session()
 
         self._access = await self._get_access(app_token)
 
@@ -188,7 +188,7 @@ class Freepybox:
         """Register freebox app."""
 
         if not self._session:
-            await self._async_create_session()
+            await self._create_session()
 
         out_msg_flag = False
         status = None
@@ -236,7 +236,7 @@ class Freepybox:
 
         return app_token
 
-    async def _async_create_session(self) -> None:
+    async def _create_session(self) -> None:
         """Create session."""
         ssl_ctx = ssl.create_default_context()
         ssl_ctx.load_verify_locations(cadata=FREEBOX_CA)
