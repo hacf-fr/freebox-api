@@ -275,7 +275,7 @@ class Freepybox:
             ) from error
 
         # raise exception if resp.success != True
-        if "success" not in resp_data:
+        if not resp_data.get("success"):
             raise AuthorizationError(
                 f"Authorization failed (APIResponse: {json.dumps(resp_data)})"
             )
