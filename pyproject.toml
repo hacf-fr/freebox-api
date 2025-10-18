@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "freebox-api"
-version = "1.2.1"
+version = "1.2.2"
 description = "Provides asynchronous authentication and access to Freebox servers"
 authors = ["stilllman <luc_touraille@yahoo.fr>", "quentame <polletquentin74@me.com>", "HACF <contact@hacf.fr>"]
 license = "GNU GPL v3"
@@ -8,7 +8,7 @@ readme = "README.rst"
 homepage = "https://github.com/hacf-fr/freebox-api"
 repository = "https://github.com/hacf-fr/freebox-api"
 documentation = "https://freebox-api.readthedocs.io"
-keywords=["freebox"]
+keywords=["freebox", "iliadbox"]
 classifiers = [
     "Operating System :: OS Independent",
     "Development Status :: 5 - Production/Stable",
@@ -35,9 +35,9 @@ importlib-metadata = {version = ">=3.3,<9.0", python = "<3.12"}
 typing-extensions = {version = ">=3.8.18,<5.0.0", python = "~3.8 || ~3.9 || ~3.10 || ~3.11"}
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.3.3"
+pytest = "^8.3.5"
 coverage = {extras = ["toml"], version = "^7.2"}
-safety = "^3.2.10"
+safety = "^3.2.14"
 mypy = "^1.13.0"
 typeguard = "^4.4.0"
 xdoctest = {extras = ["colors"], version = "^1.1.2"}
@@ -53,7 +53,7 @@ flake8-rst-docstrings = "^0.3.0"
 pep8-naming = "^0.14.1"
 darglint = "^1.8.1"
 pre-commit-hooks = "^5.0.0"
-sphinx-rtd-theme = "^3.0.1"
+sphinx-rtd-theme = "^3.0.2"
 
 [tool.poetry.scripts]
 freebox_api = "freebox_api.__main__:main"
