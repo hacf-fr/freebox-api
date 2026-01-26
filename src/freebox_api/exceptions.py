@@ -1,23 +1,23 @@
-class InvalidTokenError(Exception):
+class FreeboxException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
 
 
-class NotOpenError(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
+class InvalidTokenError(FreeboxException):
+    """Invalid Token Error."""
 
 
-class AuthorizationError(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
+class NotOpenError(FreeboxException):
+    """Not Open Error."""
 
 
-class HttpRequestError(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
+class AuthorizationError(FreeboxException):
+    """Authorization Error."""
+
+
+class HttpRequestError(FreeboxException):
+    """HTTP Request Error."""
 
 
 class InsufficientPermissionsError(HttpRequestError):
-    def __init__(self, *args, **kwargs):
-        HttpRequestError.__init__(self, *args, **kwargs)
+    """Insufficient Permissions Error."""

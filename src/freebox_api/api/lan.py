@@ -3,7 +3,7 @@ LAN API.
 https://dev.freebox.fr/sdk/os/lan/
 """
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class Lan:

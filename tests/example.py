@@ -4,21 +4,13 @@ This example can be run safely as it won't change anything in your box configura
 
 import asyncio
 
-# import m3u8
-
-# from pathlib import Path
-
-from freebox_api import Freepybox
-
-# from freebox_api.aiofreepybox import DEFAULT_TOKEN_FILE
+from freebox_api import FreeboxException, Freepybox
 
 
 async def demo():
+    """Demonstration."""
     # Instantiate Freepybox class using default application descriptor
-    # and default token_file location
-    fbx = Freepybox(api_version="latest")
-    # fbx = Freepybox(token_file=DEFAULT_TOKEN_FILE, api_version="latest")
-    # fbx = Freepybox(token_file=Path(DEFAULT_TOKEN_FILE), api_version="latest")
+    fbx = Freepybox(host="mafreebox.freebox.fr", port=443)
 
     # To find out the HTTPS host and port of your Freebox, go to
     # http://mafreebox.freebox.fr/api_version
@@ -32,7 +24,20 @@ async def demo():
     # Invalid, self signed, certificate
     # await fbx.open(host="[api_domain].fbxos.fr", port=[https_port])
     # Invalid, self signed, certificate
-    await fbx.open(host="mafreebox.freebox.fr", port=443)
+
+    # Register you application
+    # It is mandatory to register the first time in order to obtain an app token
+    # The registration step is waiting for you to validate on your Freebox
+    # app_token = await fbx.register_app()
+
+    app_token = "mytokenxxxxxxxxxxxxxxxxxxxxxxx"
+    await fbx.open(app_token)
+    try:
+        perms = await fbx.get_permissions()
+        print(perms)
+    except FreeboxException as err:
+        print(err)
+        return
 
     print("\n" * 2)
     print("=" * 50)
@@ -56,8 +61,11 @@ async def demo():
     print("-" * 25)
     print("- System config sensors -")
     print(sensors)
-    temp_sw = next(s for s in sensors if s["id"] == "temp_sw")
-    print(f"Freebox {temp_sw['name']} : {temp_sw['value']}")
+    try:
+        temp_sw = next(s for s in sensors if s["id"] == "temp_sw")
+        print(f"Freebox {temp_sw['name']} : {temp_sw['value']}")
+    except StopIteration as err:
+        print(err)
     print("-" * 25)
 
     ##############
@@ -196,7 +204,14 @@ async def demo():
     print("=" * 50)
     print("\n" * 2)
 
+    # With a Context Manager
+    # async with Freepybox(host="mafreebox.freebox.fr", port=443) as api:
+    #     await api.open(app_token)
+    #     fbx_config = await api.system.get_config()
+    #     print(f"Freebox model name : {fbx_config['model_info']['pretty_name']}")
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(demo())
-loop.close()
+
+if __name__ == "__main__":
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(demo())

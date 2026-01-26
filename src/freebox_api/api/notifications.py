@@ -5,7 +5,7 @@ No public documentation available yet.
 
 from typing import Dict
 
-from freebox_api.access import Access
+from ..access import Access
 
 
 class Notifications:

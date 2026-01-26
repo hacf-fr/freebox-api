@@ -1,21 +1,25 @@
+"""Access method for Freebox."""
+
 import hmac
 import json
 import logging
-from typing import Any, Mapping
-from typing import Dict
-from typing import Optional
+from typing import Any, Dict, Mapping, Optional
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 
-from freebox_api.exceptions import AuthorizationError
-from freebox_api.exceptions import HttpRequestError
-from freebox_api.exceptions import InsufficientPermissionsError
+from .exceptions import (
+    AuthorizationError,
+    HttpRequestError,
+    InsufficientPermissionsError,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class Access:
+    """Acces class."""
+
     def __init__(
         self,
         session: ClientSession,
@@ -23,7 +27,8 @@ class Access:
         app_token: str,
         app_id: str,
         http_timeout: int,
-    ):
+    ) -> None:
+        """Initialize."""
         self.session = session
         self.base_url = base_url
         self.app_token = app_token
@@ -32,7 +37,7 @@ class Access:
         self.session_token: Optional[str] = None
         self.session_permissions: Optional[Dict[str, bool]] = None
 
-    async def _get_challenge(self, base_url, timeout=10):
+    async def _get_challenge(self, base_url: str, timeout=10) -> str:
         """
         Return challenge from Freebox API
         """
@@ -42,13 +47,16 @@ class Access:
 
         # raise exception if resp.success != True
         if not resp_data.get("success"):
+            await self.session.close()
             raise AuthorizationError(
                 f"Getting challenge failed (APIResponse: {json.dumps(resp_data)})"
             )
 
         return resp_data["result"]["challenge"]
 
-    async def _get_session_token(self, base_url, app_token, app_id, timeout=10):
+    async def _get_session_token(
+        self, base_url: str, app_token: str, app_id: str, timeout=10
+    ) -> tuple[str, dict[str, Any]]:
         """
         Get session token from Freebox.
         Returns (session_token, session_permissions)
@@ -67,6 +75,7 @@ class Access:
 
         # raise exception if resp.success != True
         if not resp_data.get("success"):
+            await self.session.close()
             raise AuthorizationError(
                 f"Starting session failed (APIResponse: {json.dumps(resp_data)})"
             )
@@ -76,21 +85,25 @@ class Access:
 
         return (session_token, session_permissions)
 
-    async def _refresh_session_token(self):
+    async def _refresh_session_token(self) -> None:
+        """Refresh session token."""
         # Get token for the current session
         session_token, session_permissions = await self._get_session_token(
             self.base_url, self.app_token, self.app_id, self.timeout
         )
 
         logger.info("Session opened")
-        logger.info("Permissions: " + str(session_permissions))
+        logger.info("Permissions: %s", session_permissions)
         self.session_token = session_token
         self.session_permissions = session_permissions
 
     def _get_headers(self) -> Dict[str, Optional[str]]:
+        """Get Freebox application header."""
         return {"X-Fbx-App-Auth": self.session_token}
 
-    async def _perform_request(self, verb, end_url, **kwargs):
+    async def _perform_request(
+        self, verb: str, end_url: str, **kwargs: Any
+    ) -> Optional[dict[str, Any]]:
         """
         Perform the given request, refreshing the session token if needed
         """
