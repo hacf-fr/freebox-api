@@ -24,7 +24,7 @@ class Notifications:
         "id": "",
         "name": "",
         "subscriptions": subscription,
-        "token": "",
+        "token": "",  # noqa: S105
         "type": os_type[0],
     }
 

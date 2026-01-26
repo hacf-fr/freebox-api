@@ -27,7 +27,7 @@ class Airmedia:
         "action": action[0],
         "media": "",
         "media_type": media_type[1],
-        "password": "",
+        "password": "",  # noqa: S105
         "position": 0,
     }
 
