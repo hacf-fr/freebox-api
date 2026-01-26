@@ -3,7 +3,6 @@
   "rebaseWhen": "behind-base-branch",
   "dependencyDashboard": true,
   "forkProcessing": "enabled",
-  "includeForks": true,
   "labels": ["dependencies", "no-stale"],
   "lockFileMaintenance": {
     "enabled": true,
