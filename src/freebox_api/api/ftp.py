@@ -20,7 +20,7 @@ class Ftp:
         "allow_anonymous_write": False,
         "allow_remote_access": False,
         "remote_domain": "",
-        "password": "",
+        "password": "",  # noqa: S105
         "port_ctrl": 12345,
         "port_data": 45678,
     }

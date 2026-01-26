@@ -32,14 +32,14 @@ class Netshare:
         "enabled": False,
         "guest_allow": False,
         "login_name": "",
-        "login_password": "",
+        "login_password": "",  # noqa: S105
         "server_type": server_type[0],
     }
 
     samba_configuration_schema = {
         "file_share_enabled": False,
         "logon_enabled": False,
-        "logon_password": "",
+        "logon_password": "",  # noqa: S105
         "logon_user": "",
         "print_share_enabled": True,
         "workgroup": "workgroup",

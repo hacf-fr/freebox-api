@@ -86,14 +86,14 @@ class Download:
     download_url_schema: DownloadAddURL = {
         "download_url": "",
         "username": "",
-        "password": "",
+        "password": "",  # noqa: S105
         "recursive": False,
         "download_dir": "",
     }
     download_url_list_schema: DownloadAddURLList = {
         "download_url_list": "",  # items separated by /n
         "username": "",
-        "password": "",
+        "password": "",  # noqa: S105
         "recursive": False,
         "download_dir": "",
     }

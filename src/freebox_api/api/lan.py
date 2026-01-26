@@ -36,7 +36,10 @@ class Lan:
 
     lan_host_data_schema = {"id": "", "primary_name": "", "hostType": host_type[0]}
 
-    wol_schema = {"mac": "", "password": ""}
+    wol_schema = {
+        "mac": "",
+        "password": "",  # noqa: S105
+    }
 
     async def get_config(self):
         """
