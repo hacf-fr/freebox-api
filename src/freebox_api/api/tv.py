@@ -5,7 +5,6 @@ https://dev.freebox.fr/sdk/os/pvr/
 """
 
 import time
-from typing import Dict
 
 from freebox_api.access import Access
 
@@ -36,13 +35,13 @@ class Tv:
         """
         return await self._access.post("pvr/generator/", tv_record_generator)
 
-    async def delete_finished_tv_record(self, record_id: int) -> Dict[str, bool]:
+    async def delete_finished_tv_record(self, record_id: int) -> dict[str, bool]:
         """
         Delete finished tv record
         """
         return await self._access.delete(f"pvr/finished/{record_id}")  # type: ignore
 
-    async def delete_programmed_tv_record(self, record_id: int) -> Dict[str, bool]:
+    async def delete_programmed_tv_record(self, record_id: int) -> dict[str, bool]:
         """
         Delete programmed tv record
         """

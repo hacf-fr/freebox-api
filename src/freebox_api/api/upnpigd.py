@@ -3,8 +3,6 @@ UPnP IGD API.
 https://dev.freebox.fr/sdk/os/igd/
 """
 
-from typing import Dict
-
 from freebox_api.access import Access
 
 
@@ -16,7 +14,7 @@ class Upnpigd:
     def __init__(self, access: Access):
         self._access = access
 
-    async def delete_redir(self, id: str) -> Dict[str, bool]:
+    async def delete_redir(self, id: str) -> dict[str, bool]:
         """
         Deletes the given upnpigd redirection
         """

@@ -3,8 +3,6 @@ Port Forwarding API.
 https://dev.freebox.fr/sdk/os/nat/#port-forwarding
 """
 
-from typing import Dict
-
 from freebox_api.access import Access
 
 
@@ -43,7 +41,7 @@ class Fw:
 
     async def delete_port_forwarding_configuration(
         self, config_id: int
-    ) -> Dict[str, bool]:
+    ) -> dict[str, bool]:
         """
         Delete port forwarding configuration
 

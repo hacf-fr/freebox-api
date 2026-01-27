@@ -4,9 +4,6 @@ No public documentation available yet.
 """
 
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
 
 from freebox_api.access import Access
 
@@ -53,7 +50,7 @@ class Player:
     }
     media_control_data_schema = {"args": media_control_stream_args, "cmd": "pause"}
 
-    async def get_players(self) -> List[Dict[str, Any]]:
+    async def get_players(self) -> list[dict[str, Any]]:
         """
         Get players
         """
@@ -67,9 +64,7 @@ class Player:
         players = await self.get_players()
         return int(players[0]["id"])
 
-    async def get_player_status(
-        self, player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+    async def get_player_status(self, player_id: int | None = None) -> dict[str, Any]:
         """
         Get player status
 
@@ -84,9 +79,7 @@ class Player:
             f"player/{player_id}/api/{self._player_api_version}/status/"
         )
 
-    async def get_player_volume(
-        self, player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+    async def get_player_volume(self, player_id: int | None = None) -> dict[str, Any]:
         """
         Get player volume
 
@@ -102,7 +95,7 @@ class Player:
         )
 
     async def set_player_volume(
-        self, player_volume_data: Dict[str, Any], player_id: Optional[int] = None
+        self, player_volume_data: dict[str, Any], player_id: int | None = None
     ) -> None:
         """
         Set player volume
@@ -122,9 +115,9 @@ class Player:
 
     async def update_player_volume(
         self,
-        volume: Optional[int] = None,
-        mute: Optional[bool] = None,
-        player_id: Optional[int] = None,
+        volume: int | None = None,
+        mute: bool | None = None,
+        player_id: int | None = None,
     ) -> None:
         """
         Update player volume
@@ -137,7 +130,7 @@ class Player:
             , Default to `None`
         """
 
-        player_data: Dict[str, Any] = {}
+        player_data: dict[str, Any] = {}
         if volume is not None:
             player_data.update({"volume": volume})
         if mute is not None:
@@ -145,8 +138,8 @@ class Player:
         await self.set_player_volume(player_data, player_id)
 
     async def send_media_control(
-        self, media_control_data: Dict[str, str], player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+        self, media_control_data: dict[str, str], player_id: int | None = None
+    ) -> dict[str, Any]:
         """
         Send media control
 
@@ -164,8 +157,8 @@ class Player:
         )
 
     async def execute_media_control_command(
-        self, command: str, player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+        self, command: str, player_id: int | None = None
+    ) -> dict[str, Any]:
         """
         Execute media control command
 
@@ -176,8 +169,8 @@ class Player:
         return await self.send_media_control({"name": command}, player_id)
 
     async def set_media_url(
-        self, media_url_data: Dict[str, str], player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+        self, media_url_data: dict[str, str], player_id: int | None = None
+    ) -> dict[str, Any]:
         """
         Set media url and open it
 
@@ -195,8 +188,8 @@ class Player:
         )
 
     async def open_media_url(
-        self, media_url: str, player_id: Optional[int] = None
-    ) -> Dict[str, Any]:
+        self, media_url: str, player_id: int | None = None
+    ) -> dict[str, Any]:
         """
         Open player url
 

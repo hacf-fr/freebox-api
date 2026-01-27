@@ -3,8 +3,6 @@ Call API.
 https://dev.freebox.fr/sdk/os/call/
 """
 
-from typing import Dict
-
 from freebox_api.access import Access
 
 
@@ -18,7 +16,7 @@ class Call:
 
     mark_call_log_as_read_data_schema = {"new": False}
 
-    async def delete_call_log(self, log_id: int) -> Dict[str, bool]:
+    async def delete_call_log(self, log_id: int) -> dict[str, bool]:
         """
         Delete call log
 

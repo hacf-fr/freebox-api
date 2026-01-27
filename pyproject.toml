@@ -83,7 +83,7 @@ exclude = [
 
 [tool.ruff]
 line-length = 88
-target-version = "py38"
+target-version = "py310"
 
 [tool.ruff.lint]
 ignore = [
@@ -91,11 +91,8 @@ ignore = [
     "A002",    # Function argument is shadowing a Python builtin
     "E501",    # Line too long
     "ERA001",  # Found commented-out code
-    "I001",    # Import block is un-sorted or un-formatted
     "PLR0913", # Too many arguments in function definition
     "PLR0915", # Too many statements
-    "UP015",   # Unnecessary mode argument
-    "UP034",   # Avoid extraneous parentheses
 ]
 select = [
     "A",     # flake8-builtins

@@ -3,8 +3,6 @@ Home API.
 No public documentation available yet.
 """
 
-from typing import Dict
-
 from freebox_api.access import Access
 
 
@@ -152,7 +150,7 @@ class Home:
         """
         return await self._access.get("home/links")
 
-    async def del_home_node(self, node_id: int) -> Dict[str, bool]:
+    async def del_home_node(self, node_id: int) -> dict[str, bool]:
         """
         Delete home node id
         """

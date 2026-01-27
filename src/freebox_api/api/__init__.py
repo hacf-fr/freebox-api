@@ -1,5 +1,3 @@
 """Freebox APIs."""
 
-from typing import List
-
-__all__: List[str] = []
+__all__: list[str] = []
