@@ -6,12 +6,13 @@ https://dev.freebox.fr/sdk/os/download/
 import base64
 import sys
 
-if sys.version_info < (3, 12):
+if sys.version_info < (3, 11):
     from typing_extensions import Required
+    from typing_extensions import TypedDict
 else:
     from typing import Required
+    from typing import TypedDict
 from typing import Any
-from typing import TypedDict
 
 from freebox_api.access import Access
 
