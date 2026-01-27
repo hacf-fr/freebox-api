@@ -115,7 +115,7 @@ select = [
 [tool.ruff.lint.isort]
 force-single-line = true
 known-local-folder = [
-    "meteofrance_api",
+    "freebox_api",
 ]
 
 [tool.ruff.lint.mccabe]
