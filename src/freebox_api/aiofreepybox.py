@@ -68,7 +68,6 @@ logger = logging.getLogger(__name__)
 
 
 class Freepybox:
-
     def __init__(
         self,
         app_desc: Dict[str, str] = DEFAULT_APP_DESC,
