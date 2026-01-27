@@ -1,18 +1,16 @@
 import asyncio
 import json
 import logging
-from os import path
-from os import PathLike
 import socket
 import ssl
+from os import PathLike
+from os import path
 from typing import Any
-from typing import Dict
-from typing import Optional
-from typing import Tuple
 from typing import Union
 from urllib.parse import urljoin
 
-from aiohttp import ClientSession, ClientTimeout
+from aiohttp import ClientSession
+from aiohttp import ClientTimeout
 from aiohttp import TCPConnector
 
 import freebox_api
@@ -53,7 +51,7 @@ DEFAULT_TOKEN_DIRECTORY = path.dirname(path.abspath(__file__))
 DEFAULT_TOKEN_FILE: str = path.join(DEFAULT_TOKEN_DIRECTORY, DEFAULT_TOKEN_FILENAME)
 
 # Default application descriptor
-DEFAULT_APP_DESC: Dict[str, str] = {
+DEFAULT_APP_DESC: dict[str, str] = {
     "app_id": "aiofpbx",
     "app_name": "freebox-api",
     "app_version": freebox_api.__version__,
@@ -70,12 +68,12 @@ logger = logging.getLogger(__name__)
 class Freepybox:
     def __init__(
         self,
-        app_desc: Dict[str, str] = DEFAULT_APP_DESC,
+        app_desc: dict[str, str] = DEFAULT_APP_DESC,
         token_file: StrOrPath = DEFAULT_TOKEN_FILE,
         api_version: str = "v3",
         timeout: int = DEFAULT_TIMEOUT,
     ):
-        self.app_desc: Dict[str, str] = app_desc
+        self.app_desc: dict[str, str] = app_desc
         self.token_file: StrOrPath = token_file
         self.api_version: str = api_version
         self.timeout: int = timeout
@@ -170,7 +168,7 @@ class Freepybox:
         await self._access.post("login/logout")
         await self._session.close()
 
-    async def get_permissions(self) -> Optional[Dict[str, bool]]:
+    async def get_permissions(self) -> dict[str, bool] | None:
         """
         Returns the permissions for this app.
 
@@ -194,7 +192,7 @@ class Freepybox:
         port: str,
         api_version: str,
         token_file: StrOrPath,
-        app_desc: Dict[str, str],
+        app_desc: dict[str, str],
         timeout: int = DEFAULT_TIMEOUT,
     ) -> Access:
         """
@@ -217,7 +215,7 @@ class Freepybox:
 
             # Check the authorization status
             out_msg_flag = False
-            status: Optional[str] = None
+            status: str | None = None
             while status != "granted":
                 status = await self._get_authorization_status(
                     base_url, track_id, timeout
@@ -272,8 +270,8 @@ class Freepybox:
         return str(resp_data["result"]["status"])
 
     async def _get_app_token(
-        self, base_url: str, app_desc: Dict[str, str], timeout: int = DEFAULT_TIMEOUT
-    ) -> Tuple[str, int]:
+        self, base_url: str, app_desc: dict[str, str], timeout: int = DEFAULT_TIMEOUT
+    ) -> tuple[str, int]:
         """
         Get the application token from the freebox
         Returns (app_token, track_id)
@@ -301,13 +299,13 @@ class Freepybox:
         self,
         app_token: str,
         track_id: int,
-        app_desc: Dict[str, str],
+        app_desc: dict[str, str],
         token_file: StrOrPath,
     ) -> None:
         """
         Store the application token in g_app_auth_file file
         """
-        file_content: Dict[str, Union[str, int]] = {
+        file_content: dict[str, str | int] = {
             **app_desc,
             "app_token": app_token,
             "track_id": track_id,
@@ -318,17 +316,17 @@ class Freepybox:
 
     def _readfile_app_token(
         self, token_file: StrOrPath
-    ) -> Union[Tuple[str, int, Dict[str, Any]], Tuple[None, None, None]]:
+    ) -> tuple[str, int, dict[str, Any]] | tuple[None, None, None]:
         """
         Read the application token in the authentication file.
         Returns (app_token, track_id, app_desc)
         """
         try:
-            with open(token_file, "r") as f:
+            with open(token_file) as f:
                 d = json.load(f)
                 app_token: str = d["app_token"]
                 track_id: int = d["track_id"]
-                app_desc: Dict[str, str] = {
+                app_desc: dict[str, str] = {
                     k: d[k]
                     for k in ("app_id", "app_name", "app_version", "device_name")
                     if k in d
@@ -344,7 +342,7 @@ class Freepybox:
         """
         return f"https://{host}:{port}/api/{api_version}/"
 
-    def _is_app_desc_valid(self, app_desc: Dict[str, str]) -> bool:
+    def _is_app_desc_valid(self, app_desc: dict[str, str]) -> bool:
         """
         Check validity of the application descriptor
         """

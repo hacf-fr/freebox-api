@@ -4,9 +4,6 @@ https://dev.freebox.fr/sdk/os/airmedia/
 """
 
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
 
 from freebox_api.access import Access
 
@@ -31,14 +28,14 @@ class Airmedia:
         "position": 0,
     }
 
-    async def get_airmedia_receivers(self) -> List[Dict[str, Any]]:
+    async def get_airmedia_receivers(self) -> list[dict[str, Any]]:
         """
         Get AirMedia receivers
         """
         return await self._access.get("airmedia/receivers/")  # type: ignore
 
     async def send_airmedia(
-        self, receiver_name: str, airmedia_data: Dict[str, Any]
+        self, receiver_name: str, airmedia_data: dict[str, Any]
     ) -> None:
         """
         Send AirMedia
@@ -48,15 +45,15 @@ class Airmedia:
         """
         await self._access.post(f"airmedia/receivers/{receiver_name}/", airmedia_data)
 
-    async def get_airmedia_configuration(self) -> Dict[str, bool]:
+    async def get_airmedia_configuration(self) -> dict[str, bool]:
         """
         Get AirMedia configuration
         """
         return await self._access.get("airmedia/config/")  # type: ignore
 
     async def set_airmedia_configuration(
-        self, airmedia_config: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, airmedia_config: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Set AirMedia configuration
 
@@ -66,9 +63,9 @@ class Airmedia:
 
     async def update_airmedia_configuration(
         self,
-        enabled: Optional[bool] = None,
-        password: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+        enabled: bool | None = None,
+        password: str | None = None,
+    ) -> dict[str, Any] | None:
         """
         Update AirMedia configuration
 
@@ -81,7 +78,7 @@ class Airmedia:
         if enabled is None and password is None:
             return None
 
-        config: Dict[str, Any] = {}
+        config: dict[str, Any] = {}
         if enabled is not None:
             config.update({"enabled": enabled})
         if password:

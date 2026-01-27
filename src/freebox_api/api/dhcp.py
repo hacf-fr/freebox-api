@@ -4,7 +4,6 @@ https://dev.freebox.fr/sdk/os/dhcp/
 """
 
 import logging
-from typing import Dict
 
 from freebox_api.access import Access
 
@@ -42,7 +41,7 @@ class Dhcp:
         """
         return await self._access.post("dhcp/static_lease/", static_lease)
 
-    async def delete_dhcp_static_lease(self, lease_id: str) -> Dict[str, bool]:
+    async def delete_dhcp_static_lease(self, lease_id: str) -> dict[str, bool]:
         """
         Delete dhcp static lease
         """

@@ -1,9 +1,8 @@
 import hmac
 import json
 import logging
-from typing import Any, Mapping
-from typing import Dict
-from typing import Optional
+from collections.abc import Mapping
+from typing import Any
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
@@ -29,8 +28,8 @@ class Access:
         self.app_token = app_token
         self.app_id = app_id
         self.timeout = http_timeout
-        self.session_token: Optional[str] = None
-        self.session_permissions: Optional[Dict[str, bool]] = None
+        self.session_token: str | None = None
+        self.session_permissions: dict[str, bool] | None = None
 
     async def _get_challenge(self, base_url, timeout=10):
         """
@@ -87,7 +86,7 @@ class Access:
         self.session_token = session_token
         self.session_permissions = session_permissions
 
-    def _get_headers(self) -> Dict[str, Optional[str]]:
+    def _get_headers(self) -> dict[str, str | None]:
         return {"X-Fbx-App-Auth": self.session_token}
 
     async def _perform_request(self, verb, end_url, **kwargs):
@@ -134,8 +133,8 @@ class Access:
         return await self._perform_request(self.session.get, end_url)
 
     async def post(
-        self, end_url: str, payload: Optional[Mapping[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, end_url: str, payload: Mapping[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Send post request and return results
         """
@@ -143,8 +142,8 @@ class Access:
         return await self._perform_request(self.session.post, end_url, data=data)  # type: ignore
 
     async def put(
-        self, end_url: str, payload: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, end_url: str, payload: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Send post request and return results
         """
@@ -152,15 +151,15 @@ class Access:
         return await self._perform_request(self.session.put, end_url, data=data)  # type: ignore
 
     async def delete(
-        self, end_url: str, payload: Optional[Dict[str, Any]] = None
-    ) -> Optional[Dict[str, bool]]:
+        self, end_url: str, payload: dict[str, Any] | None = None
+    ) -> dict[str, bool] | None:
         """
         Send delete request and return results
         """
         data = json.dumps(payload) if payload else None
         return await self._perform_request(self.session.delete, end_url, data=data)  # type: ignore
 
-    async def get_permissions(self) -> Optional[Dict[str, bool]]:
+    async def get_permissions(self) -> dict[str, bool] | None:
         """
         Returns the permissions for this session/app.
         """

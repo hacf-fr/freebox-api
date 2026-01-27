@@ -3,7 +3,6 @@ Parental Control API.
 https://dev.freebox.fr/sdk/os/parental/
 """
 
-from typing import Dict
 
 from freebox_api.access import Access
 
@@ -27,7 +26,7 @@ class Parental:
         """
         return await self._access.post("parental/filter/", parental_filter)
 
-    async def delete_parental_filter(self, filter_id: int) -> Dict[str, bool]:
+    async def delete_parental_filter(self, filter_id: int) -> dict[str, bool]:
         """
         Delete parental filter
         """

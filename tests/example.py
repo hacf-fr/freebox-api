@@ -5,9 +5,7 @@ This example can be run safely as it won't change anything in your box configura
 import asyncio
 
 # import m3u8
-
 # from pathlib import Path
-
 from freebox_api import Freepybox
 
 # from freebox_api.aiofreepybox import DEFAULT_TOKEN_FILE
