@@ -3,7 +3,6 @@ Home API.
 No public documentation available yet.
 """
 
-
 from freebox_api.access import Access
 
 

@@ -3,7 +3,6 @@ UPnP IGD API.
 https://dev.freebox.fr/sdk/os/igd/
 """
 
-
 from freebox_api.access import Access
 
 

@@ -3,7 +3,6 @@ Parental Control API.
 https://dev.freebox.fr/sdk/os/parental/
 """
 
-
 from freebox_api.access import Access
 
 

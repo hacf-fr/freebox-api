@@ -64,9 +64,7 @@ class Player:
         players = await self.get_players()
         return int(players[0]["id"])
 
-    async def get_player_status(
-        self, player_id: int | None = None
-    ) -> dict[str, Any]:
+    async def get_player_status(self, player_id: int | None = None) -> dict[str, Any]:
         """
         Get player status
 
@@ -81,9 +79,7 @@ class Player:
             f"player/{player_id}/api/{self._player_api_version}/status/"
         )
 
-    async def get_player_volume(
-        self, player_id: int | None = None
-    ) -> dict[str, Any]:
+    async def get_player_volume(self, player_id: int | None = None) -> dict[str, Any]:
         """
         Get player volume
 

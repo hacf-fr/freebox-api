@@ -3,7 +3,6 @@ Port Forwarding API.
 https://dev.freebox.fr/sdk/os/nat/#port-forwarding
 """
 
-
 from freebox_api.access import Access
 
 

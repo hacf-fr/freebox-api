@@ -152,9 +152,7 @@ class Remote:
 
         return True
 
-    async def set_key(
-        self, key_data: dict[str, Any], code: str | None = None
-    ) -> bool:
+    async def set_key(self, key_data: dict[str, Any], code: str | None = None) -> bool:
         """
         Set Key
 

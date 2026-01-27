@@ -3,7 +3,6 @@ Call API.
 https://dev.freebox.fr/sdk/os/call/
 """
 
-
 from freebox_api.access import Access
 
 
