@@ -43,13 +43,7 @@ safety = "3.7.0"
 mypy = "1.19.1"
 typeguard = "4.4.4"
 pre-commit = "4.5.1"
-flake8 = "7.3.0"
-black = "26.1.0"
-flake8-bandit = "4.1.1"
-flake8-bugbear = "25.11.29"
-flake8-docstrings = "1.7.0"
-flake8-rst-docstrings = "0.4.0"
-pep8-naming = "0.15.1"
+ruff = "0.14.14"
 darglint = "1.8.1"
 pre-commit-hooks = "6.0.0"
 
@@ -86,6 +80,49 @@ allow_untyped_calls = true
 exclude = [
     '^tests/example\.py$',
 ]
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.ruff.lint]
+ignore = [
+    "A001",    # Variable is shadowing a Python builtin
+    "A002",    # Function argument is shadowing a Python builtin
+    "E501",    # Line too long
+    "ERA001",  # Found commented-out code
+    "I001",    # Import block is un-sorted or un-formatted
+    "PLR0913", # Too many arguments in function definition
+    "PLR0915", # Too many statements
+    "UP015",   # Unnecessary mode argument
+    "UP034",   # Avoid extraneous parentheses
+]
+select = [
+    "A",     # flake8-builtins
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "C90",   # mccabe
+    "E",     # pycodestyle error
+    "ERA",   # eradicate
+    "F",     # Pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "PL",    # Pylint
+    "PT",    # flake8-pytest-style
+    "UP",    # pyupgrade
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+known-local-folder = [
+    "freebox_api",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
