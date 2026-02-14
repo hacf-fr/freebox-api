@@ -22,6 +22,12 @@ class Connection:
         """
         return await self._access.get("connection/config/")
 
+    async def get_ipv6_config(self):
+        """
+        Get ipv6 configuration
+        """
+        return await self._access.get("connection/ipv6/config/")
+
     async def get_connection_logs(self):
         """
         Get connection logs
@@ -63,6 +69,12 @@ class Connection:
         Update connection configuration
         """
         await self._access.put("connection/config/", connection_configuration)
+
+    async def set_ipv6_config(self, ipv6_configuration):
+        """
+        Update ipv6 configuration
+        """
+        await self._access.put("connection/ipv6/config/", ipv6_configuration)
 
     async def set_lte_config(
         self, lte_configuration_data=lte_configuration_data_schema
