@@ -18,6 +18,7 @@ from freebox_api.access import Access
 from freebox_api.api.airmedia import Airmedia
 from freebox_api.api.call import Call
 from freebox_api.api.connection import Connection
+from freebox_api.api.contact import Contact
 from freebox_api.api.dhcp import Dhcp
 from freebox_api.api.download import Download
 from freebox_api.api.freeplug import Freeplug
@@ -30,6 +31,7 @@ from freebox_api.api.lcd import Lcd
 from freebox_api.api.netshare import Netshare
 from freebox_api.api.notifications import Notifications
 from freebox_api.api.parental import Parental
+from freebox_api.api.profile import Profile
 from freebox_api.api.phone import Phone
 from freebox_api.api.player import Player
 from freebox_api.api.remote import Remote
@@ -40,6 +42,8 @@ from freebox_api.api.system import System
 from freebox_api.api.tv import Tv
 from freebox_api.api.upnpav import Upnpav
 from freebox_api.api.upnpigd import Upnpigd
+from freebox_api.api.vm import Vm
+from freebox_api.api.vpn import Vpn
 from freebox_api.api.wifi import Wifi
 from freebox_api.exceptions import AuthorizationError
 from freebox_api.exceptions import InvalidTokenError
@@ -101,12 +105,16 @@ class Freepybox:
         self.download: Download
         self.home: Home
         self.parental: Parental
+        self.profile: Profile
         self.netshare: Netshare
         self.notifications: Notifications
         self.remote: Remote
         self.rrd: Rrd
         self.upnpav: Upnpav
         self.upnpigd: Upnpigd
+        self.contact: Contact
+        self.vm: Vm
+        self.vpn: Vpn
 
     async def open(self, host: str, port: str) -> None:
         """
@@ -157,6 +165,10 @@ class Freepybox:
         self.rrd = Rrd(self._access)
         self.upnpav = Upnpav(self._access)
         self.upnpigd = Upnpigd(self._access)
+        self.contact = Contact(self._access)
+        self.profile = Profile(self._access)
+        self.vm = Vm(self._access)
+        self.vpn = Vpn(self._access)
 
     async def close(self) -> None:
         """

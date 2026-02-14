@@ -82,7 +82,7 @@ class Fs:
         """
         Copy files
         """
-        return await self._access.post("fs/copy/", copy)
+        return await self._access.post("fs/cp/", copy)
 
     async def delete_file_task(self, task_id: int) -> dict[str, bool]:
         """
