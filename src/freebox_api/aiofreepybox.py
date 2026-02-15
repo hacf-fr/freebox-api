@@ -117,11 +117,10 @@ class Freepybox:
             raise InvalidTokenError("Invalid application descriptor")
 
         cert_path = path.join(path.dirname(__file__), "freebox_certificates.pem")
-        ssl_ctx = ssl.create_default_context()
-        ssl_ctx.load_verify_locations(cafile=cert_path)
-        # Disable strict validation introduced in Python 3.13, which doesn't
-        # work with Freebox/iliadbox self-signed gateway certificates
-        ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
+
+        # Create SSL context in executor thread to avoid blocking I/O of
+        # load_default_certs() and load_verify_locations().
+        ssl_ctx = await asyncio.to_thread(self._create_ssl_context, cafile=cert_path)
 
         conn = TCPConnector(ssl_context=ssl_ctx)
         self._session = ClientSession(connector=conn)
@@ -185,6 +184,21 @@ class Freepybox:
         if self._access:
             return await self._access.get_permissions()
         return None
+
+    @staticmethod
+    def _create_ssl_context(cafile: str) -> ssl.SSLContext:
+        """
+        Create an SSL context with system default certificates and the provided freebox CA file.
+        """
+
+        ssl_ctx = ssl.create_default_context()
+        ssl_ctx.load_verify_locations(cafile=cafile)
+
+        # Disable strict validation introduced in Python 3.13, which doesn't
+        # work with Freebox/iliadbox self-signed gateway certificates
+        ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
+
+        return ssl_ctx
 
     async def _get_freebox_access(
         self,
