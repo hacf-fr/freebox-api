@@ -117,11 +117,10 @@ class Freepybox:
             raise InvalidTokenError("Invalid application descriptor")
 
         cert_path = path.join(path.dirname(__file__), "freebox_certificates.pem")
-        ssl_ctx = ssl.create_default_context()
-        ssl_ctx.load_verify_locations(cafile=cert_path)
-        # Disable strict validation introduced in Python 3.13, which doesn't
-        # work with Freebox/iliadbox self-signed gateway certificates
-        ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
+
+        # Create SSL context in executor thread to avoid blocking I/O of
+        # load_default_certs() and load_verify_locations().
+        ssl_ctx = await asyncio.to_thread(self._create_ssl_context, cafile=cert_path)
 
         conn = TCPConnector(ssl_context=ssl_ctx)
         self._session = ClientSession(connector=conn)
@@ -186,6 +185,21 @@ class Freepybox:
             return await self._access.get_permissions()
         return None
 
+    @staticmethod
+    def _create_ssl_context(cafile: str) -> ssl.SSLContext:
+        """
+        Create an SSL context with system default certificates and the provided freebox CA file.
+        """
+
+        ssl_ctx = ssl.create_default_context()
+        ssl_ctx.load_verify_locations(cafile=cafile)
+
+        # Disable strict validation introduced in Python 3.13, which doesn't
+        # work with Freebox/iliadbox self-signed gateway certificates
+        ssl_ctx.verify_flags &= ~ssl.VERIFY_X509_STRICT
+
+        return ssl_ctx
+
     async def _get_freebox_access(
         self,
         host: str,
@@ -201,9 +215,11 @@ class Freepybox:
 
         base_url: str = self._get_base_url(host, port, api_version)
 
-        # Read stored application token
+        # Read stored application token, in an executor thread to avoid blocking I/O.
         logger.info("Read application authorization file")
-        app_token, track_id, file_app_desc = self._readfile_app_token(token_file)
+        app_token, track_id, file_app_desc = await asyncio.to_thread(
+            self._readfile_app_token, token_file
+        )
 
         # If no valid token is stored then request a token to freebox api -
         # Only for LAN connection
@@ -240,8 +256,10 @@ class Freepybox:
 
             logger.info("Application authorization granted")
 
-            # Store application token in file
-            self._writefile_app_token(app_token, track_id, app_desc, token_file)
+            # Store application token in file, in an executor thread to avoid blocking I/O.
+            await asyncio.to_thread(
+                self._writefile_app_token, app_token, track_id, app_desc, token_file
+            )
             logger.info("Application token file was generated: %s", token_file)
 
         # Create freebox http access module
