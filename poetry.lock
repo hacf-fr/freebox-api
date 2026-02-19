@@ -3011,14 +3011,14 @@ telegram = ["requests"]
 
 [[package]]
 name = "typeguard"
-version = "4.5.0"
+version = "4.5.1"
 description = "Run-time type checker for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "typeguard-4.5.0-py3-none-any.whl", hash = "sha256:cfda388fc88a9ce42a41890900d6f31ee124bea9b73bb84701a32438e92165c3"},
-    {file = "typeguard-4.5.0.tar.gz", hash = "sha256:749bea21cdb2553e12831bc29f1eae980b22c7de8331ab67ae7db9e85470b5a7"},
+    {file = "typeguard-4.5.1-py3-none-any.whl", hash = "sha256:44d2bf329d49a244110a090b55f5f91aa82d9a9834ebfd30bcc73651e4a8cc40"},
+    {file = "typeguard-4.5.1.tar.gz", hash = "sha256:f6f8ecbbc819c9bc749983cc67c02391e16a9b43b8b27f15dc70ed7c4a007274"},
 ]
 
 [package.dependencies]
@@ -3494,4 +3494,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "b8f1f5d21fd6f9591f53a6771fae25bb2752f06dc7a697f7ec44b04ab0f68b56"
+content-hash = "4547fad7b53073d3464d50dccdab8066308490cc697e7fc04f6d5bbcf11db135"
