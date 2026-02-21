@@ -40,6 +40,12 @@ class Connection:
         """
         return await self._access.get("connection/lte/config/")
 
+    async def get_backup_lte_status(self):
+        """
+        Get backup lte connection status
+        """
+        return await self._access.get("connection/lte/backup")
+
     async def get_status(self):
         """
         Get connection status
