@@ -108,7 +108,7 @@ class Freepybox:
         self.upnpav: Upnpav
         self.upnpigd: Upnpigd
 
-    async def open(self, host: str, port: str) -> None:
+    async def open(self, host: str, port: str, https: bool = True) -> None:
         """
         Open a session to the freebox, get a valid access module
         and instantiate freebox modules
@@ -126,7 +126,7 @@ class Freepybox:
         self._session = ClientSession(connector=conn)
 
         self._access = await self._get_freebox_access(
-            host, port, self.api_version, self.token_file, self.app_desc, self.timeout
+            host, port, self.api_version, self.token_file, self.app_desc, self.timeout, https
         )
 
         # Instantiate freebox modules
@@ -208,12 +208,13 @@ class Freepybox:
         token_file: StrOrPath,
         app_desc: dict[str, str],
         timeout: int = DEFAULT_TIMEOUT,
+        https: bool = True
     ) -> Access:
         """
         Returns an access object used for HTTP requests.
         """
 
-        base_url: str = self._get_base_url(host, port, api_version)
+        base_url: str = self._get_base_url(host, port, api_version, https)
 
         # Read stored application token, in an executor thread to avoid blocking I/O.
         logger.info("Read application authorization file")
@@ -354,11 +355,12 @@ class Freepybox:
         except FileNotFoundError:
             return (None, None, None)
 
-    def _get_base_url(self, host: str, port: str, api_version: str) -> str:
+    def _get_base_url(self, host: str, port: str, api_version: str, https: bool = True) -> str:
         """
         Returns base url for HTTPS requests
         """
-        return f"https://{host}:{port}/api/{api_version}/"
+        url_prefix: str = "https" if https else "http"
+        return f"{url_prefix}://{host}:{port}/api/{api_version}/"
 
     def _is_app_desc_valid(self, app_desc: dict[str, str]) -> bool:
         """
