@@ -37,7 +37,7 @@ aiohttp = ">=3,<4"
 importlib-metadata = {version = ">=9,<9.1", python = "<3.12"}
 
 [tool.poetry.group.dev.dependencies]
-pytest = "9.0.3"
+pytest = "9.1.0"
 coverage = {extras = ["toml"], version = "7.14.1"}
 safety = "3.8.1"
 mypy = "2.1.0"
