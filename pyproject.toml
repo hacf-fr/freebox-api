@@ -93,6 +93,7 @@ ignore = [
     "ERA001",  # Found commented-out code
     "PLR0913", # Too many arguments in function definition
     "PLR0915", # Too many statements
+    "PLR0917", # Too many positional arguments
 ]
 select = [
     "A",     # flake8-builtins
