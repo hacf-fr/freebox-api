@@ -72,3 +72,33 @@ class Parental:
         return await self._access.put(
             "parental/config/", parental_control_configuration
         )
+
+    async def get_profiles(self):
+        """
+        Get the parental control profiles
+        """
+        return await self._access.get("profile/")
+
+    async def get_network_controls(self):
+        """
+        Get the network control (Internet access) of every profile
+        """
+        return await self._access.get("network_control/")
+
+    async def get_network_control(self, profile_id: int):
+        """
+        Get the network control (Internet access) of a profile
+        """
+        return await self._access.get(f"network_control/{profile_id}")
+
+    async def set_network_control(self, profile_id: int, network_control):
+        """
+        Set the network control (Internet access) of a profile
+
+        The router rejects an update without the "macs" and "cdayranges"
+        of the profile: send back the ones returned by get_network_control.
+        Pause the profile with "override": True and "override_mode": "denied"
+        ("override_until": 0 keeps it paused until further notice),
+        resume its planning with "override": False.
+        """
+        return await self._access.put(f"network_control/{profile_id}", network_control)
